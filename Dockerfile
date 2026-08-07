@@ -1,5 +1,7 @@
 FROM nginx:alpine
 COPY index.html /usr/share/nginx/html/index.html
 COPY privacidad.html /usr/share/nginx/html/privacidad.html
+COPY bot.html /usr/share/nginx/html/bot.html
 COPY assets /usr/share/nginx/html/assets
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80

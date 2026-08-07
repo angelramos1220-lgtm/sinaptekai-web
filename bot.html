@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SynaptekAI-Bot - SynaptekAI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #1a1a1a; }
+  h1 { color: #4F46E5; }
+  h2 { color: #4F46E5; margin-top: 30px; }
+  .fecha { color: #666; font-size: 0.9em; }
+  code { background: #f2f2f4; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+
+<h1>SynaptekAI-Bot</h1>
+<p class="fecha">Última actualización: agosto 2026</p>
+
+<p>SynaptekAI-Bot es el user-agent que usamos para auditar automáticamente el rendimiento de sitios web de negocios peruanos, como parte de nuestro proceso de prospección comercial. Si nuestro bot visitó tu sitio, aquí explicamos qué hace y por qué.</p>
+
+<h2>Qué hace</h2>
+<p>El bot visita la página principal de un negocio para medir señales objetivas y públicas de su sitio web: si usa HTTPS, si tiene la etiqueta de viewport para celulares, el tiempo de carga, el peso de la página, y otras señales técnicas similares a las que reporta <a href="https://pagespeed.web.dev/" target="_blank" rel="noopener">Google PageSpeed Insights</a>. No crea cuentas, no envía formularios, no hace scraping de contenido protegido ni de redes sociales, y no interactúa con el sitio más allá de leer la página pública.</p>
+
+<h2>Cómo se identifica</h2>
+<p>Todas las peticiones del bot incluyen el siguiente encabezado <code>User-Agent</code>:</p>
+<p><code>SynaptekAI-Bot/1.0 (+https://synaptekai.tech/bot)</code></p>
+
+<h2>Reglas que respeta</h2>
+<ul>
+  <li>Lee y respeta <code>robots.txt</code> antes de visitar cualquier página. Si un sitio nos bloquea, no insistimos.</li>
+  <li>Como máximo una petición cada 2 segundos al mismo dominio.</li>
+  <li>Tiempo de espera de 15 segundos por petición — si un sitio no responde, lo dejamos pasar.</li>
+  <li>Como máximo 5 páginas por sitio en total.</li>
+  <li>No descargamos ni almacenamos imágenes del negocio, salvo su logotipo, y únicamente para mostrarlo en una maqueta de propuesta dirigida a ese mismo negocio.</li>
+</ul>
+
+<h2>Cómo pedir que no visitemos tu sitio</h2>
+<p>Puedes bloquear a SynaptekAI-Bot agregando esto a tu <code>robots.txt</code>:</p>
+<p><code>User-agent: SynaptekAI-Bot<br>Disallow: /</code></p>
+<p>Si prefieres pedirlo directamente, o si ya recibiste una propuesta nuestra y quieres que se elimine, escríbenos a <a href="mailto:info@synaptekai.tech">info@synaptekai.tech</a> indicando el dominio de tu sitio. Lo excluimos de futuras auditorías.</p>
+
+<h2>Contacto</h2>
+<p>SynaptekAI | Cahuide 500, Mariano Melgar, Arequipa, Perú | <a href="mailto:info@synaptekai.tech">info@synaptekai.tech</a></p>
+
+</body>
+</html>
