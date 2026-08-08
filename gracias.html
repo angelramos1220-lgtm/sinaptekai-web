@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<!-- Google Analytics 4 -- REEMPLAZAR G-Q01K6J04NG por el ID de medicion real -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q01K6J04NG"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -54,10 +53,19 @@
   <h1>¡Listo! Ya tienes tu checklist en camino</h1>
   <p>Revisa tu correo en los próximos minutos (y la carpeta de spam, por si acaso). Ahí te dejé el PDF con las 5 señales de que tu negocio necesita automatización.</p>
 
-  <!-- TODO(Angel): agrega el archivo de video real en assets/videos/gracias.mp4 (nunca base64) -->
-  <video controls playsinline preload="metadata">
-    <source src="assets/videos/gracias.mp4" type="video/mp4">
-  </video>
+  <!-- Para reactivar: sube el archivo real a assets/videos/gracias.mp4 (nunca base64).
+       El script de abajo oculta este bloque si el archivo no carga, y lo muestra
+       solo cuando el video existe de verdad — no hace falta tocar este HTML. -->
+  <div id="gracias-video-wrap">
+    <video id="gracias-video" controls playsinline preload="metadata">
+      <source src="assets/videos/gracias.mp4" type="video/mp4">
+    </video>
+  </div>
+  <script>
+    document.getElementById('gracias-video').addEventListener('error', function () {
+      document.getElementById('gracias-video-wrap').style.display = 'none';
+    });
+  </script>
 
   <p>Si quieres avanzar más rápido, escríbeme directo por WhatsApp y vemos juntos por dónde empezar.</p>
 
