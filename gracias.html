@@ -22,27 +22,33 @@
   }
   main {
     width: 100%; max-width: 560px;
-    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px;
+    display: flex; flex-direction: column; align-items: stretch; gap: 20px;
   }
   h1 {
+    text-align: center;
     margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.8px; line-height: 1.2;
     background: linear-gradient(90deg,#4F46E5,#06B6D4);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  p { margin: 0; font-size: 16px; line-height: 1.6; color: #94A3B8; }
+  p { margin: 0; max-width: 480px; font-size: 16px; line-height: 1.6; color: #94A3B8; text-align: left; }
+  p.hint { font-size: 13px; color: #64748B; }
   video {
     width: 100%; max-width: 480px; border-radius: 16px; margin: 8px 0;
-    border: 1px solid #1E293B; background: #0F172A;
+    border: 1px solid #1E293B; background: #0F172A; display: none;
   }
-  a.wa-btn {
+  a.primary-btn, a.wa-btn {
+    align-self: flex-start;
     display: inline-flex; align-items: center; gap: 10px;
-    background: #25D366; color: #052E16; text-decoration: none;
-    font-weight: 800; font-size: 17px; padding: 16px 32px; border-radius: 14px;
-    min-height: 52px; box-sizing: border-box;
+    text-decoration: none; font-weight: 800; font-size: 17px;
+    padding: 16px 32px; border-radius: 14px; min-height: 52px; box-sizing: border-box;
   }
+  a.primary-btn { background: #4F46E5; color: #fff; }
+  a.primary-btn:hover { background: #4338CA; }
+  a.primary-btn:focus-visible { outline: 3px solid #818CF8; outline-offset: 3px; }
+  a.wa-btn { background: #25D366; color: #052E16; }
   a.wa-btn:hover { background: #1FBE5C; }
   a.wa-btn:focus-visible { outline: 3px solid #67E8F9; outline-offset: 3px; }
-  a.home-link { color: #64748B; font-size: 14px; text-decoration: none; margin-top: 8px; }
+  a.home-link { align-self: flex-start; color: #64748B; font-size: 14px; text-decoration: none; margin-top: 8px; }
   a.home-link:hover { color: #94A3B8; }
   a.home-link:focus-visible { outline: 2px solid #06B6D4; outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
@@ -51,20 +57,40 @@
 <body>
 <main>
   <h1>¡Listo! Ya tienes tu checklist en camino</h1>
+
+  <a class="primary-btn" href="/assets/checklist-automatizacion.pdf" download="Checklist-Automatizacion-SynaptekAI.pdf">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"></path><path d="M6 11l6 6 6-6"></path><path d="M4 21h16"></path></svg>
+    Descargar el checklist ahora
+  </a>
+  <p class="hint">También te lo enviamos por correo.</p>
+
   <p>Revisa tu correo en los próximos minutos (y la carpeta de spam, por si acaso). Ahí te dejé el PDF con las 5 señales de que tu negocio necesita automatización.</p>
 
-  <!-- Para reactivar: sube el archivo real a assets/videos/gracias.mp4 (nunca base64).
-       El script de abajo oculta este bloque si el archivo no carga, y lo muestra
-       solo cuando el video existe de verdad — no hace falta tocar este HTML. -->
-  <div id="gracias-video-wrap">
-    <video id="gracias-video" controls playsinline preload="metadata">
-      <source src="assets/videos/gracias.mp4" type="video/mp4">
-    </video>
-  </div>
+  <!-- El video solo se crea (y solo entonces ocupa espacio) si assets/videos/gracias.mp4
+       responde correctamente. El listener de error se adjunta ANTES de insertar el <source>,
+       así que no hay condición de carrera: nunca puede quedar el ícono de video roto.
+       Para activarlo, sube el archivo real a assets/videos/gracias.mp4 (nunca base64) —
+       no hace falta tocar este HTML. -->
+  <div id="gracias-video-wrap"></div>
   <script>
-    document.getElementById('gracias-video').addEventListener('error', function () {
-      document.getElementById('gracias-video-wrap').style.display = 'none';
-    });
+    (function () {
+      var wrap = document.getElementById('gracias-video-wrap');
+      var video = document.createElement('video');
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = 'metadata';
+      var settled = false;
+      video.addEventListener('error', function () { settled = true; video.remove(); });
+      video.addEventListener('loadedmetadata', function () { settled = true; video.style.display = 'block'; });
+      var source = document.createElement('source');
+      source.type = 'video/mp4';
+      source.src = '/assets/videos/gracias.mp4';
+      video.appendChild(source);
+      wrap.appendChild(video);
+      // Respaldo: si en 6s no hubo ni error ni metadata (conexión lenta o
+      // rara que nunca dispara ninguno de los dos eventos), lo quitamos igual.
+      setTimeout(function () { if (!settled) video.remove(); }, 6000);
+    })();
   </script>
 
   <p>Si quieres avanzar más rápido, escríbeme directo por WhatsApp y vemos juntos por dónde empezar.</p>
