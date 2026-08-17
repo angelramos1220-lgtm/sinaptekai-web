@@ -6,3 +6,5 @@ Allow: /assets/
 
 User-agent: Googlebot-Image
 Allow: /assets/
+
+Sitemap: https://synaptekai.tech/sitemap.xml
