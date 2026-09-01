@@ -7,8 +7,14 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://synaptekai.tech/privacidad.html</loc>
-    <lastmod>2026-08-14</lastmod>
+    <loc>https://synaptekai.tech/privacidad</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://synaptekai.tech/terminos</loc>
+    <lastmod>2026-09-01</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
