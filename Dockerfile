@@ -6,6 +6,7 @@ COPY terminos.html /usr/share/nginx/html/terminos.html
 COPY bot.html /usr/share/nginx/html/bot.html
 COPY gracias.html /usr/share/nginx/html/gracias.html
 COPY robots.txt /usr/share/nginx/html/robots.txt
+COPY llms.txt /usr/share/nginx/html/llms.txt
 COPY sitemap.xml /usr/share/nginx/html/sitemap.xml
 COPY assets /usr/share/nginx/html/assets
 COPY nginx.conf /etc/nginx/conf.d/default.conf

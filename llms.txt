@@ -1,0 +1,99 @@
+# SynaptekAI
+
+> Agentes de IA por WhatsApp, páginas web a medida y visibilidad en Google para negocios en todo el Perú. Desde Arequipa, con implementación 100% remota.
+
+SynaptekAI es una agencia de automatización e inteligencia artificial para negocios. Crea agentes virtuales que atienden, agendan y venden por WhatsApp y Telegram las 24 horas, construye páginas web a medida y ordena la presencia de un negocio en Google. El sitio es solo en español y todos los precios están en soles (S/).
+
+Sitio web: https://synaptekai.tech/
+Versión en Markdown de la portada: https://synaptekai.tech/index.md
+
+## Servicios principales
+
+- Asistentes Virtuales por WhatsApp y Telegram: atención al cliente, agendamiento de citas y respuestas automáticas, 24 horas al día, sin perder el toque humano. En uso en: Due Hotel y Oral Dent.
+- Páginas Web a Medida: webs rápidas y a medida, preparadas para Google y para asistentes de IA, con WhatsApp directo y medición de cada contacto. En uso en: Aquamatic.
+- Visibilidad en Google e IA: que te encuentren en Google Maps, en el buscador y en asistentes como ChatGPT o Gemini, con reseñas reales y la medición de cada contacto. En uso en: Aquamatic.
+- Socio Tecnológico: dominio, hosting, web y proveedores en orden y a nombre de tu negocio. SynaptekAI habla el idioma técnico por el cliente. En uso en: Aquamatic.
+- Automatización de Procesos: conecta Google Calendar, Sheets y el correo para que las tareas repetitivas se hagan solas. En uso en: Due Hotel y Oral Dent.
+- Soluciones a Medida: cada negocio es distinto; se diseña el flujo de automatización que la operación realmente necesita.
+
+## Paquetes
+
+Planes listos para instalar, con instalación desde un monto base y cuota mensual fija. Funcionan para cualquier tipo de negocio: hoteles, lavanderías, consultorios, ópticas, restaurantes, ferreterías, tiendas, estudios contables, estudios de abogados, almacenes y más.
+
+- Asistente Virtual: instalación desde S/800 · S/100/mes.
+  - Atención 24/7 por WhatsApp; entiende texto y mensajes de voz
+  - Agenda citas en tu Google Calendar, o toma reservas y pedidos que quedan registrados en tu Google Sheet
+  - Comparte catálogo y precios en la conversación para orientar al cliente
+  - Tu equipo toma el control cuando quiera: si respondes a mano, el asistente se pausa
+  - Aviso inmediato de cada solicitud nueva por WhatsApp o Telegram
+- Crecimiento 360° (recomendado): instalación desde S/900 · S/120/mes.
+  - Todo lo del Asistente Virtual
+  - Recordatorios automáticos (citas, entregas, renovaciones, seguimiento)
+  - Reactivación de clientes inactivos
+  - Publicación automática en Facebook e Instagram
+  - Reporte mensual de resultados
+
+El monto de instalación varía según la complejidad del proyecto. Si un negocio necesita más de un paquete, se coordina un precio personalizado.
+
+## Más servicios
+
+Se suman a un paquete o se contratan por separado.
+
+- Visibilidad en Google e IA: instalación desde S/500 · S/80/mes. Que te encuentren cuando te buscan: en Google Maps, en el buscador y en asistentes de IA.
+  - Perfil de Empresa de Google ordenado: horarios, fotos, servicios y novedades
+  - Más reseñas reales con tarjetas QR/NFC en tu mostrador, sin premios (como exige Google)
+  - Respondemos tus reseñas por ti
+  - Google Analytics y Search Console midiendo cada contacto por WhatsApp
+  - Tu web preparada para buscadores y asistentes de IA
+  - Google Ads con medición de conversiones (opcional; la pauta la pagas directo a Google)
+  - Reporte mensual con datos reales
+- Socio Tecnológico: desde S/120/mes. Rescate y migración de web y dominio: desde S/350, pago único. Tu área de TI sin contratar a nadie: nos encargamos de la parte técnica para que tú no tengas que entenderla.
+  - Dominio, hosting y cuentas a nombre de tu negocio, nunca del proveedor
+  - Hablamos por ti con tu hosting y con tus proveedores anteriores
+  - Rescatamos tu web y tu dominio si están en manos de terceros
+  - Mantenimiento, respaldos y vigilancia de tu web
+  - Revisamos lo que te entregan otros proveedores antes de que lo apruebes
+  - Te asesoramos antes de contratar cualquier sistema o software
+
+## Diseño de páginas web
+
+Sitios a medida, desde una landing page simple hasta una tienda online completa. Precios de pago único, más mantenimiento mensual.
+
+- Landing Page: S/450 – S/700. Mantenimiento: S/50–80/mes.
+- Sitio Corporativo: S/900 – S/1,500. Mantenimiento: S/80–120/mes.
+- Sitio con Funcionalidades: S/1,500 – S/2,500. Mantenimiento: S/120–180/mes.
+- Tienda Online: S/2,800 – S/4,500. Mantenimiento: S/150–250/mes.
+- Renueva tu Página Web: S/700 – S/1,100, pago único. Rediseño completo de una web existente, que queda en un hosting y un dominio a nombre del negocio. El hosting y el dominio se pagan directo al proveedor, a nombre del negocio.
+
+## Servicios complementarios (bajo pedido)
+
+Herramientas que ya están listas y se activan cuando el negocio las necesita.
+
+- Redes Sociales con IA: desde S/400 · S/80/mes. Publicación automática en Facebook e Instagram; texto de cada publicación redactado con IA; el dueño aprueba antes de publicar, desde Telegram.
+- Videos con IA: Básico S/500 · S/80/mes; Full S/650 · S/100/mes. Avatar propio con IA (o el del negocio); 4 videos al mes en el plan Full, con guion generado por IA; video adicional: S/60–80 c/u.
+- Inventario + Boletas: Tienda S/700 · S/100/mes; Supermercado S/950 · S/110/mes. Registra ventas hablándole a WhatsApp (texto o voz); descuenta inventario y emite boletas electrónicas válidas ante SUNAT; incluye 300 boletas/mes, adicional S/0.40 c/u. La emisión válida ante SUNAT requiere el certificado digital del negocio; SynaptekAI ayuda con el trámite.
+
+## Casos de éxito
+
+- Due Hotel (asistente de WhatsApp · hotel corporativo · Trujillo). Problema: toda la atención del hotel pasaba por un solo WhatsApp; recepción respondía las mismas preguntas una y otra vez, y en horas punta algunas consultas tardaban en ser atendidas. Solución: Sofía, una asistente virtual en el mismo WhatsApp del hotel, que informa tarifas y políticas, cotiza según las fechas, toma los datos de la reserva y los deja registrados en el Google Sheet del hotel, con aviso inmediato a recepción; si el equipo escribe a mano, Sofía se pausa sola, y si escribe un cliente frecuente, avisa a recepción para que lo atienda personalmente. Resultado: en producción desde agosto de 2026, atendiendo varias conversaciones a la vez; construida, probada y lanzada en 4 días, 100% a distancia, de Arequipa a Trujillo.
+- Aquamatic Lavandería (web a medida + Google · lavandería · Trujillo). Problema: su web estaba en el servidor de un proveedor anterior, sin acceso propio al dominio y con información desactualizada; su Perfil de Google tenía 3.9★ con solo 7 reseñas. Solución: se pasó el dominio a nombre del negocio, se migró el hosting y se construyó una web nueva a medida, preparada para Google y para asistentes de IA, con precios, calculadora por kilos, preguntas frecuentes y WhatsApp directo por servicio; además se ordenó su Perfil de Google, se puso en marcha la estrategia de reseñas con tarjetas QR/NFC en el mostrador y se mide cada contacto con Google Analytics. Resultado: web con puntaje de 99–100 en Lighthouse, la prueba de calidad de Google; su Perfil de Google pasó de 3.9★ (7 reseñas) a 4.4★ (14 reseñas) en dos semanas.
+- Oral Dent (asistente de WhatsApp · clínica dental · Arequipa). Problema: necesitaba responder consultas y agendar citas fuera del horario de atención, sin contratar más personal. Solución: asistente virtual por WhatsApp que agenda y confirma citas directamente en Google Calendar, envía recordatorios automáticos al paciente 24 h y 1 h antes, avisa a la doctora de cada cita nueva y responde preguntas frecuentes las 24 horas.
+
+## Forma de trabajo
+
+- Implementación 100% remota, para negocios en todo el Perú.
+- Día 1: se analiza el negocio y se detecta qué tareas se pueden automatizar.
+- Días 2-3: se diseña el agente de IA y las automatizaciones a la medida de la operación.
+- Días 4-5: se integra con las herramientas del negocio (Google Calendar, Sheets, correo y Telegram).
+- Desde el día 6: el asistente ya atiende. Durante el primer mes se revisan con el cliente sus conversaciones reales y se ajustan respuestas y reglas cada semana.
+- La primera semana es de prueba: si no le sirve al negocio, no se sigue.
+
+## Contacto
+
+- WhatsApp: +51 939 584 377 (https://wa.me/51939584377)
+- Correo: synaptekai92@gmail.com
+- Ubicación: Arequipa, Perú
+- Facebook: https://www.facebook.com/profile.php?id=61592474065002
+- Instagram: https://www.instagram.com/synaptekai92/
+- Política de Privacidad: https://synaptekai.tech/privacidad
+- Términos del Servicio: https://synaptekai.tech/terminos

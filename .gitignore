@@ -1,0 +1,8 @@
+# Copias locales de trabajo: no se publican ni se suben
+.gstack/
+Pagina WEB/
+SynaptekAI landing page/
+SynaptekAI landing page.zip
+
+# Copia de trabajo del bundle (scripts/bundle.js) y capturas de revisión
+.work/
