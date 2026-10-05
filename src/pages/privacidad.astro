@@ -1,0 +1,18 @@
+---
+// /privacidad: mismo contenido de siempre, con el layout nuevo.
+// IMPORTANTE: esta URL está registrada en la pantalla de consentimiento OAuth de
+// Google. Debe responder 200 en /privacidad, sin redirección. El texto legal vive en
+// src/legal/privacidad.html y no se modifica desde aquí.
+import Pagina from '../layouts/Pagina.astro';
+import '../styles/legal.css';
+import contenido from '../legal/privacidad.html?raw';
+import { textos as t } from '../data/textos';
+import { textosPaginas as tp } from '../data/textosPaginas';
+import { migasJsonLd } from '../lib/datosEstructurados';
+
+const jsonLd = [migasJsonLd([{ texto: tp.migasInicio, ruta: '/' }, { texto: t.footPrivacidad, ruta: '/privacidad' }])];
+---
+
+<Pagina titulo={tp.legal.privacidadSeo} descripcion={tp.legal.privacidadDescripcion} ruta="/privacidad" chat={false} jsonLd={jsonLd}>
+  <div data-origen="privacidad" set:html={contenido} />
+</Pagina>

@@ -164,7 +164,7 @@ a:hover { color: #4F46E5; }
 .site-header { padding: 18px 48px; }
 .hero-section { padding: 96px 48px 120px; }
 .hero-content { gap: 24px; }
-.desktop-nav { display: flex; gap: 16px; font-size: 14.5px; white-space: nowrap; }
+.desktop-nav { display: flex; align-items: center; gap: 28px; font-size: 15px; white-space: nowrap; }
 .desktop-actions { display: flex; flex-shrink: 0; }
 .mobile-actions { display: none; align-items: center; gap: 8px; flex-shrink: 0; }
 .mobile-wa-btn {
@@ -277,17 +277,14 @@ a:hover { color: #4F46E5; }
      desde 1240px   menú completo + botón "Hablar por WhatsApp" con texto;
      1024 a 1239px  menú completo, más compacto, + botón de WhatsApp solo ícono;
      menos de 1024  menú hamburguesa (el menú completo ya no entra).
-   Los tamaños del menú están ajustados para que sobren unos 30px en el ancho
-   más justo de cada tramo: un enlace nuevo obliga a revisarlos. */
+   scripts/verificar.js mide la holgura de la cabecera en cada ancho: un enlace
+   nuevo en el menú obliga a revisarla. */
 @media (max-width: 1239px) {
-  .desktop-nav { font-size: 14px; }
+  .desktop-nav { gap: 22px; }
   .desktop-actions { display: none; }
   .mobile-actions { display: flex; }
   .mobile-nav-toggle { display: none; }
   .web-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 1119px) {
-  .desktop-nav { gap: 14px; font-size: 13.5px; }
 }
 @media (max-width: 1023px) {
   .desktop-nav { display: none; }
@@ -322,6 +319,14 @@ a:hover { color: #4F46E5; }
   .how-line { top: 0; bottom: 0; left: 6px; right: auto; width: 2px; height: auto; background: linear-gradient(180deg, #4F46E5, #06B6D4); transform: scaleY(0); }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* --- Desplazamiento suave ---------------------------------------------------
+   Los clics en enlaces internos (#seccion) bajan con suavidad, salvo que el
+   visitante haya pedido menos movimiento. La entrada con ancla desde otra página
+   la maneja src/scripts/ancla.ts. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 
 /* --- Movimiento reducido: también los pseudo-elementos ----------------------
    La regla heredada de arriba usa "*", que no alcanza a ::before ni ::after. En el

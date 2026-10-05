@@ -1,0 +1,34 @@
+---
+// Página 404, con el estilo del sitio y enlaces útiles. nginx la sirve con código 404
+// para cualquier ruta que no exista (error_page en nginx.conf).
+import Pagina from '../layouts/Pagina.astro';
+import { enlacesServicios, enlacesPie } from '../data/sitio';
+import { textos as t } from '../data/textos';
+import { textosPaginas as tp } from '../data/textosPaginas';
+
+const x = tp.noEncontrada;
+---
+
+<Pagina titulo={x.seoTitulo} descripcion={x.seoDescripcion} ruta="/404" chat={false} noindex>
+  <section class="pagina-simple">
+    <div class="contenedor">
+      <span class="chip chip--insignia">{x.etiqueta}</span>
+      <h1 class="titulo-pagina">{x.titulo}</h1>
+      <p class="bajada">{x.texto}</p>
+      <div class="rejilla rejilla--2">
+        <nav class="pila pila--corta" aria-label={t.navSvc}>
+          <span class="etiqueta etiqueta--tenue">{t.navSvc}</span>
+          <ul class="lista-enlaces">
+            {enlacesServicios.map((e) => <li><a class="enlace" href={e.href}>{e.texto}</a></li>)}
+          </ul>
+        </nav>
+        <nav class="pila pila--corta" aria-label={t.footLinks}>
+          <span class="etiqueta etiqueta--tenue">{t.footLinks}</span>
+          <ul class="lista-enlaces">
+            {enlacesPie.map((e) => <li><a class="enlace" href={e.href}>{e.texto}</a></li>)}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </section>
+</Pagina>

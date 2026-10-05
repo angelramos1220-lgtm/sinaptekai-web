@@ -37,3 +37,9 @@ const { servicio: c, nivel: Titulo = 'h4', ancla = false } = Astro.props;
   )}
   <a class="tarjeta-comp__boton hv-gris-suave fc-blanco" href={waLink(c.mensajeWhatsApp)} target="_blank" data-origen={c.origen}>{t.compCta}</a>
 </div>
+
+<script>
+  import { iniciarVideos, iniciarEjemplos } from "../../scripts/videos.js";
+  iniciarVideos();
+  iniciarEjemplos();
+</script>

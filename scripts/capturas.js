@@ -255,10 +255,10 @@ async function main() {
         // Recorre la página para activar las animaciones de entrada antes de capturar.
         const total = await evalJs('document.documentElement.scrollHeight');
         for (let y = 0; y < total; y += Math.round(h * 0.5)) {
-          await evalJs('window.scrollTo(0, ' + y + ')');
+          await evalJs('window.scrollTo({ top: ' + y + ', behavior: "instant" })');
           await sleep(120);
         }
-        await evalJs('window.scrollTo(0, 0)');
+        await evalJs('window.scrollTo({ top: 0, behavior: "instant" })');
         await sleep(1400);
         const info = await evalJs(`({ sw: document.documentElement.scrollWidth, iw: window.innerWidth, alto: document.documentElement.scrollHeight })`);
         if (info.sw > info.iw) problemas.push('[' + w + 'px] desborde horizontal: el contenido mide ' + info.sw + 'px en una ventana de ' + info.iw + 'px');
@@ -298,7 +298,7 @@ async function main() {
           await shot('estado-comparativa-' + w + '.png', await recorte('#paquetes .pkg-grid', '#comparativa'));
           await shot('estado-ejemplos-' + w + '.png', await recorte('#complementarios', '#complementarios'));
           // Menú hamburguesa (solo donde existe): lo abre, lo captura y lo cierra.
-          await evalJs('window.scrollTo(0, 0)');
+          await evalJs('window.scrollTo({ top: 0, behavior: "instant" })');
           const hayHamburguesa = await evalJs(`(() => {
             const b = document.getElementById('mobile-nav-toggle');
             if (!b || b.getBoundingClientRect().width === 0) return false;
@@ -315,7 +315,7 @@ async function main() {
             await sleep(300);
           }
           // Abre el chat y elige el primer servicio "bajo pedido".
-          await evalJs('window.scrollTo(0, 0)');
+          await evalJs('window.scrollTo({ top: 0, behavior: "instant" })');
           await evalJs(`(() => {
             document.getElementById('sk-launcher').click();
             const chip = document.querySelector('#sk-chips .sk-chip-bajo-pedido');

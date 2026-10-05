@@ -1,30 +1,34 @@
 ---
-// Layout base de todas las páginas: <head> con metas por página, fuentes,
-// datos estructurados, medición y estilos globales.
+// Layout base de todas las páginas: <head> con metas por página, fuentes, datos
+// estructurados, medición y estilos globales.
 import '../styles/global.css';
 import '../styles/componentes.css';
 import { negocio } from '../data/negocio';
 import { servicios } from '../data/servicios';
+import { textosPaginas as tp } from '../data/textosPaginas';
 import manropeUrl from '../assets/fonts/manrope-latin.woff2?url';
 
-interface Props {
+export interface Props {
   /** <title> completo de la página. */
   titulo: string;
   descripcion: string;
-  /** Ruta de la página, con barra inicial y sin barra final ("/" para la portada). */
+  /** Ruta limpia de la página: con barra inicial, sin .html y sin barra final ("/" para la portada). */
   ruta: string;
   /** Texto alternativo de la imagen para redes. */
   ogImagenAlt?: string;
   noindex?: boolean;
+  /** Datos estructurados propios de la página (Service, FAQPage, BreadcrumbList…). */
+  jsonLd?: object[];
 }
 
-const { titulo, descripcion, ruta, ogImagenAlt, noindex = false } = Astro.props;
+const { titulo, descripcion, ruta, ogImagenAlt, noindex = false, jsonLd = [] } = Astro.props;
+// Canonical absoluto a la URL limpia: /privacidad.html y /privacidad apuntan a /privacidad.
 const canonical = new URL(ruta, negocio.url).href;
 const ogImagen = `${negocio.url}/assets/og-image.jpg`;
 const altImagen = ogImagenAlt ?? 'SynaptekAI: automatización e inteligencia artificial para negocios en Perú';
 
-// Datos estructurados del negocio. Van en el HTML que entrega el servidor.
-const jsonLd = {
+// Datos estructurados del negocio: van en todas las páginas, en el HTML del servidor.
+const organizacion = {
   '@context': 'https://schema.org',
   '@type': 'ProfessionalService',
   '@id': `${negocio.url}/#organizacion`,
@@ -83,14 +87,20 @@ const jsonLd = {
     <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 
-    <!-- La fuente del texto se pide de inmediato: es la del titular del hero. -->
+    <!-- La fuente del texto se pide de inmediato: es la del titular. -->
     <link rel="preload" href={manropeUrl} as="font" type="font/woff2" crossorigin>
 
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(organizacion)} />
+    {jsonLd.map((dato) => <script type="application/ld+json" set:html={JSON.stringify(dato)} />)}
 
-    <!-- Google Analytics 4: solo se carga en los dominios de producción. En cualquier
-         otro (localhost, sitio de prueba) los eventos se escriben en la consola. -->
-    <script is:inline define:vars={{ ga4: negocio.ga4, dominios: negocio.dominiosProduccion }}>
+    <!-- Antes de dibujar la página:
+         1. Google Analytics 4 solo se carga en los dominios de producción. En cualquier
+            otro (localhost, sitio de prueba) los eventos se escriben en la consola.
+         2. En el dominio de prueba se marca la página para mostrar la franja de aviso.
+         3. Si se entra con un ancla (/#paquetes) y el visitante no pidió menos movimiento,
+            se guarda y se quita de la URL para que el navegador no salte de golpe:
+            src/scripts/ancla.ts hace después el desplazamiento suave. -->
+    <script is:inline define:vars={{ ga4: negocio.ga4, dominios: negocio.dominiosProduccion, dominioPrueba: negocio.dominioPrueba }}>
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
       window.gtag = gtag;
@@ -103,9 +113,15 @@ const jsonLd = {
         s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4;
         document.head.appendChild(s);
       }
+      if (location.hostname === dominioPrueba) document.documentElement.classList.add('sitio-prueba');
+      if (location.hash.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        window.__anclaInicial = location.hash;
+        history.replaceState(null, '', location.pathname + location.search);
+      }
     </script>
   </head>
   <body>
+    <div class="franja-prueba" role="status">{tp.franjaPrueba}</div>
     <div style="background:#0B0F19; color:#F1F5F9; min-height:100vh;">
       <slot />
     </div>
@@ -116,9 +132,11 @@ const jsonLd = {
       import { iniciarAparicion } from '../scripts/aparicion.js';
       import { iniciarTarjetas } from '../scripts/tarjetas.js';
       import { iniciarMedicion } from '../scripts/medicion';
+      import { iniciarAncla } from '../scripts/ancla';
       iniciarAparicion();
       iniciarTarjetas();
       iniciarMedicion();
+      iniciarAncla();
     </script>
   </body>
 </html>

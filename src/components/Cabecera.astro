@@ -1,31 +1,49 @@
 ---
 // Cabecera del sitio: logo, menú y botón de WhatsApp. Siempre en una sola fila:
 //   desde 1240 px   menú completo + botón "Hablar por WhatsApp" con texto;
-//   1024 a 1239 px  menú completo más compacto + botón de WhatsApp solo ícono;
+//   1024 a 1239 px  menú completo + botón de WhatsApp solo ícono;
 //   menos de 1024   menú hamburguesa (el panel va fuera del <header>).
-// Los cortes están en src/styles/global.css; el comportamiento, en src/scripts/menu.ts.
+// "Servicios" abre un submenú con las 6 páginas de servicio: desplegable en
+// escritorio (ratón y teclado) y sección expandible en el menú hamburguesa.
+// Los enlaces salen de src/data/sitio.ts; los cortes, de src/styles/global.css;
+// el comportamiento, de src/scripts/menu.ts.
 import { textos as t } from '../data/textos';
+import { textosPaginas as tp } from '../data/textosPaginas';
 import { negocio } from '../data/negocio';
+import { enlacesServicios, enlacesMenu } from '../data/sitio';
 import { waLink } from '../lib/whatsapp';
 import logo from '../assets/marca/logo.webp';
 
+interface Props {
+  /** Ruta de la página actual, para marcarla en el menú ("/casos", "/servicios/…"). */
+  rutaActual?: string;
+}
+const { rutaActual = '/' } = Astro.props;
 const waHref = waLink(t.waMsg);
+const actual = (href: string) => (href === rutaActual ? 'page' : undefined);
+const enServicios = rutaActual.startsWith('/servicios/');
 ---
 
 <header class="site-header" style="display:flex; align-items:center; justify-content:space-between; gap:20px; max-width:1240px; margin:0 auto; box-sizing:border-box;">
-  <a href="#inicio" style="display:flex; align-items:center; gap:10px; color:#F1F5F9; flex-shrink:0;">
+  <a href="/#inicio" style="display:flex; align-items:center; gap:10px; color:#F1F5F9; flex-shrink:0;">
     <img src={logo.src} alt={negocio.nombre} width={logo.width} height={logo.height} decoding="async" style="height:42px; width:auto; display:block;">
     <span style="font-weight:800; font-size:19px; letter-spacing:-0.3px;">Synaptek<span style="color:#06B6D4;">AI</span></span>
   </a>
-  <nav class="desktop-nav" style="font-weight:600;">
-    <a class="hv-texto-blanco" href="#inicio" style="color:#CBD5E1; padding:10px 0;">{t.navHome}</a>
-    <a class="hv-texto-blanco" href="#servicios" style="color:#CBD5E1; padding:10px 0;">{t.navSvc}</a>
-    <a class="hv-texto-blanco" href="#como-funciona" style="color:#CBD5E1; padding:10px 0;">{t.navHow}</a>
-    <a class="hv-texto-blanco" href="#casos" style="color:#CBD5E1; padding:10px 0;">{t.navCase}</a>
-    <a class="hv-texto-blanco" href="#diseno-web" style="color:#CBD5E1; padding:10px 0;">{t.navWeb}</a>
-    <a class="hv-texto-blanco" href="#paquetes" style="color:#CBD5E1; padding:10px 0;">{t.navPkg}</a>
-    <a class="hv-texto-blanco" href="#recursos" style="color:#CBD5E1; padding:10px 0;">{t.navResources}</a>
-    <a class="hv-texto-blanco" href="#contacto" style="color:#CBD5E1; padding:10px 0;">{t.navContact}</a>
+  <nav class="desktop-nav" aria-label={tp.menuPrincipal} style="font-weight:600;">
+    <div class="menu-servicios" data-menu-servicios>
+      <button type="button" class:list={['menu-enlace', enServicios && 'menu-enlace--actual']} aria-expanded="false" aria-controls="submenu-servicios">
+        {t.navSvc}
+        <span class="menu-servicios__flecha" aria-hidden="true">▾</span>
+      </button>
+      <ul id="submenu-servicios" class="submenu" hidden>
+        {enlacesServicios.map((e) => (
+          <li><a href={e.href} aria-current={actual(e.href)}>{e.texto}</a></li>
+        ))}
+      </ul>
+    </div>
+    {enlacesMenu.map((e) => (
+      <a class="menu-enlace" href={e.href} aria-current={actual(e.href)}>{e.texto}</a>
+    ))}
   </nav>
   <div class="desktop-actions" style="align-items:center; gap:16px;">
     <a class="hv-wa fc-cian" href={waHref} target="_blank" data-origen="header" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#052E16; font-weight:700; font-size:15px; padding:12px 18px; border-radius:12px; min-height:44px; box-sizing:border-box; white-space:nowrap;">
@@ -47,19 +65,23 @@ const waHref = waLink(t.waMsg);
     </button>
   </div>
 </header>
-<nav id="mobile-nav-panel" hidden>
-    <a href="#inicio">{t.navHome}</a>
-    <a href="#servicios">{t.navSvc}</a>
-    <a href="#como-funciona">{t.navHow}</a>
-    <a href="#casos">{t.navCase}</a>
-    <a href="#diseno-web">{t.navWeb}</a>
-    <a href="#paquetes">{t.navPkg}</a>
-    <a href="#recursos">{t.navResources}</a>
-    <a href="#contacto">{t.navContact}</a>
-    <a href={waHref} target="_blank" data-origen="header" class="mobile-panel-wa-btn">
-      <span style="width:8px; height:8px; border-radius:50%; background:#052E16; display:inline-block;"></span>
-      {t.waHeader}
-    </a>
+<nav id="mobile-nav-panel" aria-label={tp.menuPrincipal} hidden>
+  <button type="button" class="panel-servicios__boton" aria-expanded={enServicios ? 'true' : 'false'} aria-controls="panel-servicios">
+    {t.navSvc}
+    <span class="menu-servicios__flecha" aria-hidden="true">▾</span>
+  </button>
+  <div id="panel-servicios" class="panel-servicios" hidden={!enServicios}>
+    {enlacesServicios.map((e) => (
+      <a href={e.href} aria-current={actual(e.href)}>{e.texto}</a>
+    ))}
+  </div>
+  {enlacesMenu.map((e) => (
+    <a href={e.href} aria-current={actual(e.href)}>{e.texto}</a>
+  ))}
+  <a href={waHref} target="_blank" data-origen="header" class="mobile-panel-wa-btn">
+    <span style="width:8px; height:8px; border-radius:50%; background:#052E16; display:inline-block;"></span>
+    {t.waHeader}
+  </a>
 </nav>
 
 <script>

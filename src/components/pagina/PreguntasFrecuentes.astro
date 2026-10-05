@@ -1,0 +1,20 @@
+---
+// Preguntas frecuentes de una página. Cada una es un <details>: se abre con clic o
+// teclado y se lee completa sin JavaScript. Los datos estructurados (FAQPage) los
+// arma la página con src/lib/datosEstructurados.ts.
+import type { PreguntaFrecuente } from '../../data/paginasServicio';
+
+interface Props {
+  preguntas: PreguntaFrecuente[];
+}
+const { preguntas } = Astro.props;
+---
+
+<div class="faq">
+  {preguntas.map((p) => (
+    <details class="faq__item">
+      <summary class="faq__pregunta"><h3>{p.pregunta}</h3></summary>
+      <p class="faq__respuesta">{p.respuesta}</p>
+    </details>
+  ))}
+</div>

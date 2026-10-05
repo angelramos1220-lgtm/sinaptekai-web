@@ -1,0 +1,52 @@
+/* Páginas legales (/privacidad y /terminos). Estilos del contenido, tomados de las
+   páginas anteriores y pasados a los tokens del sitio. El texto legal está en
+   src/legal/*.html y no se modifica. */
+
+/* Las páginas anteriores partían de márgenes en cero; se conserva dentro del contenido legal. */
+.legal-hero, .legal-hero *, .legal-wrap, .legal-wrap * { margin: 0; padding: 0; box-sizing: border-box; }
+.legal-hero, .legal-wrap { color: var(--texto-suave); line-height: 1.6; }
+.legal-hero :is(h1, h2, h3), .legal-wrap :is(h1, h2, h3) { font-family: var(--fuente-titulos); color: var(--texto); }
+.legal-hero a, .legal-wrap a { color: inherit; }
+
+.legal-hero { max-width: 1240px; margin: 0 auto; padding: 32px 48px 0; box-sizing: border-box; }
+.legal-hero .eyebrow { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(6,182,212,0.35); color: var(--cian-claro); font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 999px; letter-spacing: 0.4px; }
+.legal-hero h1 { margin: 16px 0 8px; font-size: 40px; font-weight: 800; letter-spacing: -1.2px; line-height: 1.12; background: linear-gradient(90deg,var(--violeta),var(--cian)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.legal-hero .updated { color: var(--texto-apagado); font-size: 14px; font-weight: 600; }
+
+.legal-wrap { max-width: 1240px; margin: 0 auto; padding: 40px 48px 100px; box-sizing: border-box; display: flex; gap: 56px; align-items: flex-start; }
+.legal-toc { flex-shrink: 0; width: 260px; position: sticky; top: 24px; display: flex; flex-direction: column; gap: 4px; border: 1px solid var(--borde); border-radius: 16px; padding: 20px; background: rgba(15,23,42,0.5); }
+.legal-toc-label { color: var(--texto); font-weight: 800; font-size: 13px; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; }
+.legal-toc a { color: var(--texto-tenue); font-size: 14px; line-height: 1.5; padding: 6px 0; text-decoration: none; }
+.legal-toc a:hover { color: var(--cian); }
+.legal-toc a:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+.legal-article { max-width: 720px; display: flex; flex-direction: column; gap: 40px; min-width: 0; }
+.legal-section { display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 24px; }
+.legal-section h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+.legal-section h3 { font-size: 17px; font-weight: 700; color: var(--texto); margin-top: 8px; }
+.legal-section p { font-size: 15.5px; line-height: 1.75; color: var(--texto-suave); }
+.legal-section ul, .legal-section ol { padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.legal-section li { font-size: 15.5px; line-height: 1.7; color: var(--texto-suave); }
+.legal-section a.inline-link { color: var(--cian); text-decoration: underline; text-underline-offset: 2px; }
+.legal-section a.inline-link:hover { color: var(--cian-claro); }
+
+.callout { border: 1px solid rgba(129,140,248,0.35); background: rgba(79,70,229,0.08); border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+.callout p { margin: 0; }
+.callout strong { color: var(--violeta); }
+
+.data-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.data-table th, .data-table td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+.data-table th { color: var(--texto); font-size: 12px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+.data-table td { color: var(--texto-suave); }
+.data-table-wrap { overflow-x: auto; border: 1px solid var(--borde); border-radius: 14px; }
+
+.limited-use-badge { display: inline-flex; align-items: center; gap: 8px; color: #4ADE80; font-size: 13px; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .legal-wrap { flex-direction: column; gap: 32px; }
+  .legal-toc { width: 100%; position: static; }
+}
+@media (max-width: 640px) {
+  .legal-hero, .legal-wrap { padding-left: 20px; padding-right: 20px; }
+  .legal-hero h1 { font-size: 30px; }
+}

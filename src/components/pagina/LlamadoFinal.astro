@@ -1,0 +1,23 @@
+---
+// Cierre de página: título, bajada, botón de WhatsApp y correo.
+import { textosPaginas as tp } from '../../data/textosPaginas';
+import { negocio } from '../../data/negocio';
+import BotonWhatsApp from '../BotonWhatsApp.astro';
+
+interface Props {
+  mensaje: string;
+  origen: string;
+  titulo?: string;
+  bajada?: string;
+}
+const { mensaje, origen, titulo = tp.llamadoTitulo, bajada = tp.llamadoBajada } = Astro.props;
+---
+
+<section class="llamado seccion--borde">
+  <div class="contenedor" data-fade="1">
+    <h2 class="llamado__titulo">{titulo}</h2>
+    {bajada && <p class="bajada">{bajada}</p>}
+    <BotonWhatsApp mensaje={mensaje} origen={origen} texto={tp.botonWhatsApp} grande />
+    <p class="llamado__correo">{tp.llamadoCorreo} <a class="enlace" href={`mailto:${negocio.correo}`}>{negocio.correo}</a></p>
+  </div>
+</section>

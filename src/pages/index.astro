@@ -21,7 +21,8 @@ import Chat from '../components/Chat.astro';
   descripcion="Agentes de IA por WhatsApp, páginas web a medida y visibilidad en Google para negocios en todo el Perú. Desde Arequipa, con implementación 100% remota."
   ruta="/"
 >
-  <Cabecera />
+  <Cabecera rutaActual="/" />
+  <main>
   <Hero />
   <Servicios />
   <ComoFunciona />
@@ -31,6 +32,7 @@ import Chat from '../components/Chat.astro';
   <Recursos />
   <Contacto />
   <Comentarios />
+  </main>
   <Pie />
   <ModalChecklist />
   <Chat slot="flotantes" />

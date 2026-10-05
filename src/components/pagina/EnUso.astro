@@ -1,0 +1,29 @@
+---
+// "En uso en": extracto de los casos donde el servicio ya trabaja, con enlace al caso.
+// El extracto es el Resultado del caso o, si no tiene, su Solución: texto exacto de
+// src/data/casos.ts, sin resumir ni reescribir.
+import { casos, type CasoId } from '../../data/casos';
+import { textos as t } from '../../data/textos';
+import { textosPaginas as tp } from '../../data/textosPaginas';
+
+interface Props {
+  ids: CasoId[];
+}
+const { ids } = Astro.props;
+const lista = ids.map((id) => casos.find((c) => c.id === id)!).filter(Boolean);
+---
+
+<div class:list={['rejilla', 'rejilla--3a1', lista.length === 1 ? 'rejilla--1' : 'rejilla--2']}>
+  {lista.map((caso) => (
+    <article class="en-uso">
+      <div class="tarjeta-caso__chips">
+        {caso.chips.map((chip) => <span class="tarjeta-caso__chip">{chip}</span>)}
+      </div>
+      <h3 class="en-uso__nombre">{caso.nombre}</h3>
+      <p class="en-uso__texto">
+        <strong>{caso.resultado ? t.casoResultado : t.casoSolucion}</strong> {caso.resultado || caso.solucion}
+      </p>
+      <a class="enlace" href={`/casos#${caso.id}`}>{tp.enUsoEnlace}</a>
+    </article>
+  ))}
+</div>

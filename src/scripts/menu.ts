@@ -1,8 +1,54 @@
-// Menú hamburguesa (menos de 1024 px). Mismo comportamiento que el sitio anterior:
-// al abrir, el foco va al primer enlace; Escape lo cierra y devuelve el foco al botón;
-// un clic fuera lo cierra; elegir un enlace lo cierra.
+// Menú del sitio.
+//
+// Escritorio: "Servicios" abre un submenú. Se abre con clic, con Enter o Espacio,
+// con la flecha abajo y al pasar el ratón; se cierra con Escape (y el foco vuelve al
+// botón), al salir con el ratón, al tabular fuera y con un clic en otra parte.
+//
+// Menos de 1024 px: menú hamburguesa. Al abrir, el foco va al primer elemento;
+// Escape lo cierra y devuelve el foco al botón; un clic fuera lo cierra; elegir un
+// enlace lo cierra. Dentro, "Servicios" se expande y se contrae.
 
-export function iniciarMenu(): void {
+function iniciarSubmenu(): void {
+  const cont = document.querySelector<HTMLElement>('[data-menu-servicios]');
+  if (!cont) return;
+  const boton = cont.querySelector<HTMLButtonElement>('button');
+  const lista = cont.querySelector<HTMLElement>('.submenu');
+  if (!boton || !lista) return;
+  let temporizador: number | undefined;
+
+  const abrir = (): void => { window.clearTimeout(temporizador); lista.hidden = false; boton.setAttribute('aria-expanded', 'true'); };
+  const cerrar = (): void => { window.clearTimeout(temporizador); lista.hidden = true; boton.setAttribute('aria-expanded', 'false'); };
+  const abierto = (): boolean => !lista.hidden;
+
+  boton.addEventListener('click', () => (abierto() ? cerrar() : abrir()));
+  boton.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowDown') return;
+    e.preventDefault();
+    abrir();
+    lista.querySelector<HTMLElement>('a')?.focus();
+  });
+
+  // Ratón: solo donde hay puntero fino (en táctil manda el clic).
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    cont.addEventListener('mouseenter', abrir);
+    cont.addEventListener('mouseleave', () => { temporizador = window.setTimeout(cerrar, 160); });
+  }
+
+  cont.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || !abierto()) return;
+    cerrar();
+    boton.focus();
+  });
+  cont.addEventListener('focusout', (e) => {
+    const destino = e.relatedTarget;
+    if (!(destino instanceof Node) || !cont.contains(destino)) cerrar();
+  });
+  document.addEventListener('click', (e) => {
+    if (abierto() && e.target instanceof Node && !cont.contains(e.target)) cerrar();
+  });
+}
+
+function iniciarHamburguesa(): void {
   const boton = document.getElementById('mobile-nav-toggle');
   const panel = document.getElementById('mobile-nav-panel');
   if (!boton || !panel) return;
@@ -23,7 +69,6 @@ export function iniciarMenu(): void {
       barras[2].style.transform = abierto ? 'rotate(-45deg) translateY(-7px)' : 'none';
     }
   };
-
   const cerrar = (): void => {
     if (!abierto) return;
     abierto = false;
@@ -33,24 +78,35 @@ export function iniciarMenu(): void {
   boton.addEventListener('click', () => {
     abierto = !abierto;
     pintar();
-    if (abierto) {
-      const primero = panel.querySelector<HTMLElement>('a');
-      if (primero) primero.focus();
-    }
+    if (abierto) panel.querySelector<HTMLElement>('button, a')?.focus();
   });
+
+  // "Servicios" dentro del panel: se expande y se contrae.
+  const botonServicios = panel.querySelector<HTMLButtonElement>('.panel-servicios__boton');
+  const listaServicios = document.getElementById('panel-servicios');
+  if (botonServicios && listaServicios) {
+    botonServicios.addEventListener('click', () => {
+      const abrir = listaServicios.hidden;
+      listaServicios.hidden = !abrir;
+      botonServicios.setAttribute('aria-expanded', String(abrir));
+    });
+  }
 
   panel.addEventListener('click', (e) => {
     if (e.target instanceof Element && e.target.closest('a')) cerrar();
   });
-
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape' || !abierto) return;
     cerrar();
     boton.focus();
   });
-
   document.addEventListener('click', (e) => {
     if (!abierto || !(e.target instanceof Node)) return;
     if (!panel.contains(e.target) && !boton.contains(e.target)) cerrar();
   });
+}
+
+export function iniciarMenu(): void {
+  iniciarSubmenu();
+  iniciarHamburguesa();
 }

@@ -1,61 +1,59 @@
 ---
-// Footer del sitio.
+// Footer del sitio: marca, servicios, enlaces, contacto, redes y páginas legales.
+// Los enlaces salen de src/data/sitio.ts.
 import { textos as t } from '../data/textos';
+import { textosPaginas as tp } from '../data/textosPaginas';
 import { negocio } from '../data/negocio';
+import { enlacesServicios, enlacesPie, enlacesLegales } from '../data/sitio';
 import { waLink } from '../lib/whatsapp';
 import logo from '../assets/marca/logo.webp';
 
 const waHref = waLink(t.waMsg);
 ---
 
-<footer data-screen-label="Footer" style="background:#070A12; color:#94A3B8; padding:64px 48px 32px; box-sizing:border-box;">
-  <div style="max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:48px;">
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:40px;">
-      <div style="display:flex; flex-direction:column; gap:14px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <img src={logo.src} alt={negocio.nombre} width={logo.width} height={logo.height} loading="lazy" decoding="async" style="height:38px; width:auto; display:block;">
-          <span style="font-weight:800; font-size:18px; color:#F1F5F9;">Synaptek<span style="color:#06B6D4;">AI</span></span>
+<footer class="pie" data-screen-label="Footer">
+  <div class="pie__contenido">
+    <div class="pie__columnas">
+      <div class="pie__columna">
+        <div class="pie__marca">
+          <img src={logo.src} alt={negocio.nombre} width={logo.width} height={logo.height} loading="lazy" decoding="async">
+          <span class="pie__nombre">Synaptek<span>AI</span></span>
         </div>
-        <p style="margin:0; font-size:14px; line-height:1.6; max-width:280px;">{negocio.lema}</p>
+        <p class="pie__lema">{negocio.lema}</p>
       </div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <span style="color:#F1F5F9; font-weight:800; font-size:14px; letter-spacing:0.5px; text-transform:uppercase;">{t.footLinks}</span>
-        <a class="hv-texto-cian-vivo" href="#inicio" style="color:#94A3B8; font-size:14px; padding:4px 0;">{t.navHome}</a>
-        <a class="hv-texto-cian-vivo" href="#servicios" style="color:#94A3B8; font-size:14px; padding:4px 0;">{t.navSvc}</a>
-        <a class="hv-texto-cian-vivo" href="#como-funciona" style="color:#94A3B8; font-size:14px; padding:4px 0;">{t.navHow}</a>
-        <a class="hv-texto-cian-vivo" href="#casos" style="color:#94A3B8; font-size:14px; padding:4px 0;">{t.navCase}</a>
-        <a class="hv-texto-cian-vivo" href="#diseno-web" style="color:#94A3B8; font-size:14px; padding:4px 0;">{t.navWeb}</a>
-        <a class="hv-texto-cian-vivo" href="#paquetes" style="color:#94A3B8; font-size:14px; padding:4px 0;">{t.navPkg}</a>
-        <a class="hv-texto-cian-vivo" href="#recursos" style="color:#94A3B8; font-size:14px; padding:4px 0;">{t.navResources}</a>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <span style="color:#F1F5F9; font-weight:800; font-size:14px; letter-spacing:0.5px; text-transform:uppercase;">{t.footContact}</span>
-        <a class="hv-texto-cian-vivo" href={`mailto:${negocio.correo}`} style="color:#94A3B8; font-size:14px; padding:4px 0;">{negocio.correo}</a>
-        <a class="hv-texto-cian-vivo" href={waHref} target="_blank" data-origen="footer" style="display:inline-flex; align-items:center; gap:8px; color:#94A3B8; font-size:14px; padding:4px 0;">
-          <span style="position:relative; width:16px; height:15px; display:inline-block; flex-shrink:0;">
-            <span style="position:absolute; inset:0 0 2px 0; background:#25D366; border-radius:50% 50% 50% 12%;"></span>
-          </span>
+      <nav class="pie__columna" aria-label={tp.pieServicios}>
+        <span class="pie__titulo">{tp.pieServicios}</span>
+        {enlacesServicios.map((e) => <a href={e.href}>{e.texto}</a>)}
+      </nav>
+      <nav class="pie__columna" aria-label={tp.pieSitio}>
+        <span class="pie__titulo">{tp.pieSitio}</span>
+        {enlacesPie.map((e) => <a href={e.href}>{e.texto}</a>)}
+      </nav>
+      <div class="pie__columna">
+        <span class="pie__titulo">{t.footContact}</span>
+        <a href={`mailto:${negocio.correo}`}>{negocio.correo}</a>
+        <a href={waHref} target="_blank" rel="noopener" data-origen="footer">
+          <span class="pie__icono-wa" aria-hidden="true"></span>
           {t.footSocialWa} {negocio.whatsapp.visible}
         </a>
-        <span style="font-size:14px;">{negocio.dominio}</span>
+        <span class="pie__dato">{negocio.dominio}</span>
       </div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
-        <span style="color:#F1F5F9; font-weight:800; font-size:14px; letter-spacing:0.5px; text-transform:uppercase;">{t.footSocial}</span>
-        <a class="hv-texto-cian-vivo" href={negocio.redes.facebook} target="_blank" style="display:inline-flex; align-items:center; gap:8px; color:#94A3B8; font-size:14px; padding:4px 0;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+      <div class="pie__columna">
+        <span class="pie__titulo">{t.footSocial}</span>
+        <a href={negocio.redes.facebook} target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
           {t.footSocialFb}
         </a>
-        <a class="hv-texto-cian-vivo" href={negocio.redes.instagram} target="_blank" style="display:inline-flex; align-items:center; gap:8px; color:#94A3B8; font-size:14px; padding:4px 0;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        <a href={negocio.redes.instagram} target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
           {t.footSocialIg}
         </a>
       </div>
     </div>
-    <div style="border-top:1px solid #1E293B; padding-top:24px; font-size:13px; color:#475569; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+    <div class="pie__base">
       <span>{t.rights}</span>
-      <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-        <a class="hv-texto-gris" href="/privacidad" style="color:#475569;">{t.footPrivacidad}</a>
-        <a class="hv-texto-gris" href="/terminos" style="color:#475569;">{t.footTerminos}</a>
+      <div class="pie__legales">
+        {enlacesLegales.map((e) => <a href={e.href}>{e.texto}</a>)}
         <span>{negocio.dominio}</span>
       </div>
     </div>

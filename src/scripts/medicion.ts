@@ -20,9 +20,13 @@ export function medir(evento: string, parametros: Record<string, string>): void 
   }
 }
 
-/** Evento de contacto por WhatsApp. "origen" dice desde qué parte del sitio salió. */
+/**
+ * Evento de contacto por WhatsApp.
+ * origen: desde qué parte del sitio salió (el data-origen del enlace).
+ * pagina: la ruta de la página donde ocurrió ("/", "/casos", "/servicios/paginas-web"…).
+ */
 export function medirWhatsApp(origen: string): void {
-  medir('contacto_whatsapp', { origen });
+  medir('contacto_whatsapp', { origen, pagina: location.pathname.replace(/\.html$/, '') || '/' });
 }
 
 // Un único listener delegado sobre document: cualquier enlace a wa.me (también los

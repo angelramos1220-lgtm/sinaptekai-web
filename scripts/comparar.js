@@ -255,8 +255,8 @@ async function main() {
         await sleep(3200);
         await shot(path.join(OUT, sitio, 'portada-' + w + '.png'));
         const alto = await evalJs('document.documentElement.scrollHeight');
-        for (let y = 0; y < alto; y += Math.round(h * 0.5)) { await evalJs('window.scrollTo(0, ' + y + ')'); await sleep(120); }
-        await evalJs('window.scrollTo(0, 0)');
+        for (let y = 0; y < alto; y += Math.round(h * 0.5)) { await evalJs('window.scrollTo({ top: ' + y + ', behavior: "instant" })'); await sleep(120); }
+        await evalJs('window.scrollTo({ top: 0, behavior: "instant" })');
         await sleep(3200);
         medidas[sitio] = await evalJs(MEDIR + '(' + JSON.stringify(SECCIONES) + ')');
         for (const s of SECCIONES) {
@@ -391,9 +391,9 @@ async function main() {
         await sleep(800);
         const estadoPopup = 'getComputedStyle(document.getElementById("lead-modal-overlay")).display';
         const antes = await evalJs(estadoPopup);
-        await evalJs('window.scrollTo(0, document.documentElement.scrollHeight * 0.45)'); await sleep(500);
+        await evalJs('window.scrollTo({ top: document.documentElement.scrollHeight * 0.45, behavior: "instant" })'); await sleep(500);
         const al45 = await evalJs(estadoPopup);
-        await evalJs('window.scrollTo(0, document.documentElement.scrollHeight * 0.72)'); await sleep(700);
+        await evalJs('window.scrollTo({ top: document.documentElement.scrollHeight * 0.72, behavior: "instant" })'); await sleep(700);
         const al72 = await evalJs(estadoPopup);
         const foco = await evalJs('document.activeElement && document.activeElement.id');
         const clave = await evalJs('localStorage.getItem("synaptekai-lead-modal-shown")');
@@ -411,7 +411,7 @@ async function main() {
         await cargar(sitio, 1280);
         await sleep(1500);
         r.hero = await evalJs('(() => { const d = window.__heroConstellationDebug(); return { nodos: d.nodeCount, ancho: d.cssW, alto: d.cssH, modo: d.mode || "interactivo", enMarcha: d.running }; })()');
-        const centro = await evalJs(`(() => { const c = document.querySelector('#paquetes .pkg-grid [data-tilt-card]'); c.scrollIntoView({ block: 'center' }); const q = c.getBoundingClientRect(); return { x: Math.round(q.left + q.width * 0.75), y: Math.round(q.top + q.height * 0.25) }; })()`);
+        const centro = await evalJs(`(() => { const c = document.querySelector('#paquetes .pkg-grid [data-tilt-card]'); c.scrollIntoView({ block: 'center', behavior: 'instant' }); const q = c.getBoundingClientRect(); return { x: Math.round(q.left + q.width * 0.75), y: Math.round(q.top + q.height * 0.25) }; })()`);
         await sleep(900);
         const c2 = await evalJs(`(() => { const q = document.querySelector('#paquetes .pkg-grid [data-tilt-card]').getBoundingClientRect(); return { x: Math.round(q.left + q.width * 0.75), y: Math.round(q.top + q.height * 0.25) }; })()`);
         await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: c2.x - 3, y: c2.y - 3 });
@@ -421,7 +421,7 @@ async function main() {
         r.tarjeta = await evalJs(`(() => { const c = document.querySelector('#paquetes .pkg-grid [data-tilt-card]'); const v = (n) => c.style.getPropertyValue(n).trim(); return { activa: c.classList.contains('is-active'), entro: c.classList.contains('tc-in'), tiltX: v('--tilt-x'), tiltY: v('--tilt-y'), tiltZ: v('--tilt-z'), mx: v('--mx'), my: v('--my'), borde: v('--border-angle'), sombra: getComputedStyle(c).boxShadow.slice(0, 60) }; })()`);
         void centro;
         // banner de Diseño Web: se inclina menos
-        const b2 = await evalJs(`(() => { const c = document.querySelector('.promo-banner'); c.scrollIntoView({ block: 'center' }); return true; })()`);
+        const b2 = await evalJs(`(() => { const c = document.querySelector('.promo-banner'); c.scrollIntoView({ block: 'center', behavior: 'instant' }); return true; })()`);
         void b2;
         await sleep(900);
         const pb = await evalJs(`(() => { const q = document.querySelector('.promo-banner').getBoundingClientRect(); return { x: Math.round(q.left + q.width * 0.9), y: Math.round(q.top + q.height * 0.5) }; })()`);
@@ -450,7 +450,7 @@ async function main() {
         })()`);
         // aparición al hacer scroll y pasos de "Cómo funciona"
         const altoPag = await evalJs('document.documentElement.scrollHeight');
-        for (let y = 0; y < altoPag; y += 400) { await evalJs('window.scrollTo(0, ' + y + ')'); await sleep(120); }
+        for (let y = 0; y < altoPag; y += 400) { await evalJs('window.scrollTo({ top: ' + y + ', behavior: "instant" })'); await sleep(120); }
         await sleep(3000);
         r.revelado = await evalJs(`(() => ({
           fade: Array.from(document.querySelectorAll('[data-fade]')).map((e) => e.style.opacity + '/' + e.style.transform).join(','),

@@ -24,6 +24,8 @@ export const negocio = {
   ga4: 'G-Q01K6J04NG',
   /** Dominios donde se carga GA4. En cualquier otro, los eventos se escriben en consola. */
   dominiosProduccion: ['synaptekai.tech', 'www.synaptekai.tech'],
+  /** Dominio del sitio de prueba: nginx lo sirve sin indexar y la página muestra una franja de aviso. */
+  dominioPrueba: 'nuevo.synaptekai.tech',
 } as const;
 
 // Integraciones con n8n. No cambiar las URLs ni los nombres de los campos que
