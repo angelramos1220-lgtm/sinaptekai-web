@@ -5,7 +5,7 @@
 
 import { paquetes } from './paquetes';
 import { masServicios } from './masServicios';
-import { planesWeb, renuevaWeb } from './planesWeb';
+import { planesWeb, renuevaWeb, notaMantenimiento } from './planesWeb';
 import { complementarios } from './complementarios';
 import { textos as t } from './textos';
 import { textosPaginas as tp } from './textosPaginas';
@@ -83,4 +83,6 @@ export const gruposPrecios: GrupoPrecios[] = [
 
 // Notas: frases que ya están en la portada, junto a cada precio.
 const [, videos, inventario] = complementarios;
-export const notasPrecios: string[] = [t.pkgPriceNote, renuevaWeb.notaHosting, videos.vinetas[2], inventario.vinetas[2], inventario.nota];
+const aparte = masServicios.map((m) => m.notaAparte).filter(Boolean);
+// En el orden de las listas de la página: paquetes, más servicios, diseño web, complementarios.
+export const notasPrecios: string[] = [t.pkgPriceNote, ...aparte, notaMantenimiento, renuevaWeb.notaHosting, videos.vinetas[2], inventario.vinetas[2], inventario.nota];

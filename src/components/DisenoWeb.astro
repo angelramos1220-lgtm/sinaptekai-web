@@ -2,7 +2,7 @@
 // Sección "Diseño de Páginas Web": 4 planes y el banner "Renueva tu Página Web".
 // Datos: src/data/planesWeb.ts (los montos salen de src/data/precios.ts).
 import { textos as t } from '../data/textos';
-import { planesWeb } from '../data/planesWeb';
+import { planesWeb, notaMantenimiento } from '../data/planesWeb';
 import TarjetaPlanWeb from './tarjetas/TarjetaPlanWeb.astro';
 import BannerRenueva from './tarjetas/BannerRenueva.astro';
 import { waLink } from '../lib/whatsapp';
@@ -18,6 +18,7 @@ import { waLink } from '../lib/whatsapp';
     </div>
     <div class="web-grid" data-tilt-grid>
       {planesWeb.map((plan) => <TarjetaPlanWeb plan={plan} />)}
+      <p class="web-nota">{notaMantenimiento}</p>
       <BannerRenueva />
     </div>
     <div data-fade="1" style="background:rgba(79,70,229,0.08); border:1px solid rgba(79,70,229,0.25); border-radius:20px; padding:32px 40px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px;">

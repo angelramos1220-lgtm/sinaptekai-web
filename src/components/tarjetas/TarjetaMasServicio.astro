@@ -25,6 +25,7 @@ const c = m.colores;
   <div class="tarjeta-mas__precio">
     <span class="tarjeta-mas__monto">{m.precio}</span>
     <span class="tarjeta-mas__nota">{m.notaPrecio}</span>
+    {m.notaAparte && <span class="tarjeta-mas__aparte">{m.notaAparte}</span>}
   </div>
   <Vinetas items={m.vinetas} />
   {m.prueba && <p class="tarjeta-mas__prueba">{m.prueba}</p>}

@@ -19,7 +19,7 @@ import { rubros } from '../data/rubros';
 import { paquetes, comparativa } from '../data/paquetes';
 import { masServicios } from '../data/masServicios';
 import { complementarios } from '../data/complementarios';
-import { planesWeb, renuevaWeb } from '../data/planesWeb';
+import { planesWeb, renuevaWeb, notaMantenimiento } from '../data/planesWeb';
 import { paginasServicio, paginaDeServicio, type PaginaServicio } from '../data/paginasServicio';
 import { gruposPrecios, notasPrecios } from '../data/paginaPrecios';
 import { enlacesLegales } from '../data/sitio';
@@ -58,7 +58,7 @@ const tablaComparativa = (): string =>
   tabla([t.compareFeature, ...paquetes.map((p) => p.nombre)], comparativa.map((f) => [f.caracteristica, ...f.incluye.map((si) => (si ? m.si : m.no))]));
 
 const bloquesMasServicios = (nivel: '###'): string[] =>
-  masServicios.flatMap((s) => [`${nivel} ${s.nombre} — ${s.precio}`, s.notaPrecio, s.bajada, lista(s.vinetas), s.prueba]).filter(Boolean);
+  masServicios.flatMap((s) => [`${nivel} ${s.nombre} — ${s.precio}`, [s.notaPrecio, s.notaAparte].filter(Boolean).join('. ').replace(/\.\.$/, '.'), s.bajada, lista(s.vinetas), s.prueba]).filter(Boolean);
 
 const tablaComplementarios = (): string =>
   tabla([m.colServicio, tp.precioTitulo, m.colIncluye], complementarios.map((c) => [c.nombre, c.precios.join(' — '), c.vinetas.join('; ')]));
@@ -132,6 +132,7 @@ export function markdownPortada(): string {
     `## ${t.webLabel}`,
     t.webSub,
     tablaPlanesWeb(),
+    notaMantenimiento,
     parrafoRenueva(),
 
     `## ${m.paginas}`,
@@ -159,6 +160,7 @@ function incluyeServicio(p: PaginaServicio): string[] {
   if (p.slug === 'paginas-web') {
     return [
       ...planesWeb.flatMap((plan) => [`### ${plan.nombre} — ${plan.precio}`, `${plan.notaPago} · ${plan.mantenimiento}`, lista(plan.incluye)]),
+      notaMantenimiento,
       `### ${renuevaWeb.nombre} (${renuevaWeb.insignia.toLowerCase()}) — ${renuevaWeb.precio}`,
       `${renuevaWeb.descripcion}`,
       lista(renuevaWeb.vinetas),
@@ -257,7 +259,7 @@ export function llmsTxt(): string {
 
     `## ${t.addonsLabel}`,
     `${t.addonsTitle}.`,
-    masServicios.map((s) => [`- ${s.nombre}: ${s.precio}. ${s.notaPrecio}. ${s.bajada}`, ...s.vinetas.map((v) => `  - ${v}`)].join('\n')).join('\n'),
+    masServicios.map((s) => [`- ${s.nombre}: ${s.precio}. ${s.notaPrecio}. ${s.notaAparte ? s.notaAparte + ' ' : ''}${s.bajada}`, ...s.vinetas.map((v) => `  - ${v}`)].join('\n')).join('\n'),
 
     `## ${t.webLabel}`,
     t.webSub,
@@ -265,6 +267,7 @@ export function llmsTxt(): string {
       ...planesWeb.map((p) => `${p.nombre}: ${p.precio}, ${p.notaPago.toLowerCase()}. ${p.mantenimiento}. ${p.incluye.join('; ')}.`),
       `${renuevaWeb.nombre}: ${renuevaWeb.precio}, ${renuevaWeb.notaPago.toLowerCase()}. ${renuevaWeb.descripcion} ${renuevaWeb.notaHosting}`,
     ]),
+    notaMantenimiento,
 
     `## ${t.compLabel} (${t.compTitle.toLowerCase()})`,
     t.compSub,

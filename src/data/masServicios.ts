@@ -15,6 +15,8 @@ export interface MasServicio {
   precio: string;
   /** Segunda línea, más pequeña. */
   notaPrecio: string;
+  /** Nota bajo el precio: lo que no está incluido y se cotiza aparte. Vacía no se muestra. */
+  notaAparte: string;
   vinetas: string[];
   /** Línea de prueba destacada. Vacía no se muestra. */
   prueba: string;
@@ -35,13 +37,14 @@ export const masServicios: MasServicio[] = [
     bajada: 'Que te encuentren cuando te buscan: en Google Maps, en el buscador y en asistentes de IA.',
     precio: `Desde ${soles(m.visibilidad.instalacion)}`,
     notaPrecio: `Instalación · ${porMes(m.visibilidad.mensual)}`,
+    notaAparte: 'Las tarjetas QR/NFC y la gestión de Google Ads se cotizan aparte.',
     vinetas: [
       'Perfil de Empresa de Google ordenado: horarios, fotos, servicios y novedades',
       'Más reseñas reales con tarjetas QR/NFC en tu mostrador, sin premios (como exige Google)',
       'Respondemos tus reseñas por ti',
-      'Google Analytics y Search Console midiendo cada contacto por WhatsApp',
+      'Google Analytics mide cada contacto por WhatsApp y Search Console muestra cómo te buscan en Google',
       'Tu web preparada para buscadores y asistentes de IA',
-      'Google Ads con medición de conversiones (opcional; la pauta la pagas directo a Google)',
+      'Google Ads con medición de conversiones (opcional, se cotiza aparte; la pauta la pagas directo a Google)',
       'Reporte mensual con datos reales',
     ],
     prueba: 'Caso Aquamatic: de 3.9★ a 4.4★ y el doble de reseñas en dos semanas.',
@@ -63,6 +66,7 @@ export const masServicios: MasServicio[] = [
     bajada: 'Tu área de TI sin contratar a nadie: nos encargamos de la parte técnica para que tú no tengas que entenderla.',
     precio: `Desde ${porMes(m.socioTecnologico.mensual)}`,
     notaPrecio: `Rescate y migración de web y dominio: desde ${soles(m.socioTecnologico.rescateMigracion)}, pago único`,
+    notaAparte: '',
     vinetas: [
       'Dominio, hosting y cuentas a nombre de tu negocio, nunca del proveedor',
       'Hablamos por ti con tu hosting y con tus proveedores anteriores',

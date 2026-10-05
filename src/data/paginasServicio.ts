@@ -12,8 +12,8 @@ import { servicioPorId } from './servicios';
 import { masServicios } from './masServicios';
 import { complementarios } from './complementarios';
 import { paquetes } from './paquetes';
-import { planesWeb, renuevaWeb } from './planesWeb';
-import { pasos } from './pasos';
+import { planesWeb, renuevaWeb, notaMantenimiento } from './planesWeb';
+import { pasos, semanaDePrueba } from './pasos';
 import { textos } from './textos';
 import { serviciosChat, textosChat } from './chat';
 import type { CasoId } from './casos';
@@ -87,7 +87,7 @@ const mensaje = (nombre: string) => textosChat.mensajeServicio + nombre;
 // Hechos que se repiten en varias páginas (todos ya están en la portada).
 const REMOTO: PreguntaFrecuente = {
   pregunta: '¿Trabajan con negocios fuera de Arequipa?',
-  respuesta: 'Sí. La implementación es 100% remota, para negocios en todo el Perú.',
+  respuesta: 'Sí. La implementación es 100% remota, para negocios en todo el Perú. Due Hotel y Aquamatic, por ejemplo, están en Trujillo.',
 };
 
 export const paginasServicio: PaginaServicio[] = [
@@ -115,7 +115,7 @@ export const paginasServicio: PaginaServicio[] = [
     faqs: [
       {
         pregunta: '¿Puedo probarlo antes de decidir?',
-        respuesta: 'Sí. La primera semana es de prueba: si no te sirve, no seguimos.',
+        respuesta: `Sí. ${semanaDePrueba}`,
       },
       {
         pregunta: '¿Qué pasa si quiero responderle yo a un cliente?',
@@ -127,7 +127,7 @@ export const paginasServicio: PaginaServicio[] = [
       },
       {
         pregunta: '¿El precio es fijo?',
-        respuesta: `La cuota mensual es fija: ${asistenteVirtual.mensual} en Asistente Virtual y ${crecimiento360.mensual} en Crecimiento 360°. El monto de instalación varía según la complejidad del proyecto: va desde ${asistenteVirtual.instalacion} y desde ${crecimiento360.instalacion}.`,
+        respuesta: `La cuota mensual es fija: ${asistenteVirtual.mensual} en ${asistenteVirtual.nombre} y ${crecimiento360.mensual} en ${crecimiento360.nombre}. La instalación varía según la complejidad del proyecto: desde ${asistenteVirtual.instalacion} en ${asistenteVirtual.nombre} y desde ${crecimiento360.instalacion} en ${crecimiento360.nombre}.`,
       },
       REMOTO,
     ],
@@ -158,7 +158,7 @@ export const paginasServicio: PaginaServicio[] = [
       ...planesWeb.map((plan) => ({ concepto: plan.nombre, monto: plan.precio, nota: `${plan.notaPago} · ${plan.mantenimiento}` })),
       { concepto: renuevaWeb.nombre, monto: renuevaWeb.precio, nota: renuevaWeb.notaPago },
     ],
-    notasPrecio: [renuevaWeb.notaHosting],
+    notasPrecio: [notaMantenimiento, renuevaWeb.notaHosting],
     enUso: ['aquamatic'],
     faqs: [
       {
@@ -167,11 +167,11 @@ export const paginasServicio: PaginaServicio[] = [
       },
       {
         pregunta: '¿Es un pago único o mensual?',
-        respuesta: `El diseño es un pago único. El mantenimiento es mensual y depende del plan: desde ${rangoCorto(p.web.landing.mantenimiento.min, p.web.landing.mantenimiento.max)}/mes en una landing page hasta ${rangoCorto(p.web.tienda.mantenimiento.min, p.web.tienda.mantenimiento.max)}/mes en una tienda online.`,
+        respuesta: `El diseño es un pago único. El mantenimiento mensual es opcional, aunque lo recomendamos: incluye respaldos, vigilancia y actualizaciones técnicas de tu web. Va de ${rangoCorto(p.web.landing.mantenimiento.min, p.web.landing.mantenimiento.max)}/mes en una landing page hasta ${rangoCorto(p.web.tienda.mantenimiento.min, p.web.tienda.mantenimiento.max)}/mes en una tienda online.`,
       },
       {
         pregunta: 'Ya tengo una página web. ¿Pueden renovarla?',
-        respuesta: `Sí. La rediseñamos completa con estética moderna y migramos todo tu contenido actual (textos, fotos, contacto). Es un pago único de ${rangoSoles(p.web.renueva.min, p.web.renueva.max)}.`,
+        respuesta: `Sí. La rediseñamos completa con estética moderna y migramos todo tu contenido actual (textos, fotos, contacto). Es un pago único de ${rangoSoles(p.web.renueva.min, p.web.renueva.max)}. El hosting y el dominio se pagan aparte, directo al proveedor.`,
       },
       {
         pregunta: '¿La web queda preparada para Google?',
@@ -206,20 +206,20 @@ export const paginasServicio: PaginaServicio[] = [
     mensajeWhatsApp: visibilidad.mensajeWhatsApp,
     incluye: [{ vinetas: visibilidad.vinetas }],
     precios: [{ concepto: visibilidad.nombre, monto: visibilidad.precio, nota: visibilidad.notaPrecio }],
-    notasPrecio: ['Súmalo a tu paquete o contrátalo por separado.'],
+    notasPrecio: [visibilidad.notaAparte, 'Súmalo a tu paquete o contrátalo por separado.'],
     enUso: ['aquamatic'],
     faqs: [
       {
         pregunta: '¿Cómo consiguen más reseñas?',
-        respuesta: 'Con tarjetas QR/NFC en tu mostrador. Son reseñas reales y sin premios, como exige Google. Además, respondemos tus reseñas por ti.',
+        respuesta: 'Con tarjetas QR/NFC en tu mostrador. Son reseñas reales y sin premios, como exige Google, y respondemos tus reseñas por ti. Las tarjetas físicas no están incluidas: puedes comprarlas por tu cuenta o te las preparamos nosotros con un costo adicional.',
       },
       {
         pregunta: '¿La publicidad en Google está incluida?',
-        respuesta: 'Google Ads con medición de conversiones es opcional. La pauta la pagas directo a Google.',
+        respuesta: 'La gestión de Google Ads con medición de conversiones es opcional y se cotiza aparte. La pauta, lo que se invierte en los anuncios, la pagas directo a Google.',
       },
       {
         pregunta: '¿Cómo sé si está funcionando?',
-        respuesta: 'Medimos cada contacto por WhatsApp con Google Analytics y Search Console, y recibes un reporte mensual con datos reales.',
+        respuesta: 'Google Analytics mide cada contacto por WhatsApp y Search Console muestra cómo te buscan en Google. Cada mes recibes un reporte con datos reales.',
       },
       {
         pregunta: '¿Tengo que contratar un paquete para tener este servicio?',
@@ -261,7 +261,7 @@ export const paginasServicio: PaginaServicio[] = [
       },
       {
         pregunta: 'Mi web o mi dominio están en manos de otro proveedor. ¿Pueden recuperarlos?',
-        respuesta: `Sí. Rescatamos tu web y tu dominio si están en manos de terceros, y hablamos por ti con tu hosting y con tus proveedores anteriores. El rescate y la migración de web y dominio van desde ${soles(p.masServicios.socioTecnologico.rescateMigracion)}, pago único.`,
+        respuesta: `Sí. Rescatamos tu web y tu dominio si están en manos de terceros, y hablamos por ti con tu hosting y con tus proveedores anteriores. El rescate y la migración de web y dominio van desde ${soles(p.masServicios.socioTecnologico.rescateMigracion)}, pago único. Si el dominio está registrado a nombre de otra persona, el traspaso depende de que esa persona lo autorice.`,
       },
       {
         pregunta: '¿Tengo que saber de tecnología?',
@@ -308,7 +308,7 @@ export const paginasServicio: PaginaServicio[] = [
     faqs: [
       {
         pregunta: '¿Qué herramientas conectan?',
-        respuesta: pasos[2].texto,
+        respuesta: 'Conectamos Google Calendar, Google Sheets, correo, WhatsApp y Telegram, para que tus tareas repetitivas se hagan solas.',
       },
       {
         pregunta: '¿Cuánto cuesta?',
@@ -352,7 +352,7 @@ export const paginasServicio: PaginaServicio[] = [
       },
       {
         pregunta: '¿Cuántos videos incluye el plan?',
-        respuesta: `El plan Full incluye ${p.complementarios.videos.videosAlMesFull} videos al mes, con guion generado por IA. Cada video adicional cuesta ${rangoCorto(p.complementarios.videos.videoAdicional.min, p.complementarios.videos.videoAdicional.max)}.`,
+        respuesta: `El plan Básico incluye ${p.complementarios.videos.videosAlMesBasico} videos al mes y el plan Full, ${p.complementarios.videos.videosAlMesFull}, con guion generado por IA. Cada video adicional cuesta ${rangoCorto(p.complementarios.videos.videoAdicional.min, p.complementarios.videos.videoAdicional.max)}.`,
       },
       {
         pregunta: '¿Qué necesito para emitir boletas electrónicas?',
@@ -361,8 +361,8 @@ export const paginasServicio: PaginaServicio[] = [
     ],
     ofertas: [
       { nombre: redes.nombre, descripcion: redes.vinetas.join('. '), precio: p.complementarios.redes.instalacion, unidad: 'instalación, desde' },
-      { nombre: `${videos.nombre}: plan Básico`, descripcion: videos.vinetas[0], precio: p.complementarios.videos.basico.instalacion, unidad: 'instalación' },
-      { nombre: `${videos.nombre}: plan Full`, descripcion: videos.vinetas[1], precio: p.complementarios.videos.full.instalacion, unidad: 'instalación' },
+      { nombre: `${videos.nombre}: plan Básico`, descripcion: videos.vinetas.slice(0, 2).join('. '), precio: p.complementarios.videos.basico.instalacion, unidad: 'instalación' },
+      { nombre: `${videos.nombre}: plan Full`, descripcion: videos.vinetas.slice(0, 2).join('. '), precio: p.complementarios.videos.full.instalacion, unidad: 'instalación' },
       { nombre: `${inventario.nombre}: Tienda`, descripcion: inventario.vinetas.slice(0, 2).join('. '), precio: p.complementarios.inventario.tienda.instalacion, unidad: 'instalación' },
       { nombre: `${inventario.nombre}: Supermercado`, descripcion: inventario.vinetas.slice(0, 2).join('. '), precio: p.complementarios.inventario.supermercado.instalacion, unidad: 'instalación' },
     ],

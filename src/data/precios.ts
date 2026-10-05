@@ -20,7 +20,8 @@ export const precios = {
     videos: {
       basico: { instalacion: 500, mensual: 80 },
       full: { instalacion: 650, mensual: 100 },
-      /** Videos que incluye al mes el plan Full. */
+      /** Videos que incluye al mes cada plan. */
+      videosAlMesBasico: 2,
       videosAlMesFull: 4,
       videoAdicional: { min: 60, max: 80 },
     },

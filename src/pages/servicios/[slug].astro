@@ -17,7 +17,7 @@ import BannerRenueva from '../../components/tarjetas/BannerRenueva.astro';
 import TarjetaComplementario from '../../components/tarjetas/TarjetaComplementario.astro';
 import { paginasServicio, type PaginaServicio } from '../../data/paginasServicio';
 import { paquetes } from '../../data/paquetes';
-import { planesWeb } from '../../data/planesWeb';
+import { planesWeb, notaMantenimiento } from '../../data/planesWeb';
 import { complementarios } from '../../data/complementarios';
 import { masServicios } from '../../data/masServicios';
 import { textos as t } from '../../data/textos';
@@ -72,6 +72,7 @@ const jsonLd = [
     {pagina.slug === 'paginas-web' && (
       <div class="web-grid" data-tilt-grid>
         {planesWeb.map((plan) => <TarjetaPlanWeb plan={plan} />)}
+        <p class="web-nota">{notaMantenimiento}</p>
         <BannerRenueva />
       </div>
     )}

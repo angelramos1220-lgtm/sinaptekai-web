@@ -1,7 +1,39 @@
 # Textos nuevos (para revisión)
 
 Aquí se lista todo texto que **no existe hoy** en synaptekai.tech y que la migración
-agrega. Nada de esta lista se da por aprobado hasta que lo revises.
+agrega.
+
+> **Revisado y aprobado el 04/10/2026**, con los 16 cambios de la sección siguiente.
+> Todo lo demás de este documento quedó aprobado tal cual. Un texto nuevo que se agregue
+> después de esa fecha va en una sección aparte, al final, hasta que se revise.
+
+## Revisión del 04/10/2026 — cambios pedidos y aplicados
+
+Todos están en `src/data`, así que salen igual en las páginas, en las versiones Markdown,
+en `llms.txt` y en los datos estructurados.
+
+**Cambian un texto que ya está publicado en la portada actual:**
+
+| # | Dónde | Antes | Ahora |
+| --- | --- | --- | --- |
+| 1 | Paso 04 de "Cómo funciona" | …La primera semana es de prueba: si no te sirve, no seguimos. | …La primera semana es de prueba, sin costo: si no te sirve, no seguimos. |
+| 12 | Visibilidad, viñeta de medición | Google Analytics y Search Console midiendo cada contacto por WhatsApp | Google Analytics mide cada contacto por WhatsApp y Search Console muestra cómo te buscan en Google |
+| 13 | Visibilidad, viñeta de Ads | Google Ads con medición de conversiones (opcional; la pauta la pagas directo a Google) | Google Ads con medición de conversiones (opcional, se cotiza aparte; la pauta la pagas directo a Google) |
+| 15 | Videos con IA, viñeta | 4 videos al mes en el plan Full, con guion generado por IA | 2 videos al mes en el plan Básico y 4 en el Full, con guion generado por IA |
+
+La frase del punto 1 está escrita una sola vez (`semanaDePrueba`, en `src/data/pasos.ts`)
+y la usan el paso 04 y la pregunta frecuente de Asistentes. El "2" del plan Básico es un
+dato nuevo: está en `src/data/precios.ts` (`videosAlMesBasico`), junto al "4" del Full.
+
+**Notas nuevas:**
+
+| # | Texto | Dónde aparece |
+| --- | --- | --- |
+| 14 | `Las tarjetas QR/NFC y la gestión de Google Ads se cotizan aparte.` | Portada: tarjeta de Visibilidad, bajo el precio. `/servicios/visibilidad-google-ia`: bajo el precio. `/precios`: en "Para tener en cuenta" |
+| 16 | `El mantenimiento mensual es opcional.` | Portada: bajo los 4 planes de Diseño Web. `/servicios/paginas-web`: bajo los 4 planes y bajo la lista de precios. `/precios`: en "Para tener en cuenta" |
+
+**Preguntas frecuentes (puntos 1 a 11):** cambiaron 11 respuestas; quedaron como se lee
+más abajo, en "Preguntas frecuentes".
 
 Cómo leerlo:
 
@@ -85,7 +117,8 @@ las notas que se indican.
 
 - Título y bajada: los de la tarjeta "Páginas Web a Medida". Rótulo: "Diseño de Páginas Web".
 - Qué incluye: los 4 planes y el banner "Renueva tu Página Web", tal cual.
-- Nota de precio: "El hosting y el dominio se pagan directo al proveedor, a nombre de tu negocio." (del banner Renueva).
+- Bajo los 4 planes (aquí y en la portada): "El mantenimiento mensual es opcional."
+- Notas de precio: "El mantenimiento mensual es opcional." y "El hosting y el dominio se pagan directo al proveedor, a nombre de tu negocio." (del banner Renueva).
 - En uso en: Aquamatic Lavandería.
 - Título para Google — **Nuevo**: `Páginas Web a Medida | SynaptekAI`
 - Descripción para Google — **Nuevo**: `Webs rápidas y a medida, preparadas para Google y para asistentes de IA, con WhatsApp directo y medición de cada contacto. Desde S/450, pago único.`
@@ -95,7 +128,7 @@ las notas que se indican.
 
 - Título, bajada y las 7 viñetas: los de la tarjeta "Visibilidad en Google e IA" de Más servicios. Rótulo: "Más servicios".
 - Bajo el precio va la línea ya publicada "Caso Aquamatic: de 3.9★ a 4.4★ y el doble de reseñas en dos semanas."
-- Nota de precio — **Nuevo**: `Súmalo a tu paquete o contrátalo por separado.` (hoy está en plural, como título de Más servicios: "Súmalos a tu paquete o contrátalos por separado").
+- Notas de precio: `Las tarjetas QR/NFC y la gestión de Google Ads se cotizan aparte.` (también en la tarjeta de la portada) y `Súmalo a tu paquete o contrátalo por separado.` (hoy está en plural, como título de Más servicios: "Súmalos a tu paquete o contrátalos por separado").
 - En uso en: Aquamatic Lavandería.
 - Título para Google — **Nuevo**: `Visibilidad en Google e IA | SynaptekAI`
 - Descripción para Google — **Nuevo**: `Que te encuentren en Google Maps, en el buscador y en asistentes como ChatGPT o Gemini, con reseñas reales y la medición de cada contacto. Instalación desde S/500 · S/80/mes.` (la primera frase es la de la tarjeta de Servicios de la portada).
@@ -133,103 +166,88 @@ Estos dos servicios no tienen hoy viñetas ni precio publicados. No inventé nin
 - Descripción para Google — **Nuevo**: `Redes Sociales con IA, Videos con IA e Inventario + Boletas: herramientas que ya tenemos listas y activamos cuando tu negocio las necesita.`
 - Mensaje de WhatsApp del botón del encabezado y del cierre — **Nuevo**: `Hola, quiero información de los servicios complementarios`
 
-## Fase 2 — Preguntas frecuentes (todas nuevas)
+## Fase 2 — Preguntas frecuentes
 
-Las 27 preguntas son nuevas. Cada respuesta repite hechos que el sitio ya afirma hoy
-(se indica de dónde sale cada uno); no hay plazos, garantías ni resultados que no estén
-ya escritos. Así quedan publicadas, con los montos ya puestos:
+Las 27 preguntas, **tal como quedaron publicadas** después de tu revisión del 04/10/2026,
+con los montos ya puestos (salen de `src/data/precios.ts`). La respuesta sobre negocios
+fuera de Arequipa es la misma en las 5 páginas que la llevan.
+
+Estas respuestas incluyen datos que diste tú en la revisión y que no estaban en el sitio:
+la semana de prueba es sin costo; las tarjetas QR/NFC y la gestión de Google Ads no
+están incluidas; el mantenimiento web es opcional y qué incluye; el plan Básico de Videos
+trae 2 videos al mes; y el traspaso de un dominio depende de quien figure como titular.
 
 ### `/servicios/asistentes-whatsapp`
 
 1. **¿Puedo probarlo antes de decidir?**
-   Sí. La primera semana es de prueba: si no te sirve, no seguimos.
-   _Fuente: paso 4 de "Cómo funciona"._
+   Sí. La primera semana es de prueba, sin costo: si no te sirve, no seguimos.
 2. **¿Qué pasa si quiero responderle yo a un cliente?**
    Tu equipo toma el control cuando quiera: si respondes a mano, el asistente se pausa.
-   _Fuente: viñeta del paquete Asistente Virtual._
 3. **¿Dónde quedan las citas, las reservas y los pedidos?**
    Las citas se agendan en tu Google Calendar. Las reservas y los pedidos quedan registrados en tu Google Sheet, y recibes un aviso inmediato de cada solicitud nueva por WhatsApp o Telegram.
-   _Fuente: viñetas del paquete Asistente Virtual._
 4. **¿El precio es fijo?**
-   La cuota mensual es fija: S/100/mes en Asistente Virtual y S/120/mes en Crecimiento 360°. El monto de instalación varía según la complejidad del proyecto: va desde S/800 y desde S/900.
-   _Fuente: bajada y nota de la sección Paquetes._
+   La cuota mensual es fija: S/100/mes en Asistente Virtual y S/120/mes en Crecimiento 360°. La instalación varía según la complejidad del proyecto: desde S/800 en Asistente Virtual y desde S/900 en Crecimiento 360°.
 5. **¿Trabajan con negocios fuera de Arequipa?**
-   Sí. La implementación es 100% remota, para negocios en todo el Perú.
-   _Fuente: la descripción del sitio que hoy ve Google ("…para negocios en todo el Perú. Desde Arequipa, con implementación 100% remota."). **Ojo**: hoy esa frase no está en el texto visible de la portada, solo en la descripción para buscadores. Se repite en 5 páginas._
+   Sí. La implementación es 100% remota, para negocios en todo el Perú. Due Hotel y Aquamatic, por ejemplo, están en Trujillo.
 
 ### `/servicios/paginas-web`
 
 1. **¿A nombre de quién quedan el dominio y el hosting?**
    A nombre de tu negocio. Nosotros los configuramos y gestionamos, y se pagan directo al proveedor: son tuyos de verdad, aunque mañana cambies de proveedor.
-   _Fuente: banner "Renueva tu Página Web"._
 2. **¿Es un pago único o mensual?**
-   El diseño es un pago único. El mantenimiento es mensual y depende del plan: desde S/50–80/mes en una landing page hasta S/150–250/mes en una tienda online.
-   _Fuente: los 4 planes._
+   El diseño es un pago único. El mantenimiento mensual es opcional, aunque lo recomendamos: incluye respaldos, vigilancia y actualizaciones técnicas de tu web. Va de S/50–80/mes en una landing page hasta S/150–250/mes en una tienda online.
 3. **Ya tengo una página web. ¿Pueden renovarla?**
-   Sí. La rediseñamos completa con estética moderna y migramos todo tu contenido actual (textos, fotos, contacto). Es un pago único de S/700 – S/1,100.
-   _Fuente: banner "Renueva tu Página Web"._
+   Sí. La rediseñamos completa con estética moderna y migramos todo tu contenido actual (textos, fotos, contacto). Es un pago único de S/700 – S/1,100. El hosting y el dominio se pagan aparte, directo al proveedor.
 4. **¿La web queda preparada para Google?**
    Sí. Son webs rápidas y a medida, preparadas para Google y para asistentes de IA, con WhatsApp directo y medición de cada contacto.
-   _Fuente: tarjeta "Páginas Web a Medida"._
 5. **¿Trabajan con negocios fuera de Arequipa?**
-   Sí. La implementación es 100% remota, para negocios en todo el Perú.
+   Sí. La implementación es 100% remota, para negocios en todo el Perú. Due Hotel y Aquamatic, por ejemplo, están en Trujillo.
 
 ### `/servicios/visibilidad-google-ia`
 
 1. **¿Cómo consiguen más reseñas?**
-   Con tarjetas QR/NFC en tu mostrador. Son reseñas reales y sin premios, como exige Google. Además, respondemos tus reseñas por ti.
+   Con tarjetas QR/NFC en tu mostrador. Son reseñas reales y sin premios, como exige Google, y respondemos tus reseñas por ti. Las tarjetas físicas no están incluidas: puedes comprarlas por tu cuenta o te las preparamos nosotros con un costo adicional.
 2. **¿La publicidad en Google está incluida?**
-   Google Ads con medición de conversiones es opcional. La pauta la pagas directo a Google.
+   La gestión de Google Ads con medición de conversiones es opcional y se cotiza aparte. La pauta, lo que se invierte en los anuncios, la pagas directo a Google.
 3. **¿Cómo sé si está funcionando?**
-   Medimos cada contacto por WhatsApp con Google Analytics y Search Console, y recibes un reporte mensual con datos reales.
+   Google Analytics mide cada contacto por WhatsApp y Search Console muestra cómo te buscan en Google. Cada mes recibes un reporte con datos reales.
 4. **¿Tengo que contratar un paquete para tener este servicio?**
    No. Puedes sumarlo a tu paquete o contratarlo por separado. La instalación va desde S/500 y la cuota es de S/80/mes.
 5. **¿Trabajan con negocios fuera de Arequipa?**
-   Sí. La implementación es 100% remota, para negocios en todo el Perú.
-
-_Fuente de las cuatro primeras: viñetas y precio de la tarjeta "Visibilidad en Google e IA"._
+   Sí. La implementación es 100% remota, para negocios en todo el Perú. Due Hotel y Aquamatic, por ejemplo, están en Trujillo.
 
 ### `/servicios/socio-tecnologico`
 
 1. **¿A nombre de quién quedan mis cuentas?**
    Dominio, hosting y cuentas quedan a nombre de tu negocio, nunca del proveedor.
 2. **Mi web o mi dominio están en manos de otro proveedor. ¿Pueden recuperarlos?**
-   Sí. Rescatamos tu web y tu dominio si están en manos de terceros, y hablamos por ti con tu hosting y con tus proveedores anteriores. El rescate y la migración de web y dominio van desde S/350, pago único.
+   Sí. Rescatamos tu web y tu dominio si están en manos de terceros, y hablamos por ti con tu hosting y con tus proveedores anteriores. El rescate y la migración de web y dominio van desde S/350, pago único. Si el dominio está registrado a nombre de otra persona, el traspaso depende de que esa persona lo autorice.
 3. **¿Tengo que saber de tecnología?**
    No. Nos encargamos de la parte técnica para que tú no tengas que entenderla, y te asesoramos antes de contratar cualquier sistema o software.
 4. **¿Trabajan con negocios fuera de Arequipa?**
-   Sí. La implementación es 100% remota, para negocios en todo el Perú.
-
-_Fuente de las tres primeras: bajada, viñetas y precio de la tarjeta "Socio Tecnológico"._
+   Sí. La implementación es 100% remota, para negocios en todo el Perú. Due Hotel y Aquamatic, por ejemplo, están en Trujillo.
 
 ### `/servicios/automatizacion`
 
 1. **¿Qué herramientas conectan?**
-   Google Calendar, Sheets, correo y Telegram: todo conectado y funcionando.
-   _Fuente: paso 3 de "Cómo funciona", copiado._
+   Conectamos Google Calendar, Google Sheets, correo, WhatsApp y Telegram, para que tus tareas repetitivas se hagan solas.
 2. **¿Cuánto cuesta?**
    Depende del proceso: cuéntanos cuál y lo cotizamos.
-   _**Nuevo** (el mismo texto de la sección Precio de esta página)._
 3. **¿Y si mi negocio necesita algo distinto?**
    Cada negocio es distinto: diseñamos el flujo de automatización que tu operación realmente necesita.
-   _Fuente: tarjeta "Soluciones a Medida", copiado._
 4. **¿Trabajan con negocios fuera de Arequipa?**
-   Sí. La implementación es 100% remota, para negocios en todo el Perú.
+   Sí. La implementación es 100% remota, para negocios en todo el Perú. Due Hotel y Aquamatic, por ejemplo, están en Trujillo.
 
 ### `/servicios/complementarios`
 
 1. **¿Qué significa "bajo pedido"?**
    Son herramientas que ya tenemos listas y activamos cuando tu negocio las necesita.
-   _Fuente: bajada de la sección, copiada._
 2. **¿Las publicaciones salen sin que yo las vea?**
    No. Tú apruebas antes de publicar, desde Telegram.
-   _Fuente: viñeta de Redes Sociales con IA._
 3. **¿Cuántos videos incluye el plan?**
-   El plan Full incluye 4 videos al mes, con guion generado por IA. Cada video adicional cuesta S/60–80.
-   _Fuente: viñetas de Videos con IA._
+   El plan Básico incluye 2 videos al mes y el plan Full, 4, con guion generado por IA. Cada video adicional cuesta S/60–80.
 4. **¿Qué necesito para emitir boletas electrónicas?**
    La emisión válida ante SUNAT requiere el certificado digital del negocio; te ayudamos con el trámite. El servicio incluye 300 boletas al mes y cada boleta adicional cuesta S/0.40.
-   _Fuente: viñetas y nota de Inventario + Boletas._
 
 ## Fase 2 — `/casos`
 
@@ -254,13 +272,15 @@ _Fuente de las tres primeras: bajada, viñetas y precio de la tarjeta "Socio Tec
 | "Paquetes", "Más servicios", "Diseño de Páginas Web", "Servicios complementarios" y sus bajadas | Títulos de las 4 listas | Reutilizado: rótulos y bajadas de la portada |
 | Nombres, montos, "Instalación", "Pago único", "Mantenimiento", "Recomendado", "Oferta", "Bajo pedido" | Filas | Reutilizado: tarjetas de la portada |
 
-Las notas de "Para tener en cuenta" son cinco frases ya publicadas, sin cambios:
+Las notas de "Para tener en cuenta" son siete, en el orden de las listas de la página:
 
 1. El monto de instalación varía según la complejidad del proyecto. Si tu negocio necesita más de un paquete, coordinamos un precio personalizado. _(la nota "desde")_
-2. El hosting y el dominio se pagan directo al proveedor, a nombre de tu negocio. _(la nota de hosting y dominio)_
-3. Video adicional: S/60–80 c/u
-4. Incluye 300 boletas/mes; adicional S/0.40 c/u
-5. La emisión válida ante SUNAT requiere el certificado digital del negocio — te ayudamos con el trámite.
+2. Las tarjetas QR/NFC y la gestión de Google Ads se cotizan aparte. _(nota de Visibilidad, del 04/10/2026)_
+3. El mantenimiento mensual es opcional. _(nota de Diseño Web, del 04/10/2026)_
+4. El hosting y el dominio se pagan directo al proveedor, a nombre de tu negocio. _(la nota de hosting y dominio)_
+5. Video adicional: S/60–80 c/u
+6. Incluye 300 boletas/mes; adicional S/0.40 c/u
+7. La emisión válida ante SUNAT requiere el certificado digital del negocio — te ayudamos con el trámite.
 
 Automatización de Procesos y Soluciones a Medida no aparecen en `/precios`: no tienen un
 monto publicado.

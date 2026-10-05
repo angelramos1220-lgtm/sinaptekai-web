@@ -116,6 +116,9 @@
 .tarjeta-plan__nota { font-size: 12px; color: var(--texto-tenue); font-weight: 600; }
 .tarjeta-plan .vinetas { margin-top: 4px; }
 
+/* Nota bajo los 4 planes de Diseño Web: ocupa toda la fila de la rejilla. */
+.web-nota { grid-column: 1 / -1; margin: -8px 0 0; font-size: 13px; line-height: 1.6; color: var(--texto-tenue); }
+
 /* --- Banner "Renueva tu Página Web" (la rejilla está en global.css) -------- */
 .promo-banner { position: relative; padding: 28px; border-radius: 20px; box-sizing: border-box; }
 .tilt-card > .promo-banner__insignia { position: absolute; top: -13px; left: 28px; background: var(--rosa); color: #4A0A2E; font-size: 12px; font-weight: 800; padding: 5px 14px; border-radius: 999px; letter-spacing: 0.3px; }
@@ -138,6 +141,7 @@
 .tarjeta-mas__precio { display: flex; flex-direction: column; gap: 2px; }
 .tarjeta-mas__monto { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
 .tarjeta-mas__nota { font-size: 12px; line-height: 1.5; color: var(--texto-tenue); font-weight: 600; }
+.tarjeta-mas__aparte { margin-top: 4px; font-size: 12px; line-height: 1.5; color: var(--texto-tenue); }
 .tarjeta-mas .vinetas { margin-top: 2px; }
 .tarjeta-mas__prueba { margin: 0; font-size: 12px; line-height: 1.5; font-weight: 700; color: var(--acento); background: var(--acento-suave); padding: 8px 12px; border-radius: 10px; }
 .tarjeta-mas__boton { margin-top: auto; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 11px; background: var(--acento); color: var(--acento-tinta); font-weight: 700; font-size: 14px; text-align: center; }

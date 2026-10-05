@@ -7,8 +7,8 @@ contraseñas, tokens ni URLs de webhooks, y no debe contenerlos.
 > **Estado: migración a Astro en curso, en la rama `astro`.** Fases 0 a 3 terminadas
 > (inventario, portada con paridad, páginas nuevas, SEO/servidor). Fase 4 en curso: la
 > rama `astro` está en origin y se publica como sitio de prueba en
-> `nuevo.synaptekai.tech`. Falta la Fase 5 (reemplazar el sitio real), que además espera
-> la revisión de las preguntas frecuentes (`docs/textos-nuevos.md`).
+> `nuevo.synaptekai.tech`. Los textos nuevos (`docs/textos-nuevos.md`) quedaron revisados y
+> aprobados el 04/10/2026. Falta la Fase 5 (reemplazar el sitio real), solo con aprobación.
 > Hasta la Fase 5, `main` sigue siendo el sitio anterior (un bundle de Claude Design) y
 > es lo que está publicado.
 >

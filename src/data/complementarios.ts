@@ -55,7 +55,7 @@ export const complementarios: Complementario[] = [
     precios: [plan('Básico', c.videos.basico), plan('Full', c.videos.full)],
     vinetas: [
       'Tu avatar propio con IA (o el de tu negocio)',
-      `${c.videos.videosAlMesFull} videos al mes en el plan Full, con guion generado por IA`,
+      `${c.videos.videosAlMesBasico} videos al mes en el plan Básico y ${c.videos.videosAlMesFull} en el Full, con guion generado por IA`,
       `Video adicional: ${rangoCorto(c.videos.videoAdicional.min, c.videos.videoAdicional.max)} c/u`,
     ],
     nota: '',

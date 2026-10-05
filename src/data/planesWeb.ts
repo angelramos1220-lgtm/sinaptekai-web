@@ -60,6 +60,9 @@ export const planesWeb: PlanWeb[] = [
 ];
 
 // Banner "Renueva tu Página Web".
+/** Nota bajo los 4 planes. */
+export const notaMantenimiento = 'El mantenimiento mensual es opcional.';
+
 export const renuevaWeb = {
   insignia: 'Oferta',
   nombre: 'Renueva tu Página Web',

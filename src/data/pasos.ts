@@ -7,6 +7,9 @@ export interface Paso {
   texto: string;
 }
 
+/** La semana de prueba. Se dice igual aquí y en las preguntas frecuentes de Asistentes. */
+export const semanaDePrueba = 'La primera semana es de prueba, sin costo: si no te sirve, no seguimos.';
+
 export const pasos: Paso[] = [
   {
     numero: '01',
@@ -30,6 +33,6 @@ export const pasos: Paso[] = [
     numero: '04',
     duracion: 'Desde el día 6',
     titulo: 'Tu negocio atiende solo, y lo afinamos contigo',
-    texto: 'Tu asistente ya atiende. Durante el primer mes revisamos contigo sus conversaciones reales y ajustamos respuestas y reglas cada semana. La primera semana es de prueba: si no te sirve, no seguimos.',
+    texto: `Tu asistente ya atiende. Durante el primer mes revisamos contigo sus conversaciones reales y ajustamos respuestas y reglas cada semana. ${semanaDePrueba}`,
   },
 ];
