@@ -77,6 +77,16 @@ const ORIGENES = ['header', 'hero', 'caso', 'contacto', 'diseno-web', 'flotante'
 // Lo que no puede aparecer en ningún texto del sitio.
 const PROHIBIDO = [/hostal/i, /[óo]ptica caballero/i, /visual lents/i, /US\$|USD|d[óo]lares/];
 
+// Las direcciones de n8n salen de src/data/negocio.ts. Todo lo que vaya hacia ellas se
+// responde aquí mismo. Si no se pueden leer, no se ejecuta nada: mejor no probar que
+// arriesgarse a enviar un formulario de prueba a n8n de verdad.
+const NEGOCIO_TS = fs.readFileSync(path.join(ROOT, 'src/data/negocio.ts'), 'utf8');
+const WEBHOOK_CHECKLIST = (NEGOCIO_TS.match(/webhookChecklist:\s*'([^']+)'/) || [])[1];
+const WEBHOOK_CHAT = (NEGOCIO_TS.match(/webhookChat:\s*'([^']+)'/) || [])[1];
+if (!WEBHOOK_CHECKLIST || !WEBHOOK_CHAT) { console.error('ERROR: no pude leer los webhooks de src/data/negocio.ts. No se ejecuta nada, para no llamar a n8n de verdad.'); process.exit(2); }
+const ORIGENES_N8N = Array.from(new Set([WEBHOOK_CHECKLIST, WEBHOOK_CHAT].map((u) => new URL(u).origin)));
+const ES_N8N = (url) => ORIGENES_N8N.some((o) => url.startsWith(o + '/')) || /\/webhook(-test)?\//.test(url);
+
 const BROWSERS = [
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
   'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe',
@@ -263,13 +273,22 @@ async function verificarServidor() {
     }
     const rob = await pedir('/robots.txt', o);
     if (rob.estado !== 200 || !/^User-agent: \*\s+Disallow: \/\s*$/.test(rob.texto.trim())) problemas.push('robots.txt: ' + rob.texto.slice(0, 60));
-    ok(!problemas.length, etiqueta + ' → modo de prueba: "X-Robots-Tag: noindex, nofollow" en páginas, .md, 404 y archivos; robots.txt con "Disallow: /"', problemas.join('; '));
+    // TEMPORAL (se quita antes de la Fase 5, con la cabecera de nginx.conf): el nombre de
+    // dominio que nginx recibió del proxy tiene que ser el mismo que se pidió.
+    const recibido = (await pedir('/', o)).cab['x-host-recibido'];
+    const esperado = (host || new URL(BASE).hostname).toLowerCase();
+    if (recibido !== undefined && recibido !== esperado) problemas.push('nginx recibió el dominio "' + recibido + '" y se pidió "' + esperado + '": el proxy no pasa el nombre original');
+    ok(!problemas.length, etiqueta + ' → modo de prueba: "X-Robots-Tag: noindex, nofollow" en páginas, .md, 404 y archivos; robots.txt con "Disallow: /"' + (recibido !== undefined ? '; nginx recibió el dominio "' + recibido + '"' : ''), problemas.join('; '));
   };
   const cabecerasReal = async (host, etiqueta) => {
     const o = host ? { host } : {};
     const problemas = [];
-    for (const ruta of ['/', '/casos.md', '/no-existe', '/robots.txt']) { const r = await pedir(ruta, o); if (r.cab['x-robots-tag']) problemas.push(ruta + ' lleva X-Robots-Tag: ' + r.cab['x-robots-tag']); }
-    ok(!problemas.length, etiqueta + ' → dominio real: sin X-Robots-Tag en ninguna respuesta', problemas.join('; '));
+    for (const ruta of ['/', '/casos.md', '/no-existe', '/robots.txt']) {
+      const r = await pedir(ruta, o);
+      if (r.cab['x-robots-tag']) problemas.push(ruta + ' lleva X-Robots-Tag: ' + r.cab['x-robots-tag']);
+      if (r.cab['x-host-recibido'] !== undefined) problemas.push(ruta + ' lleva la cabecera temporal X-Host-Recibido: ' + r.cab['x-host-recibido']);
+    }
+    ok(!problemas.length, etiqueta + ' → dominio real: sin X-Robots-Tag (ni cabeceras de prueba) en ninguna respuesta', problemas.join('; '));
   };
   if (LOCAL) {
     const www = await pedir('/casos?x=1', { host: 'www.synaptekai.tech' });
@@ -384,14 +403,16 @@ async function verificarNavegador() {
   const perfil = path.join(os.tmpdir(), 'synaptekai-verificar-perfil');
   fs.rmSync(perfil, { recursive: true, force: true });
   if (CAPTURAS) fs.mkdirSync(DIR_CAPTURAS, { recursive: true });
-  const navegador = spawn(exe, ['--headless=new', '--remote-debugging-port=' + PORT, '--user-data-dir=' + perfil,
+  const banderas = ['--headless=new', '--remote-debugging-port=' + PORT, '--user-data-dir=' + perfil,
     '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', '--mute-audio',
     // Si el sistema tiene las animaciones apagadas, Chrome desactiva el desplazamiento
     // suave: se fuerza para poder probarlo (el modo reducido se emula por página).
-    '--force-prefers-no-reduced-motion', '--enable-smooth-scrolling',
-    // Los dos dominios apuntan al contenedor local: el modo de prueba y el dominio real
-    // se prueban aquí mismo, sin tocar el DNS ni el sitio publicado.
-    '--host-resolver-rules=MAP ' + DOMINIO_PRUEBA + ' 127.0.0.1, MAP synaptekai.tech 127.0.0.1', 'about:blank'], { stdio: 'ignore' });
+    '--force-prefers-no-reduced-motion', '--enable-smooth-scrolling'];
+  // Solo contra localhost: los dos dominios apuntan al contenedor local, para probar el
+  // modo de prueba y el dominio real sin tocar el DNS ni el sitio publicado. Contra un
+  // dominio de verdad no se toca la resolución de nombres.
+  if (LOCAL) banderas.push('--host-resolver-rules=MAP ' + DOMINIO_PRUEBA + ' 127.0.0.1, MAP synaptekai.tech 127.0.0.1');
+  const navegador = spawn(exe, banderas.concat(['about:blank']), { stdio: 'ignore' });
   let cdp;
   try {
     cdp = await conectar();
@@ -410,7 +431,7 @@ async function verificarNavegador() {
       else if (method === 'Network.loadingFinished') bytes += p.encodedDataLength || 0;
       else if (method === 'Fetch.requestPaused') {
         const url = p.request.url;
-        const esN8n = url.includes('easypanel.host');
+        const esN8n = ES_N8N(url);
         if (esN8n) capturadas.push({ url, metodo: p.request.method, tipo: p.request.headers['Content-Type'] || p.request.headers['content-type'] || '', cuerpo: p.request.postData || '' });
         cdp.send('Fetch.fulfillRequest', {
           requestId: p.requestId, responseCode: 200,
@@ -424,7 +445,10 @@ async function verificarNavegador() {
     await cdp.send('Log.enable');
     await cdp.send('Network.enable');
     await cdp.send('Network.setCacheDisabled', { cacheDisabled: true });
-    await cdp.send('Fetch.enable', { patterns: [{ urlPattern: '*easypanel.host*' }, { urlPattern: '*googletagmanager.com*' }, { urlPattern: '*google-analytics.com*' }, { urlPattern: '*analytics.google.com*' }] });
+    // Se interceptan n8n (por su dirección y por la ruta /webhook/) y Google Analytics. El
+    // sitio que se revisa puede estar en un dominio *.easypanel.host: por eso no se intercepta
+    // ese dominio entero, solo las direcciones de n8n.
+    await cdp.send('Fetch.enable', { patterns: ORIGENES_N8N.map((o) => ({ urlPattern: o + '/*' })).concat([{ urlPattern: '*/webhook/*' }, { urlPattern: '*/webhook-test/*' }, { urlPattern: '*googletagmanager.com*' }, { urlPattern: '*google-analytics.com*' }, { urlPattern: '*analytics.google.com*' }]) });
 
     const evalJs = async (expression) => {
       const r = await cdp.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
@@ -709,9 +733,8 @@ async function verificarNavegador() {
 
       // ---------- Formulario del checklist (interceptado: no llega a n8n)
       titulo('Navegador: checklist, popup, chat y videos');
-      const negocioTs = fs.readFileSync(path.join(ROOT, 'src/data/negocio.ts'), 'utf8');
-      const webhookChecklist = (negocioTs.match(/webhookChecklist:\s*'([^']+)'/) || [])[1];
-      const webhookChat = (negocioTs.match(/webhookChat:\s*'([^']+)'/) || [])[1];
+      const webhookChecklist = WEBHOOK_CHECKLIST;
+      const webhookChat = WEBHOOK_CHAT;
       await cargar('/', 1280);
       capturadas = [];
       const vacio = await evalJs(`(() => {

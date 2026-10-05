@@ -18,6 +18,10 @@ contraseñas, tokens ni URLs de webhooks, y no debe contenerlos.
 > - Después de cada push hay que decir en qué servicio de Easypanel tocar "Deploy"
 >   (`sitio-web-nuevo` o `sitio-web`) y **esperar la confirmación** antes de verificar con curl.
 > - Ningún texto nuevo sin listarlo en `docs/textos-nuevos.md`.
+> - **Pendiente antes de la Fase 5:** quitar la cabecera temporal `X-Host-Recibido` de
+>   `nginx.conf` (el `map $host_recibido` y su `add_header`) y su comprobación en
+>   `scripts/verificar.js`. Solo se envía en modo de prueba; existe para comprobar que el
+>   proxy de Easypanel pasa a nginx el nombre de dominio original.
 
 ## Contexto del proyecto
 
