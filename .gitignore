@@ -4,5 +4,11 @@ Pagina WEB/
 SynaptekAI landing page/
 SynaptekAI landing page.zip
 
-# Copia de trabajo del bundle (scripts/bundle.js) y capturas de revisión
+# Copia de trabajo del bundle viejo, capturas de revisión y comparaciones
 .work/
+
+# Astro / Node
+node_modules/
+dist/
+.astro/
+npm-debug.log*

@@ -1,0 +1,123 @@
+---
+// Layout base de todas las páginas: <head> con metas por página, fuentes,
+// datos estructurados, medición y estilos globales.
+import '../styles/global.css';
+import { negocio } from '../data/negocio';
+import { servicios } from '../data/servicios';
+import manropeUrl from '../assets/fonts/manrope-latin.woff2?url';
+
+interface Props {
+  /** <title> completo de la página. */
+  titulo: string;
+  descripcion: string;
+  /** Ruta de la página, con barra inicial y sin barra final ("/" para la portada). */
+  ruta: string;
+  /** Texto alternativo de la imagen para redes. */
+  ogImagenAlt?: string;
+  noindex?: boolean;
+}
+
+const { titulo, descripcion, ruta, ogImagenAlt, noindex = false } = Astro.props;
+const canonical = new URL(ruta, negocio.url).href;
+const ogImagen = `${negocio.url}/assets/og-image.jpg`;
+const altImagen = ogImagenAlt ?? 'SynaptekAI: automatización e inteligencia artificial para negocios en Perú';
+
+// Datos estructurados del negocio. Van en el HTML que entrega el servidor.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': `${negocio.url}/#organizacion`,
+  name: negocio.nombre,
+  url: `${negocio.url}/`,
+  logo: `${negocio.url}/assets/favicon-512x512.png`,
+  description: 'Agentes de IA por WhatsApp, páginas web a medida y visibilidad en Google para negocios en todo el Perú. Desde Arequipa, con implementación 100% remota.',
+  email: negocio.correo,
+  telephone: `+${negocio.whatsapp.numero}`,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: negocio.ubicacion.ciudad,
+    addressCountry: negocio.ubicacion.pais,
+  },
+  areaServed: { '@type': 'Country', name: negocio.ubicacion.paisNombre },
+  sameAs: [negocio.redes.facebook, negocio.redes.instagram],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Servicios principales',
+    itemListElement: servicios.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s.titulo, description: s.descripcion },
+    })),
+  },
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion}>
+    <link rel="canonical" href={canonical}>
+    {noindex && <meta name="robots" content="noindex">}
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content={canonical}>
+    <meta property="og:title" content={titulo}>
+    <meta property="og:description" content={descripcion}>
+    <meta property="og:image" content={ogImagen}>
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content={altImagen}>
+    <meta property="og:locale" content="es_PE">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={titulo}>
+    <meta name="twitter:description" content={descripcion}>
+    <meta name="twitter:image" content={ogImagen}>
+
+    <link rel="icon" href="/assets/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+
+    <!-- La fuente del texto se pide de inmediato: es la del titular del hero. -->
+    <link rel="preload" href={manropeUrl} as="font" type="font/woff2" crossorigin>
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Google Analytics 4: solo se carga en los dominios de producción. En cualquier
+         otro (localhost, sitio de prueba) los eventos se escriben en la consola. -->
+    <script is:inline define:vars={{ ga4: negocio.ga4, dominios: negocio.dominiosProduccion }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = gtag;
+      window.__ga4Activo = dominios.indexOf(location.hostname) !== -1;
+      if (window.__ga4Activo) {
+        gtag('js', new Date());
+        gtag('config', ga4);
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4;
+        document.head.appendChild(s);
+      }
+    </script>
+  </head>
+  <body>
+    <div style="background:#0B0F19; color:#F1F5F9; min-height:100vh;">
+      <slot />
+    </div>
+    <slot name="flotantes" />
+
+    <script>
+      // Comportamiento común a todas las páginas.
+      import { iniciarAparicion } from '../scripts/aparicion.js';
+      import { iniciarTarjetas } from '../scripts/tarjetas.js';
+      import { iniciarMedicion } from '../scripts/medicion';
+      iniciarAparicion();
+      iniciarTarjetas();
+      iniciarMedicion();
+    </script>
+  </body>
+</html>

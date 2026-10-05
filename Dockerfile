@@ -1,13 +1,21 @@
+# syntax=docker/dockerfile:1
+
+# ---------- Etapa 1: build del sitio con Astro ----------
+FROM node:22-alpine AS build
+WORKDIR /app
+
+# Primero solo los manifiestos: mientras package.json y package-lock.json no cambien,
+# Docker reutiliza esta capa y no vuelve a instalar dependencias.
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev --no-audit --no-fund
+
+COPY astro.config.mjs tsconfig.json ./
+COPY public ./public
+COPY src ./src
+RUN npm run build
+
+# ---------- Etapa 2: nginx sirve el sitio estático ----------
 FROM nginx:alpine
-COPY index.html /usr/share/nginx/html/index.html
-COPY index.md /usr/share/nginx/html/index.md
-COPY privacidad.html /usr/share/nginx/html/privacidad.html
-COPY terminos.html /usr/share/nginx/html/terminos.html
-COPY bot.html /usr/share/nginx/html/bot.html
-COPY gracias.html /usr/share/nginx/html/gracias.html
-COPY robots.txt /usr/share/nginx/html/robots.txt
-COPY llms.txt /usr/share/nginx/html/llms.txt
-COPY sitemap.xml /usr/share/nginx/html/sitemap.xml
-COPY assets /usr/share/nginx/html/assets
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80

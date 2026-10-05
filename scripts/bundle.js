@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 /*
- * scripts/bundle.js — edita el contenido de index.html sin romper el bundle.
+ * OBSOLETO desde la migración a Astro (rama astro). Solo sirve para leer el sitio
+ * anterior, que quedó en legacy/index.html. Se borra junto con legacy/ en la Fase 5.
+ * El sitio nuevo se edita en src/ (ver CLAUDE.md).
+ *
+ * scripts/bundle.js — edita el contenido de legacy/index.html sin romper el bundle.
  *
  * index.html es un bundle autodescodificable: el sitio real (HTML, CSS, textos y
  * la clase Component) vive en <script type="__bundler/template"> como un string
@@ -24,7 +28,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const INDEX = path.join(ROOT, 'index.html');
+const INDEX = path.join(ROOT, 'legacy', 'index.html');
 const WORK_DIR = path.join(ROOT, '.work');
 const WORK = path.join(WORK_DIR, 'template.html');
 

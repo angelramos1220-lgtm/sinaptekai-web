@@ -1,0 +1,68 @@
+---
+// Cabecera del sitio: logo, menú y botón de WhatsApp. Siempre en una sola fila:
+//   desde 1240 px   menú completo + botón "Hablar por WhatsApp" con texto;
+//   1024 a 1239 px  menú completo más compacto + botón de WhatsApp solo ícono;
+//   menos de 1024   menú hamburguesa (el panel va fuera del <header>).
+// Los cortes están en src/styles/global.css; el comportamiento, en src/scripts/menu.ts.
+import { textos as t } from '../data/textos';
+import { negocio } from '../data/negocio';
+import { waLink } from '../lib/whatsapp';
+import logo from '../assets/marca/logo.webp';
+
+const waHref = waLink(t.waMsg);
+---
+
+<header class="site-header" style="display:flex; align-items:center; justify-content:space-between; gap:20px; max-width:1240px; margin:0 auto; box-sizing:border-box;">
+  <a href="#inicio" style="display:flex; align-items:center; gap:10px; color:#F1F5F9; flex-shrink:0;">
+    <img src={logo.src} alt={negocio.nombre} width={logo.width} height={logo.height} decoding="async" style="height:42px; width:auto; display:block;">
+    <span style="font-weight:800; font-size:19px; letter-spacing:-0.3px;">Synaptek<span style="color:#06B6D4;">AI</span></span>
+  </a>
+  <nav class="desktop-nav" style="font-weight:600;">
+    <a class="hv-texto-blanco" href="#inicio" style="color:#CBD5E1; padding:10px 0;">{t.navHome}</a>
+    <a class="hv-texto-blanco" href="#servicios" style="color:#CBD5E1; padding:10px 0;">{t.navSvc}</a>
+    <a class="hv-texto-blanco" href="#como-funciona" style="color:#CBD5E1; padding:10px 0;">{t.navHow}</a>
+    <a class="hv-texto-blanco" href="#casos" style="color:#CBD5E1; padding:10px 0;">{t.navCase}</a>
+    <a class="hv-texto-blanco" href="#diseno-web" style="color:#CBD5E1; padding:10px 0;">{t.navWeb}</a>
+    <a class="hv-texto-blanco" href="#paquetes" style="color:#CBD5E1; padding:10px 0;">{t.navPkg}</a>
+    <a class="hv-texto-blanco" href="#recursos" style="color:#CBD5E1; padding:10px 0;">{t.navResources}</a>
+    <a class="hv-texto-blanco" href="#contacto" style="color:#CBD5E1; padding:10px 0;">{t.navContact}</a>
+  </nav>
+  <div class="desktop-actions" style="align-items:center; gap:16px;">
+    <a class="hv-wa fc-cian" href={waHref} target="_blank" data-origen="header" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#052E16; font-weight:700; font-size:15px; padding:12px 18px; border-radius:12px; min-height:44px; box-sizing:border-box; white-space:nowrap;">
+      <span style="width:8px; height:8px; border-radius:50%; background:#052E16; display:inline-block;"></span>
+      {t.waHeader}
+    </a>
+  </div>
+  <div class="mobile-actions">
+    <a href={waHref} target="_blank" data-origen="header" aria-label={t.waHeader} class="mobile-wa-btn">
+      <span style="position:relative; width:20px; height:19px; display:block;">
+        <span style="position:absolute; inset:0 0 3px 0; background:#052E16; border-radius:50% 50% 50% 12%;"></span>
+        <span style="position:absolute; top:6px; left:5px; display:flex; gap:2px;"><span style="width:3px; height:3px; border-radius:50%; background:#25D366; display:block;"></span><span style="width:3px; height:3px; border-radius:50%; background:#25D366; display:block;"></span><span style="width:3px; height:3px; border-radius:50%; background:#25D366; display:block;"></span></span>
+      </span>
+    </a>
+    <button type="button" id="mobile-nav-toggle" class="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-panel" aria-label={t.navMenuOpen} data-abrir={t.navMenuOpen} data-cerrar={t.navMenuClose}>
+      <span class="hamburger-bar" style="transform:none;"></span>
+      <span class="hamburger-bar" style="opacity:1;"></span>
+      <span class="hamburger-bar" style="transform:none;"></span>
+    </button>
+  </div>
+</header>
+<nav id="mobile-nav-panel" hidden>
+    <a href="#inicio">{t.navHome}</a>
+    <a href="#servicios">{t.navSvc}</a>
+    <a href="#como-funciona">{t.navHow}</a>
+    <a href="#casos">{t.navCase}</a>
+    <a href="#diseno-web">{t.navWeb}</a>
+    <a href="#paquetes">{t.navPkg}</a>
+    <a href="#recursos">{t.navResources}</a>
+    <a href="#contacto">{t.navContact}</a>
+    <a href={waHref} target="_blank" data-origen="header" class="mobile-panel-wa-btn">
+      <span style="width:8px; height:8px; border-radius:50%; background:#052E16; display:inline-block;"></span>
+      {t.waHeader}
+    </a>
+</nav>
+
+<script>
+  import { iniciarMenu } from '../scripts/menu';
+  iniciarMenu();
+</script>

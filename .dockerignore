@@ -1,0 +1,19 @@
+# Todo lo que el build de Docker no necesita. Mantiene el contexto pequeño
+# (los videos de public/ sí viajan: son parte del sitio).
+.git
+.gitignore
+.dockerignore
+node_modules
+dist
+.astro
+.work
+.gstack
+Pagina WEB
+SynaptekAI landing page
+SynaptekAI landing page.zip
+legacy
+docs
+scripts
+CLAUDE.md
+Dockerfile
+*.log

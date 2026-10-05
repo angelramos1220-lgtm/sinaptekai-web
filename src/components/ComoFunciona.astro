@@ -1,0 +1,35 @@
+---
+// Sección "Cómo funciona": 4 pasos. Datos: src/data/pasos.ts.
+// La animación (línea que se dibuja y pasos que aparecen) está en src/scripts/pasos.js.
+import { textos as t } from '../data/textos';
+import { pasos } from '../data/pasos';
+
+// Los dos primeros pasos van en índigo y los dos últimos en cian, como la línea.
+const color = (i: number) => (i < 2 ? { borde: '#4F46E5', numero: '#818CF8' } : { borde: '#06B6D4', numero: '#22D3EE' });
+---
+
+<section id="como-funciona" data-screen-label="Cómo funciona" style="background:#0B0F19; color:#F1F5F9; padding:96px 48px 140px; box-sizing:border-box; position:relative; overflow:hidden;">
+  <div style="position:absolute; inset:0; background:radial-gradient(ellipse 50% 60% at 20% 80%, rgba(6,182,212,0.08), transparent 70%); pointer-events:none;"></div>
+  <div data-fade="1" style="max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:56px; position:relative;">
+    <div style="max-width:560px; display:flex; flex-direction:column; gap:12px;">
+      <span style="color:#22D3EE; font-weight:700; font-size:14px; letter-spacing:1.5px; text-transform:uppercase;">{t.howLabel}</span>
+      <h2 style="margin:0; font-size:43px; font-weight:800; letter-spacing:-1.2px; line-height:1.12; text-wrap:balance; background:linear-gradient(90deg,#818CF8,#22D3EE); -webkit-background-clip:text; background-clip:text; color:transparent;">{t.howTitle}</h2>
+    </div>
+    <div data-how-grid style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:32px;">
+      <div class="how-line" aria-hidden="true"></div>
+      {pasos.map((paso, i) => (
+        <div class="how-step" data-how-step style={`display:flex; flex-direction:column; gap:14px; border-top:2px solid ${color(i).borde}; padding-top:24px;`}>
+          <span class="how-num" style={`font-size:15px; font-weight:800; color:${color(i).numero};`}>{paso.numero}</span>
+          <span style="font-size:12px; font-weight:700; color:#64748B; text-transform:uppercase; letter-spacing:0.5px;">{paso.duracion}</span>
+          <h3 style="margin:0; font-size:19px; font-weight:800;">{paso.titulo}</h3>
+          <p style="margin:0; font-size:15px; line-height:1.6; color:#94A3B8;">{paso.texto}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { iniciarPasos } from '../scripts/pasos.js';
+  iniciarPasos();
+</script>

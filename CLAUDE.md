@@ -1,5 +1,22 @@
 # SynaptekAI — sitio web (sinaptekai-web)
 
+> **Rama `astro`: migración en curso (Fase 1 terminada).** En esta rama el sitio es un
+> proyecto Astro 5 y su código vive en `src/` (datos en `src/data/`, con
+> `src/data/precios.ts` como fuente única de los montos). El resto de este archivo
+> todavía describe el sitio anterior (el bundle, que quedó en `legacy/index.html`) y se
+> reescribe en la Fase 3. Mientras tanto:
+>
+> - Estado de la migración: `docs/inventario.md`, `docs/fase-1-diferencias.md` y
+>   `docs/textos-nuevos.md`.
+> - Reglas de la migración: nunca commit, merge ni push sobre `main` hasta la Fase 5 y
+>   con aprobación explícita; commits locales en `astro`; push de `astro` solo con
+>   aprobación; ningún texto nuevo sin listarlo en `docs/textos-nuevos.md`.
+> - Sitio nuevo en localhost: `docker build -t sinaptekai-web:astro .`,
+>   `docker rm -f synaptekai-web-astro`,
+>   `docker run -d --name synaptekai-web-astro -p 8081:80 sinaptekai-web:astro`.
+> - Comparación con el sitio actual (que debe estar en `localhost:8080`):
+>   `node scripts/comparar.js --comportamiento`.
+
 Landing de SynaptekAI: https://synaptekai.tech. Solo en español, precios solo en soles.
 Este archivo existe para que una sesión nueva no arranque de cero. No contiene
 contraseñas, tokens ni URLs de webhooks, y no debe contenerlos.
