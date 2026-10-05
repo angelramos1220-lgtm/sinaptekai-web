@@ -1,0 +1,27 @@
+---
+// Tarjeta de un caso de éxito. Los textos vienen de src/data/casos.ts y se
+// muestran exactos (están aprobados por el cliente, solo para este sitio).
+import type { Caso } from '../../data/casos';
+import { textos as t } from '../../data/textos';
+
+interface Props {
+  caso: Caso;
+  /** En /casos: tarjeta a todo el ancho, con ancla (#due-hotel, etc.). */
+  amplia?: boolean;
+  nivel?: 'h2' | 'h3';
+}
+const { caso, amplia = false, nivel: Titulo = 'h3' } = Astro.props;
+---
+
+<article class:list={['tilt-card', 'tilt-card--light', 'tarjeta-caso', amplia && 'tarjeta-caso--amplia']} data-tilt-card={amplia ? undefined : ''} id={amplia ? caso.id : undefined}>
+  <div class="tarjeta-caso__chips">
+    {caso.chips.map((chip) => <span class="tarjeta-caso__chip">{chip}</span>)}
+  </div>
+  {caso.imagen && <img class="tarjeta-caso__imagen" src={caso.imagen} alt={caso.nombre} loading="lazy" decoding="async">}
+  <Titulo class="tarjeta-caso__nombre">{caso.nombre}</Titulo>
+  <div class="tarjeta-caso__textos">
+    <p class="tarjeta-caso__texto"><strong>{t.casoProblema}</strong> {caso.problema}</p>
+    <p class="tarjeta-caso__texto"><strong>{t.casoSolucion}</strong> {caso.solucion}</p>
+    {caso.resultado && <p class="tarjeta-caso__texto"><strong>{t.casoResultado}</strong> {caso.resultado}</p>}
+  </div>
+</article>

@@ -1,0 +1,39 @@
+---
+// Tarjeta compacta de un servicio complementario (bajo pedido).
+// El video va detrás de "Ver ejemplo": ni el póster ni el archivo se piden hasta
+// que el visitante lo abre (src/scripts/videos.js).
+import type { Complementario } from '../../data/complementarios';
+import { textos as t } from '../../data/textos';
+import { waLink } from '../../lib/whatsapp';
+import Vinetas from '../Vinetas.astro';
+
+interface Props {
+  servicio: Complementario;
+  nivel?: 'h2' | 'h3' | 'h4';
+  /** Pone el id del servicio como ancla de la tarjeta (#redes, #videos, #inventario). */
+  ancla?: boolean;
+}
+const { servicio: c, nivel: Titulo = 'h4', ancla = false } = Astro.props;
+---
+
+<div class="tilt-card tarjeta-comp" data-tilt-card id={ancla ? c.id : undefined}>
+  <span class="tarjeta-comp__insignia">{t.compBadge}</span>
+  <Titulo class="tarjeta-comp__nombre">{c.nombre}</Titulo>
+  <div class="tarjeta-comp__precios">
+    {c.precios.map((precio) => <span class="tarjeta-comp__precio">{precio}</span>)}
+  </div>
+  <Vinetas items={c.vinetas} variante="simples" />
+  {c.nota && <p class="tarjeta-comp__nota">{c.nota}</p>}
+  {c.video && (
+    <details class="comp-ejemplo" data-ejemplo>
+      <summary>{t.compVerEjemplo} <span class="comp-ejemplo-arrow" aria-hidden="true">▾</span></summary>
+      <div class:list={['sk-video-wrap', 'tarjeta-comp__video', c.video.vertical && 'tarjeta-comp__video--vertical']} data-video-wrap>
+        <video data-src={c.video.src} data-poster={c.video.poster} playsinline preload="none"></video>
+        <button type="button" class="sk-video-play-btn" data-video-playbtn aria-label={c.video.etiqueta}>
+          <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
+        </button>
+      </div>
+    </details>
+  )}
+  <a class="tarjeta-comp__boton hv-gris-suave fc-blanco" href={waLink(c.mensajeWhatsApp)} target="_blank" data-origen={c.origen}>{t.compCta}</a>
+</div>

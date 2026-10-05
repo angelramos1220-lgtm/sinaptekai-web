@@ -1,0 +1,29 @@
+---
+// Tabla comparativa de los dos paquetes. Datos: src/data/paquetes.ts.
+// En la portada va oculta detrás de un botón (ver Paquetes.astro); en la página
+// del servicio se muestra abierta.
+import { paquetes, comparativa } from '../../data/paquetes';
+import { textos as t } from '../../data/textos';
+
+interface Props {
+  id?: string;
+  oculta?: boolean;
+}
+const { id, oculta = false } = Astro.props;
+const marca = (incluye: boolean) => (incluye ? '✓' : '–');
+---
+
+<div class="cmp-table" id={id} hidden={oculta}>
+  <div class="cmp-row cmp-row--head">
+    <span class="cmp-label">{t.compareFeature}</span>
+    {paquetes.map((p) => <span class="cmp-pkg">{p.nombre}</span>)}
+  </div>
+  {comparativa.map((fila) => (
+    <div class="cmp-row">
+      <span class="cmp-label">{fila.caracteristica}</span>
+      {fila.incluye.map((incluye) => (
+        <span class:list={['cmp-mark', incluye ? 'cmp-mark--si' : 'cmp-mark--no']}>{marca(incluye)}</span>
+      ))}
+    </div>
+  ))}
+</div>

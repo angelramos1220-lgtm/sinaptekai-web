@@ -1,0 +1,19 @@
+---
+// Botón que abre WhatsApp con un mensaje prellenado.
+// "origen" es el valor que recibe GA4 en el evento contacto_whatsapp.
+import { waLink } from '../lib/whatsapp';
+
+interface Props {
+  mensaje: string;
+  origen: string;
+  texto: string;
+  grande?: boolean;
+  class?: string;
+}
+const { mensaje, origen, texto, grande = false, class: clase } = Astro.props;
+---
+
+<a href={waLink(mensaje)} target="_blank" rel="noopener" data-origen={origen} class:list={['boton', 'boton--wa', grande && 'boton--grande', clase]}>
+  <span class="boton__punto" aria-hidden="true"></span>
+  {texto}
+</a>

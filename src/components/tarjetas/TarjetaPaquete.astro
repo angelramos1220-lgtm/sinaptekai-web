@@ -1,0 +1,35 @@
+---
+// Tarjeta de un paquete (Asistente Virtual, Crecimiento 360°).
+import type { Paquete } from '../../data/paquetes';
+import { mensajePaquete } from '../../data/paquetes';
+import { textos as t } from '../../data/textos';
+import { waLink } from '../../lib/whatsapp';
+import Vinetas from '../Vinetas.astro';
+
+interface Props {
+  paquete: Paquete;
+  /** Nivel del título dentro de la página. */
+  nivel?: 'h2' | 'h3';
+}
+const { paquete, nivel: Titulo = 'h3' } = Astro.props;
+const fondo = paquete.destacado ? 'rgba(30,27,58,0.85)' : 'rgba(15,23,42,0.78)';
+---
+
+<div
+  class:list={['tilt-card', 'tarjeta-paquete', paquete.destacado && 'tilt-card--featured']}
+  data-tilt-card
+  style={`--hover-glow: ${paquete.resplandor}; --card-fill: ${fondo};`}
+>
+  {paquete.destacado && <span class="tarjeta-paquete__insignia">{paquete.insignia}</span>}
+  <div class="tarjeta-paquete__icono">
+    {paquete.icono === 'chat' && <div class="tarjeta-paquete__icono-chat"></div>}
+    {paquete.icono === 'estrella' && <div class="tarjeta-paquete__icono-estrella"><span></span><span></span></div>}
+  </div>
+  <Titulo class="tarjeta-paquete__nombre">{paquete.nombre}</Titulo>
+  <div class="tarjeta-paquete__precio">
+    <span class="tarjeta-paquete__monto">{t.pkgDesde} {paquete.instalacion}</span>
+    <span class="tarjeta-paquete__nota">{t.pkgInstallWord} · {paquete.mensual}</span>
+  </div>
+  <Vinetas items={paquete.vinetas} />
+  <a class="boton-tarjeta hv-brillo fc-blanco" href={waLink(mensajePaquete(paquete))} target="_blank" data-origen={paquete.origen}>{t.pkgCtaBtn}</a>
+</div>

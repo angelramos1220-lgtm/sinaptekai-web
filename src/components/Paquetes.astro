@@ -4,16 +4,17 @@
 // Todos los montos salen de src/data/precios.ts.
 import { textos as t } from '../data/textos';
 import { rubros } from '../data/rubros';
-import { paquetes, comparativa, mensajePaquete } from '../data/paquetes';
+import { paquetes } from '../data/paquetes';
 import { masServicios } from '../data/masServicios';
 import { complementarios } from '../data/complementarios';
-import { waLink } from '../lib/whatsapp';
+import TarjetaPaquete from './tarjetas/TarjetaPaquete.astro';
+import Comparativa from './tarjetas/Comparativa.astro';
+import TarjetaMasServicio from './tarjetas/TarjetaMasServicio.astro';
+import TarjetaComplementario from './tarjetas/TarjetaComplementario.astro';
 
 // Color de acento de la sección.
 const pkgAccent = '#4F46E5';
 const pkgAccentSoft = 'rgba(79,70,229,0.18)';
-const marca = (incluye: boolean) => (incluye ? '✓' : '–');
-const colorMarca = (incluye: boolean) => (incluye ? pkgAccent : '#475569');
 ---
 
 <section id="paquetes" data-screen-label="Paquetes" style="background:#0B0F19; color:#F1F5F9; padding:96px 48px 140px; box-sizing:border-box; position:relative; overflow:hidden;">
@@ -33,38 +34,7 @@ const colorMarca = (incluye: boolean) => (incluye ? pkgAccent : '#475569');
 
     <div style="display:flex; flex-direction:column; gap:16px;">
     <div class="pkg-grid" data-tilt-grid>
-      {paquetes.map((pkg) => (<Fragment>
-        <div class:list={['tilt-card', pkg.destacado && 'tilt-card--featured']} data-tilt-card style={`--hover-glow: ${pkg.resplandor}; --card-fill: ${pkg.destacado ? 'rgba(30,27,58,0.85)' : 'rgba(15,23,42,0.78)'}; position:relative; border-radius:20px; padding:32px; display:flex; flex-direction:column; gap:18px;`}>
-          {pkg.destacado && (<Fragment>
-            <span style={`position:absolute; top:-13px; left:32px; background:${pkgAccent}; color:#fff; font-size:12px; font-weight:800; padding:5px 14px; border-radius:999px; letter-spacing:0.3px;`}>{pkg.insignia}</span>
-          </Fragment>)}
-          <div style={`width:48px; height:48px; border-radius:13px; background:${pkgAccent}; display:flex; align-items:center; justify-content:center; flex-shrink:0;`}>
-            {pkg.icono === 'chat' && (<Fragment>
-              <div style="width:20px; height:17px; background:#fff; border-radius:50% 50% 50% 4px;"></div>
-            </Fragment>)}
-            {pkg.icono === 'estrella' && (<Fragment>
-              <div style="position:relative; width:20px; height:20px;">
-                <div style="position:absolute; inset:2px; background:#fff;"></div>
-                <div style="position:absolute; inset:2px; background:#fff; transform:rotate(45deg);"></div>
-              </div>
-            </Fragment>)}
-          </div>
-          <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:21px; font-weight:700;">{pkg.nombre}</h3>
-          <div style="display:flex; flex-direction:column; gap:2px;">
-            <span style="font-size:26px; font-weight:800; letter-spacing:-0.5px;">{t.pkgDesde} {pkg.instalacion}</span>
-            <span style="font-size:13px; color:#94A3B8; font-weight:600;">{t.pkgInstallWord} · {pkg.mensual}</span>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:10px; margin-top:4px;">
-            {pkg.vinetas.map((b) => (<Fragment>
-              <div style="display:flex; gap:10px; align-items:flex-start;">
-                <span style={`width:16px; height:16px; border-radius:50%; background:${pkgAccentSoft}; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center;`}><span style={`width:5px; height:5px; border-radius:50%; background:${pkgAccent}; display:block;`}></span></span>
-                <span style="font-size:14px; line-height:1.5; color:#CBD5E1;">{b}</span>
-              </div>
-            </Fragment>))}
-          </div>
-          <a class="hv-brillo fc-blanco" href={waLink(mensajePaquete(pkg))} target="_blank" data-origen={pkg.origen} style={`margin-top:auto; display:inline-flex; align-items:center; justify-content:center; min-height:48px; border-radius:12px; background:${pkgAccent}; color:#fff; font-weight:700; font-size:15px; text-align:center;`}>{t.pkgCtaBtn}</a>
-        </div>
-      </Fragment>))}
+      {paquetes.map((p) => <TarjetaPaquete paquete={p} />)}
     </div>
     {/* Comparativa: justo debajo de los 2 paquetes que compara, con su mismo ancho */}
     <div id="comparativa" class="pkg-narrow">
@@ -72,21 +42,7 @@ const colorMarca = (incluye: boolean) => (incluye ? pkgAccent : '#475569');
         <span data-etiqueta>{t.compareShow}</span>
         <span data-flecha style="display:inline-block; transition:transform .25s ease; transform:rotate(0deg);">▾</span>
       </button>
-      <div class="cmp-table" id="comparativa-tabla" hidden>
-          <div class="cmp-row cmp-row--head">
-            <span class="cmp-label">{t.compareFeature}</span>
-            {paquetes.map((pkg) => (<Fragment>
-              <span class="cmp-pkg">{pkg.nombre}</span>
-            </Fragment>))}
-          </div>
-          {comparativa.map((feat) => (<Fragment>
-            <div class="cmp-row">
-              <span class="cmp-label">{feat.caracteristica}</span>
-              <span class="cmp-mark" style={`color:${colorMarca(feat.incluye[0])};`}>{marca(feat.incluye[0])}</span>
-              <span class="cmp-mark" style={`color:${colorMarca(feat.incluye[1])};`}>{marca(feat.incluye[1])}</span>
-            </div>
-          </Fragment>))}
-        </div>
+      <Comparativa id="comparativa-tabla" oculta />
     </div>
     </div>
 
@@ -97,30 +53,7 @@ const colorMarca = (incluye: boolean) => (incluye ? pkgAccent : '#475569');
         <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.5px;">{t.addonsTitle}</h3>
       </div>
       <div class="pkg-grid" data-tilt-grid>
-        {masServicios.map((m) => (<Fragment>
-          <div class="tilt-card" data-tilt-card style={`--hover-glow: ${m.colores.resplandor}; --card-fill: ${m.colores.fondo}; position:relative; border-radius:18px; padding:28px; display:flex; flex-direction:column; gap:14px;`}>
-            <span style={`position:absolute; top:-11px; left:24px; background:${m.colores.acento}; color:${m.colores.tinta}; font-size:11px; font-weight:800; padding:4px 12px; border-radius:999px; letter-spacing:0.3px;`}>{m.insignia}</span>
-            <div style={`width:40px; height:40px; border-radius:11px; background:${m.colores.acento}; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px;`}>{m.emoji}</div>
-            <h4 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:19px; font-weight:700;">{m.nombre}</h4>
-            <p style="margin:0; font-size:14px; line-height:1.55; color:#94A3B8;">{m.bajada}</p>
-            <div style="display:flex; flex-direction:column; gap:2px;">
-              <span style="font-size:22px; font-weight:800; letter-spacing:-0.5px;">{m.precio}</span>
-              <span style="font-size:12px; line-height:1.5; color:#94A3B8; font-weight:600;">{m.notaPrecio}</span>
-            </div>
-            <div style="display:flex; flex-direction:column; gap:8px; margin-top:2px;">
-              {m.vinetas.map((b) => (<Fragment>
-                <div style="display:flex; gap:10px; align-items:flex-start;">
-                  <span style={`width:16px; height:16px; border-radius:50%; background:${m.colores.suave}; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center;`}><span style={`width:5px; height:5px; border-radius:50%; background:${m.colores.acento}; display:block;`}></span></span>
-                  <span style="font-size:14px; line-height:1.5; color:#CBD5E1;">{b}</span>
-                </div>
-              </Fragment>))}
-            </div>
-            {m.prueba && (<Fragment>
-              <p style={`margin:0; font-size:12px; line-height:1.5; font-weight:700; color:${m.colores.acento}; background:${m.colores.suave}; padding:8px 12px; border-radius:10px;`}>{m.prueba}</p>
-            </Fragment>)}
-            <a class="hv-brillo fc-blanco" href={waLink(m.mensajeWhatsApp)} target="_blank" data-origen={m.origen} style={`margin-top:auto; display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:11px; background:${m.colores.acento}; color:${m.colores.tinta}; font-weight:700; font-size:14px; text-align:center;`}>{t.masCta}</a>
-          </div>
-        </Fragment>))}
+        {masServicios.map((m) => <TarjetaMasServicio servicio={m} />)}
       </div>
     </div>
 
@@ -132,40 +65,7 @@ const colorMarca = (incluye: boolean) => (incluye ? pkgAccent : '#475569');
         <p style="margin:0; font-size:14px; line-height:1.6; color:#94A3B8;">{t.compSub}</p>
       </div>
       <div class="comp-grid" data-tilt-grid>
-        {complementarios.map((c) => (<Fragment>
-          <div class="tilt-card" data-tilt-card style="--hover-glow: rgba(148,163,184,0.12); --card-fill: rgba(15,23,42,0.55); position:relative; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:10px;">
-            <span style="align-self:flex-start; border:1px solid rgba(148,163,184,0.35); color:#94A3B8; font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; letter-spacing:0.3px;">{t.compBadge}</span>
-            <h4 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:16px; font-weight:700; color:#E2E8F0;">{c.nombre}</h4>
-            <div style="display:flex; flex-direction:column; gap:2px;">
-              {c.precios.map((pr) => (<Fragment>
-                <span style="font-size:13px; font-weight:700; color:#CBD5E1;">{pr}</span>
-              </Fragment>))}
-            </div>
-            <div style="display:flex; flex-direction:column; gap:6px;">
-              {c.vinetas.map((b) => (<Fragment>
-                <div style="display:flex; gap:8px; align-items:flex-start;">
-                  <span style="width:5px; height:5px; border-radius:50%; background:#64748B; flex-shrink:0; margin-top:8px; display:block;"></span>
-                  <span style="font-size:13px; line-height:1.5; color:#94A3B8;">{b}</span>
-                </div>
-              </Fragment>))}
-            </div>
-            {c.nota && (<Fragment>
-              <p style="margin:0; font-size:11px; line-height:1.5; color:#94A3B8;">{c.nota}</p>
-            </Fragment>)}
-            {c.video && (<Fragment>
-              <details class="comp-ejemplo" data-ejemplo>
-                <summary>{t.compVerEjemplo} <span class="comp-ejemplo-arrow" aria-hidden="true">▾</span></summary>
-                <div class="sk-video-wrap" data-video-wrap style={`aspect-ratio:${c.video.vertical ? '9/16' : 'auto'}; max-height:${c.video.vertical ? '360px' : 'none'}; margin-top:8px;`}>
-                  <video data-src={c.video.src} data-poster={c.video.poster} playsinline preload="none" style={`width:100%; height:${c.video.vertical ? '100%' : 'auto'}; border-radius:12px; display:block; background:#000; object-fit:cover;`}></video>
-                  <button type="button" class="sk-video-play-btn" data-video-playbtn aria-label={c.video.etiqueta}>
-                    <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 5v14l11-7z"></path></svg>
-                  </button>
-                </div>
-              </details>
-            </Fragment>)}
-            <a class="hv-gris-suave fc-blanco" href={waLink(c.mensajeWhatsApp)} target="_blank" data-origen={c.origen} style="margin-top:auto; display:inline-flex; align-items:center; justify-content:center; min-height:44px; border-radius:10px; border:1px solid rgba(148,163,184,0.35); background:transparent; color:#E2E8F0; font-weight:700; font-size:13px; text-align:center;">{t.compCta}</a>
-          </div>
-        </Fragment>))}
+        {complementarios.map((c) => <TarjetaComplementario servicio={c} />)}
       </div>
     </div>
 
