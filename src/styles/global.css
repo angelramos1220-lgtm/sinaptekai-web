@@ -62,6 +62,7 @@
   --fuente-titulos: 'Space Grotesk', sans-serif;
   /* Medidas */
   --ancho-max: 1240px;
+  /* Margen lateral de todas las secciones del sitio: 48 px, y 20 px en móvil (abajo). */
   --margen-lateral: 48px;
   --seccion-arriba: 96px;
   --seccion-abajo: 140px;
@@ -182,7 +183,7 @@ a:hover { color: #4F46E5; }
 .hamburger-bar { width: 20px; height: 2px; border-radius: 2px; background: #F1F5F9; transition: transform .25s ease, opacity .25s ease; }
 #mobile-nav-panel {
   display: flex; flex-direction: column; gap: 4px;
-  padding: 12px 16px 20px; border-top: 1px solid #1E293B;
+  padding: 12px var(--margen-lateral) 20px; border-top: 1px solid #1E293B;
   background: #0B0F19;
 }
 #mobile-nav-panel a { padding: 12px 4px; font-size: 16px; font-weight: 600; color: #CBD5E1; min-height: 44px; display: flex; align-items: center; }
@@ -306,7 +307,10 @@ a:hover { color: #4F46E5; }
   .cmp-pkg { padding: 12px 4px; font-size: 12px; }
 }
 @media (max-width: 767px) {
-  .site-header { padding: 14px 16px; }
+  /* Margen lateral en móvil: 20 px en todo el sitio, portada incluida. (El sitio anterior
+     dejaba 48 px en la portada; se cambió a pedido, como excepción a la paridad.) */
+  :root { --margen-lateral: 20px; }
+  .site-header { padding: 14px var(--margen-lateral); }
   /* Espacio inferior y lateral: el botón flotante del chat (68px, abajo a la
      derecha) no debe quedar encima de la línea de confianza ni del diagrama. */
   .hero-section { padding: 28px 20px 96px; }

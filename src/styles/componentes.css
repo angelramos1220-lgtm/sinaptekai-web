@@ -250,7 +250,6 @@ html.sitio-prueba .franja-prueba { display: block; background: #F59E0B; color: #
 
 /* --- Móvil ----------------------------------------------------------------- */
 @media (max-width: 767px) {
-  :root { --margen-lateral: 20px; }
   .seccion { padding-top: 56px; padding-bottom: 56px; }
   .seccion--primera { padding-top: 28px; }
   .cabecera-pagina { padding-top: 28px; padding-bottom: 56px; }
@@ -283,8 +282,7 @@ html.sitio-prueba .franja-prueba { display: block; background: #F59E0B; color: #
 #mobile-nav-panel a[aria-current="page"] { color: #fff; }
 
 /* --- Footer ---------------------------------------------------------------- */
-.pie { background: var(--fondo-profundo); color: var(--texto-tenue); padding: 64px 48px 32px; box-sizing: border-box; }
-@media (max-width: 767px) { .pie--alineado { padding-left: var(--margen-lateral); padding-right: var(--margen-lateral); } }
+.pie { background: var(--fondo-profundo); color: var(--texto-tenue); padding: 64px var(--margen-lateral) 32px; box-sizing: border-box; }
 .pie__contenido { max-width: var(--ancho-max); margin: 0 auto; display: flex; flex-direction: column; gap: 48px; }
 .pie__columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 40px; }
 .pie__columna { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }

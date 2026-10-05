@@ -5,8 +5,10 @@ Este archivo existe para que una sesión nueva no arranque de cero. No contiene
 contraseñas, tokens ni URLs de webhooks, y no debe contenerlos.
 
 > **Estado: migración a Astro en curso, en la rama `astro`.** Fases 0 a 3 terminadas
-> (inventario, portada con paridad, páginas nuevas, SEO/servidor). Faltan la Fase 4
-> (sitio de prueba en `nuevo.synaptekai.tech`) y la Fase 5 (reemplazar el sitio real).
+> (inventario, portada con paridad, páginas nuevas, SEO/servidor). Fase 4 en curso: la
+> rama `astro` está en origin y se publica como sitio de prueba en
+> `nuevo.synaptekai.tech`. Falta la Fase 5 (reemplazar el sitio real), que además espera
+> la revisión de las preguntas frecuentes (`docs/textos-nuevos.md`).
 > Hasta la Fase 5, `main` sigue siendo el sitio anterior (un bundle de Claude Design) y
 > es lo que está publicado.
 >
@@ -83,6 +85,9 @@ Verificarlo en cada cambio (`node scripts/verificar.js` revisa casi todo):
 - Las páginas internas usan los componentes y los tokens de `src/styles/componentes.css`,
   no estilos en línea. La portada conserva estilos en línea porque se portó con paridad
   exacta del sitio anterior.
+- El margen lateral de todas las secciones, de la cabecera y del footer es el token
+  `--margen-lateral` (`src/styles/global.css`): 48 px, y 20 px por debajo de 768 px.
+  No escribir ese margen a mano en una sección nueva.
 
 ## Dónde vive cada cosa
 
@@ -299,7 +304,7 @@ para probar el sitio con movimiento; el modo reducido se prueba aparte.
 
 - `scripts/comparar.js`: compara el sitio anterior (puerto 8080) con el nuevo (8081),
   sección por sección. Desde la Fase 2, la cabecera, las tarjetas de Servicios y el
-  footer difieren a propósito.
+  footer difieren a propósito; y por debajo de 768 px, también los márgenes laterales.
 - `scripts/bundle.js` y `scripts/capturas.js`: **obsoletos**. Eran para editar y revisar
   el bundle anterior (`legacy/index.html`).
 - `scripts/optimizar-logo.mjs`: generó `src/assets/marca/logo.webp`. Se conserva por si cambia el logo.

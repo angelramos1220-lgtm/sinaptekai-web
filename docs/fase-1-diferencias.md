@@ -100,3 +100,15 @@ Este equipo tiene las animaciones del sistema desactivadas, así que Chrome info
 tarjetas sin entrada escalonada). Para probar las animaciones, la herramienta fuerza el
 modo con movimiento. Si al revisar en tu navegador el hero no se mueve, es por esto, y
 pasa igual en el sitio actual.
+
+## Cambio posterior aprobado: márgenes laterales en móvil (Fase 4, 04/10/2026)
+
+El sitio anterior dejaba 48 px de margen a cada lado en las secciones de la portada
+también en móvil (solo el hero bajaba a 20 px). A pedido, como excepción a la paridad,
+**por debajo de 768 px todo el sitio usa 20 px de margen lateral**: las 8 secciones de la
+portada, el footer, la cabecera y el panel del menú (estos dos tenían 16 px). El
+contenido gana 56 px de ancho en un teléfono de 375 px y la portada queda unos 1 800 px
+más corta.
+
+A 768 px o más no cambia nada: la portada sigue idéntica al sitio anterior. El valor
+vive en un solo lugar, el token `--margen-lateral` de `src/styles/global.css`.
