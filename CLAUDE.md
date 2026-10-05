@@ -4,24 +4,8 @@ Sitio de SynaptekAI: https://synaptekai.tech. Solo en español, precios solo en 
 Este archivo existe para que una sesión nueva no arranque de cero. No contiene
 contraseñas, tokens ni URLs de webhooks, y no debe contenerlos.
 
-> **Estado: migración a Astro en curso, en la rama `astro`.** Fases 0 a 3 terminadas
-> (inventario, portada con paridad, páginas nuevas, SEO/servidor). Fase 4 en curso: la
-> rama `astro` está en origin y se publica como sitio de prueba en
-> `nuevo.synaptekai.tech`. Los textos nuevos (`docs/textos-nuevos.md`) quedaron revisados y
-> aprobados el 04/10/2026. Falta la Fase 5 (reemplazar el sitio real), solo con aprobación.
-> Hasta la Fase 5, `main` sigue siendo el sitio anterior (un bundle de Claude Design) y
-> es lo que está publicado.
->
-> Reglas de la migración, vigentes hasta que termine:
-> - **Nunca commit, merge ni push sobre `main`** hasta la Fase 5, y solo con aprobación explícita.
-> - En `astro` se hacen commits locales. **Push de `astro` solo con aprobación** (Fase 4).
-> - Después de cada push hay que decir en qué servicio de Easypanel tocar "Deploy"
->   (`sitio-web-nuevo` o `sitio-web`) y **esperar la confirmación** antes de verificar con curl.
-> - Ningún texto nuevo sin listarlo en `docs/textos-nuevos.md`.
-> - **Pendiente antes de la Fase 5:** quitar la cabecera temporal `X-Host-Recibido` de
->   `nginx.conf` (el `map $host_recibido` y su `add_header`) y su comprobación en
->   `scripts/verificar.js`. Solo se envía en modo de prueba; existe para comprobar que el
->   proxy de Easypanel pasa a nginx el nombre de dominio original.
+> **Estado:** el sitio es el proyecto Astro de este repo. La migración desde el bundle de
+> Claude Design terminó el 04/10/2026; el sitio anterior queda en la etiqueta `pre-astro`.
 
 ## Contexto del proyecto
 
@@ -30,12 +14,34 @@ contraseñas, tokens ni URLs de webhooks, y no debe contenerlos.
   el sitio cambia solo cuando alguien toca "Deploy" en el servicio. Cada despliegue tarda
   unos segundos en lanzarse; el build corre en un VPS de 2 vCPU compartido con n8n y los
   bots de clientes, así que el build tiene que ser liviano (ver "Build").
-  - `sitio-web`: el sitio real, synaptekai.tech (rama `main`).
-  - `sitio-web-nuevo`: el sitio de prueba, nuevo.synaptekai.tech (rama `astro`). Se crea en la Fase 4.
+  - `sitio-web`: el sitio real, synaptekai.tech. Despliega la rama `main`.
+  - `sitio-web-nuevo`: el entorno de prueba permanente, nuevo.synaptekai.tech. Despliega
+    la rama `astro`. Va siempre en modo de prueba (ver más abajo).
 - **Tecnología:** Astro 5.18, 100 % estático, sin frameworks de interfaz. nginx sirve el
   resultado. El comportamiento es JavaScript/TypeScript a mano en `src/scripts/`.
 - **Estilo:** tema oscuro, acentos índigo/violeta y teal, tipografías Manrope (texto) y
   Space Grotesk (títulos de bloques), autoalojadas en `src/assets/fonts/`.
+
+## Flujo de trabajo
+
+Ningún cambio va directo a `main`. Siempre pasa primero por el entorno de prueba:
+
+1. **El cambio se hace en una rama.** La rama de revisión es `astro`, la que despliega el
+   entorno de prueba. Un cambio hecho en otra rama se fusiona antes en `astro`.
+2. **Se verifica en local:** `npm run check`, Docker y `node scripts/verificar.js`.
+3. **Commit y push de la rama**, con aprobación.
+4. **Deploy en `sitio-web-nuevo`.** Lo toca Angel: hay que pedírselo y esperar su
+   confirmación. Después se revisa en https://nuevo.synaptekai.tech
+   (`node scripts/verificar.js --base https://nuevo.synaptekai.tech`).
+5. **Con su aprobación, fusión en `main` y push.**
+6. **Deploy en `sitio-web`.** Igual: pedírselo, esperar su confirmación y verificar en
+   https://synaptekai.tech (`node scripts/verificar.js --base https://synaptekai.tech`).
+
+Después de cada push hay que decir en qué servicio tocar "Deploy" y **esperar la
+confirmación antes de verificar**: un push no publica nada.
+
+Vuelta atrás de una publicación: `git revert` del commit que se fusionó en `main`
+(`git revert -m 1 <hash>` si fue un commit de fusión), push y Deploy en `sitio-web`.
 
 ## Lo que no se puede romper
 
@@ -70,10 +76,11 @@ Verificarlo en cada cambio (`node scripts/verificar.js` revisa casi todo):
 
 ## Reglas de trabajo
 
-- **No hacer commit ni push sin aprobación.** Al terminar un cambio: levantarlo en
-  localhost y esperar la revisión.
+- **No hacer commit ni push sin aprobación**, y nunca commit directo en `main` (ver "Flujo
+  de trabajo"). Al terminar un cambio: levantarlo en localhost y esperar la revisión.
 - **No inventar datos, cifras, clientes, funciones ni promesas.** Todo texto que no exista
-  ya en el sitio se lista en `docs/textos-nuevos.md` para revisión.
+  ya en el sitio se lista en `docs/textos-nuevos.md`, en una sección nueva al final, hasta
+  que Angel lo revise.
 - **Los textos de los casos (Due Hotel, Aquamatic, Oral Dent) se copian exactos.** Están
   aprobados por el cliente solo para este sitio web: no se resumen, no se reescriben y no
   se usan en piezas para redes sociales.
@@ -109,9 +116,8 @@ src/
 public/          Se publica tal cual: assets/ (PDF, favicons, og-image, videos), bot.html, robots.txt, robots-prueba.txt.
 nginx.conf       Servidor: URLs sin extensión, Markdown por negociación, caché, 404, modo de prueba, www.
 Dockerfile       Build con Node y sitio final con nginx.
-docs/            inventario.md (sitio anterior), fase-1-diferencias.md, textos-nuevos.md.
-scripts/         verificar.js, lighthouse.js y herramientas de la migración (ver "Verificación").
-legacy/          El bundle anterior, solo como referencia. Se borra en la Fase 5.
+docs/            textos-nuevos.md (textos revisados) y el registro de la migración.
+scripts/         verificar.js, lighthouse.js y optimizar-logo.mjs (ver "Verificación").
 ```
 
 | Qué | Archivo en `src/data/` |
@@ -283,9 +289,6 @@ Queda en http://localhost:8081, **en modo de prueba** (con la franja y con `noin
 porque `localhost` no es el dominio real. Para ver lo que responderá el dominio real,
 sin tocar DNS: `curl -sI -H "Host: synaptekai.tech" http://localhost:8081/`.
 
-El sitio anterior (rama `main`) se levanta igual en el puerto 8080, con la imagen
-`sinaptekai-web:local` y el contenedor `synaptekai-web-local`.
-
 ## Verificación
 
 ```
@@ -293,17 +296,21 @@ node scripts/verificar.js                 # todo, contra http://localhost:8081
 node scripts/verificar.js --http          # solo servidor: URLs, cabeceras, metas, Markdown, modo de prueba
 node scripts/verificar.js --navegador     # solo navegador
 node scripts/verificar.js --capturas dir  # además, capturas de cada página a 375 y 1280 px
-node scripts/verificar.js --base https://nuevo.synaptekai.tech
-node scripts/lighthouse.js                # Lighthouse móvil en /, un servicio y /casos
+node scripts/verificar.js --base https://nuevo.synaptekai.tech   # el entorno de prueba
+node scripts/verificar.js --base https://synaptekai.tech         # el sitio real
+node scripts/lighthouse.js                # Lighthouse móvil en /, un servicio y /casos (acepta --base)
 ```
 
 `verificar.js` usa Chrome o Edge sin ventana y **no toca producción**: las llamadas a n8n
 y a Google Analytics se responden ahí mismo con datos simulados, y el formulario del
 checklist nunca llega a n8n. Contra localhost, cada página se abre con el nombre del
 dominio real (Chrome lo resuelve hacia el contenedor) para revisarla como la verá el
-público, y además se comprueba el modo de prueba con varios nombres de dominio. Revisa cada página a 375, 768, 1280 y 1440 px (consola,
-peticiones fallidas, desborde horizontal, cabecera en una fila), los enlaces a WhatsApp y
-su evento, el menú, las anclas, el checklist, el popup, el chat y los videos diferidos.
+público, y además se comprueba el modo de prueba con varios nombres de dominio. Contra el
+sitio real tampoco deja rastro: no envía formularios ni visitas a Analytics.
+
+Revisa cada página a 375, 768, 1280 y 1440 px (consola, peticiones fallidas, desborde
+horizontal, cabecera en una fila), los enlaces a WhatsApp y su evento, el menú, las
+anclas, el checklist, el popup, el chat y los videos diferidos.
 
 Metas de Lighthouse (móvil): Rendimiento ≥ 95; Accesibilidad, Buenas prácticas y SEO = 100.
 La portada debe pesar menos de 200 kB en la carga inicial. Fuera del dominio real el
@@ -314,11 +321,5 @@ Nota: si el equipo tiene apagadas las animaciones del sistema, Chrome informa
 `prefers-reduced-motion` y desactiva el desplazamiento suave. Las herramientas lo fuerzan
 para probar el sitio con movimiento; el modo reducido se prueba aparte.
 
-### Herramientas de la migración (se borran en la Fase 5)
-
-- `scripts/comparar.js`: compara el sitio anterior (puerto 8080) con el nuevo (8081),
-  sección por sección. Desde la Fase 2, la cabecera, las tarjetas de Servicios y el
-  footer difieren a propósito; y por debajo de 768 px, también los márgenes laterales.
-- `scripts/bundle.js` y `scripts/capturas.js`: **obsoletos**. Eran para editar y revisar
-  el bundle anterior (`legacy/index.html`).
-- `scripts/optimizar-logo.mjs`: generó `src/assets/marca/logo.webp`. Se conserva por si cambia el logo.
+`scripts/optimizar-logo.mjs` generó `src/assets/marca/logo.webp` a partir del logo
+original; se conserva por si cambia el logo.

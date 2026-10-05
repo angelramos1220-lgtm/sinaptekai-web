@@ -1,5 +1,9 @@
 # Fase 1 — Comparación de la portada: sitio actual vs. Astro
 
+> Registro de la migración (octubre de 2026). El sitio anterior y la herramienta de
+> comparación ya no están en el repo: se pueden recuperar de la etiqueta `pre-astro` y
+> del historial de la rama `astro`.
+
 Fecha: 04/10/2026. Sitio actual: rama `main` (`e019b73`) en `localhost:8080`.
 Sitio nuevo: rama `astro` en `localhost:8081`. Herramienta: `scripts/comparar.js`
 (Chrome sin ventana; las llamadas a n8n y a GA4 se simulan, no llegan a producción).

@@ -1,5 +1,9 @@
 # Inventario del sitio actual (antes de migrar a Astro)
 
+> Registro de la migración (octubre de 2026): describe el sitio anterior, el bundle de
+> Claude Design, tal como estaba antes de pasar a Astro. Ese sitio queda en la etiqueta
+> `pre-astro`. Sirve como lista de lo que el sitio nuevo tenía que conservar.
+
 Punto de partida: rama `main`, commit `e019b73` (04/10/2026), igual a `origin/main` y a lo que
 sirve https://synaptekai.tech. Todo lo que sigue se leyó del código y se comprobó contra
 producción con peticiones de solo lectura. No se envió ningún formulario.

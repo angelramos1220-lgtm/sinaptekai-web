@@ -84,6 +84,7 @@ const NEGOCIO_TS = fs.readFileSync(path.join(ROOT, 'src/data/negocio.ts'), 'utf8
 const WEBHOOK_CHECKLIST = (NEGOCIO_TS.match(/webhookChecklist:\s*'([^']+)'/) || [])[1];
 const WEBHOOK_CHAT = (NEGOCIO_TS.match(/webhookChat:\s*'([^']+)'/) || [])[1];
 if (!WEBHOOK_CHECKLIST || !WEBHOOK_CHAT) { console.error('ERROR: no pude leer los webhooks de src/data/negocio.ts. No se ejecuta nada, para no llamar a n8n de verdad.'); process.exit(2); }
+const GA4 = (NEGOCIO_TS.match(/ga4:\s*'([^']+)'/) || [])[1];
 const ORIGENES_N8N = Array.from(new Set([WEBHOOK_CHECKLIST, WEBHOOK_CHAT].map((u) => new URL(u).origin)));
 const ES_N8N = (url) => ORIGENES_N8N.some((o) => url.startsWith(o + '/')) || /\/webhook(-test)?\//.test(url);
 
@@ -114,7 +115,7 @@ const dato = (texto) => log('- ' + texto);
 // ---------------------------------------------------------------- servidor
 function pedir(ruta, o = {}) {
   return new Promise((res, rej) => {
-    const u = new URL(BASE + ruta);
+    const u = new URL((o.base || BASE) + ruta);
     const cab = { 'Accept-Encoding': o.gzip ? 'gzip' : 'identity' };
     if (o.host) cab.Host = o.host;
     if (o.accept) cab.Accept = o.accept;
@@ -273,12 +274,9 @@ async function verificarServidor() {
     }
     const rob = await pedir('/robots.txt', o);
     if (rob.estado !== 200 || !/^User-agent: \*\s+Disallow: \/\s*$/.test(rob.texto.trim())) problemas.push('robots.txt: ' + rob.texto.slice(0, 60));
-    // TEMPORAL (se quita antes de la Fase 5, con la cabecera de nginx.conf): el nombre de
-    // dominio que nginx recibió del proxy tiene que ser el mismo que se pidió.
-    const recibido = (await pedir('/', o)).cab['x-host-recibido'];
-    const esperado = (host || new URL(BASE).hostname).toLowerCase();
-    if (recibido !== undefined && recibido !== esperado) problemas.push('nginx recibió el dominio "' + recibido + '" y se pidió "' + esperado + '": el proxy no pasa el nombre original');
-    ok(!problemas.length, etiqueta + ' → modo de prueba: "X-Robots-Tag: noindex, nofollow" en páginas, .md, 404 y archivos; robots.txt con "Disallow: /"' + (recibido !== undefined ? '; nginx recibió el dominio "' + recibido + '"' : ''), problemas.join('; '));
+    // X-Host-Recibido fue una cabecera de diagnóstico de la migración: no debe volver.
+    if ((await pedir('/', o)).cab['x-host-recibido'] !== undefined) problemas.push('queda la cabecera temporal X-Host-Recibido');
+    ok(!problemas.length, etiqueta + ' → modo de prueba: "X-Robots-Tag: noindex, nofollow" en páginas, .md, 404 y archivos; robots.txt con "Disallow: /"', problemas.join('; '));
   };
   const cabecerasReal = async (host, etiqueta) => {
     const o = host ? { host } : {};
@@ -302,6 +300,8 @@ async function verificarServidor() {
     ok(robotsOtro.estado === 404, 'el robots de prueba no se puede pedir directo (/robots-prueba.txt → 404)', 'estado ' + robotsOtro.estado);
   } else if (BASE_ES_PRODUCCION) {
     await cabecerasReal(null, new URL(BASE).host);
+    const www = await pedir('/casos?x=1', { base: 'https://www.synaptekai.tech' });
+    ok(www.estado === 301 && www.cab.location === DOMINIO + '/casos?x=1', 'www.synaptekai.tech redirige con 301 a ' + DOMINIO, 'estado ' + www.estado + ' → ' + www.cab.location);
   } else {
     await cabecerasPrueba(null, new URL(BASE).host);
   }
@@ -601,10 +601,12 @@ async function verificarNavegador() {
       }
       dato(totalEnlaces + ' enlaces a WhatsApp revisados en total.');
       await cargar('/', 1280);
-      const ga = await evalJs('({ activo: window.__ga4Activo, script: !!document.querySelector(\'script[src*="googletagmanager"]\') })');
+      const ga = await evalJs('({ activo: window.__ga4Activo, script: (document.querySelector(\'script[src*="googletagmanager"]\') || {}).src || "", config: Array.from(window.dataLayer || []).filter((a) => a[0] === "config").map((a) => a[1]).join(",") })');
       const pidioGa = pedidas.some((u) => /googletagmanager|google-analytics/.test(u));
       const franjaBase = await evalJs('document.querySelector(".franja-prueba").getBoundingClientRect().height');
-      if (BASE_ES_PRODUCCION) ok(ga.activo === true && franjaBase === 0, 'dominio real: GA4 activo y sin franja de prueba', JSON.stringify({ ga, franjaBase }));
+      // En el dominio real GA4 se pide y se configura una sola vez. La petición a Google se
+      // intercepta aquí, así que la verificación no deja visitas falsas en Analytics.
+      if (BASE_ES_PRODUCCION) ok(ga.activo === true && ga.script === 'https://www.googletagmanager.com/gtag/js?id=' + GA4 && ga.config === GA4 && pidioGa && franjaBase === 0, 'dominio real: Google Analytics ' + GA4 + ' activo (se pide gtag.js y se configura una sola vez) y sin franja de prueba', JSON.stringify({ ga, pidioGa, franjaBase }));
       else ok(ga.activo === false && !ga.script && !pidioGa && franjaBase > 0, new URL(BASE).host + ' no es el dominio real: franja "Sitio de prueba" visible y GA4 sin cargar (los eventos van a la consola)', JSON.stringify({ ga, pidioGa, franjaBase }));
 
       // ---------- Modo de prueba y dominio real, simulados sobre el contenedor local
@@ -636,10 +638,10 @@ async function verificarNavegador() {
           const enlace = marca.matches('a') ? marca : marca.querySelector('a[href*="wa.me"]');
           enlace.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
           const nuevos = Array.from(window.dataLayer).slice(antes).map((a) => Array.from(a));
-          return { host: location.hostname, franja: document.querySelector('.franja-prueba').getBoundingClientRect().height, ga: window.__ga4Activo, script: !!document.querySelector('script[src*="googletagmanager.com/gtag/js?id=G-Q01K6J04NG"]'), config: Array.from(window.dataLayer).filter((a) => a[0] === 'config').map((a) => a[1]).join(','), evento: JSON.stringify(nuevos[0] || null) };
+          return { host: location.hostname, franja: document.querySelector('.franja-prueba').getBoundingClientRect().height, ga: window.__ga4Activo, script: !!document.querySelector('script[src*="googletagmanager.com/gtag/js?id="]'), config: Array.from(window.dataLayer).filter((a) => a[0] === 'config').map((a) => a[1]).join(','), evento: JSON.stringify(nuevos[0] || null) };
         })()`);
         ok(real.host === 'synaptekai.tech' && real.franja === 0, 'synaptekai.tech: sin franja de prueba', JSON.stringify(real));
-        ok(real.ga === true && real.script && real.config === 'G-Q01K6J04NG', 'synaptekai.tech: GA4 G-Q01K6J04NG cargado una sola vez (la petición a Google se intercepta aquí)', JSON.stringify(real));
+        ok(real.ga === true && real.script && real.config === GA4, 'synaptekai.tech: GA4 ' + GA4 + ' cargado una sola vez (la petición a Google se intercepta aquí)', JSON.stringify(real));
         ok(real.evento === '["event","contacto_whatsapp",{"origen":"hero","pagina":"/"}]', 'synaptekai.tech: el clic en WhatsApp envía a GA4 ' + real.evento, JSON.stringify(real));
       }
 
