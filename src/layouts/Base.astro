@@ -99,7 +99,12 @@ const organizacion = {
 
     <!-- Antes de dibujar la página:
          1. Producción es SOLO synaptekai.tech y www.synaptekai.tech (negocio.dominiosProduccion).
-            Solo ahí se carga Google Analytics 4.
+            Solo ahí se carga Google Analytics 4, y con retraso: la configuración queda en la
+            cola (dataLayer) desde el principio, pero la librería gtag.js (177 kB) se pide
+            recién al primer gesto del visitante (scroll, toque, clic, tecla) o, si no hace
+            nada, 3 segundos después de que la página termina de cargar. Así no compite con
+            el dibujado de la página. Los eventos que ocurran antes (un clic en WhatsApp)
+            esperan en la cola y se envían cuando la librería llega: no se pierden.
          2. En cualquier otro dominio (el sitio de prueba, un dominio de Easypanel, localhost)
             la página va en modo de prueba: muestra la franja de aviso y escribe los eventos
             en la consola. nginx aplica la misma regla para el noindex y robots.txt.
@@ -115,10 +120,22 @@ const organizacion = {
       if (produccion) {
         gtag('js', new Date());
         gtag('config', ga4);
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4;
-        document.head.appendChild(s);
+        var gestos = ['scroll', 'pointerdown', 'touchstart', 'keydown'];
+        var pedido = false;
+        var cargarGa = function () {
+          if (pedido) return;
+          pedido = true;
+          gestos.forEach(function (g) { window.removeEventListener(g, cargarGa, true); });
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4;
+          document.head.appendChild(s);
+        };
+        gestos.forEach(function (g) { window.addEventListener(g, cargarGa, { capture: true, passive: true }); });
+        var tope = function () { setTimeout(cargarGa, 3000); };
+        if (document.readyState === 'complete') tope(); else window.addEventListener('load', tope);
+        // Respaldo: si la página nunca termina de cargar (un recurso colgado), se pide igual.
+        setTimeout(cargarGa, 10000);
       }
       if (!produccion) document.documentElement.classList.add('sitio-prueba');
       if (location.hash.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

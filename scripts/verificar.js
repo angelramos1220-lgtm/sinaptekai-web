@@ -511,6 +511,47 @@ async function verificarNavegador() {
       return partes;
     };
 
+    // Google Analytics en el dominio real. La configuración se encola al empezar, pero la
+    // librería (gtag.js) se pide después: al primer gesto o a los 3 s de terminar la carga.
+    // "o" son las opciones de cargar(): contra localhost, el nombre del dominio real.
+    const probarAnalytics = async (o, etiqueta) => {
+      const urlGtag = 'https://www.googletagmanager.com/gtag/js?id=' + GA4;
+      const estado = () => evalJs('({ host: location.hostname, activo: window.__ga4Activo, scripts: Array.from(document.querySelectorAll(\'script[src*="googletagmanager"]\')).map((s) => s.src), franja: document.querySelector(".franja-prueba").getBoundingClientRect().height, cola: JSON.stringify(Array.from(window.dataLayer || []).map((x) => Array.from(x)).filter((x) => x[0] !== "js")) })');
+      const pidio = () => pedidas.filter((u) => u.startsWith(urlGtag)).length;
+      const soloConfig = JSON.stringify([['config', GA4]]);
+      const conEvento = JSON.stringify([['config', GA4], ['event', 'contacto_whatsapp', { origen: 'hero', pagina: '/' }]]);
+
+      // 1. Recién cargada, sin tocar nada.
+      await cargar('/', 1280, Object.assign({ espera: 250 }, o));
+      const a = await estado();
+      ok(a.activo === true && a.franja === 0 && a.cola === soloConfig && !a.scripts.length && !pidio(), etiqueta + ': sin franja de prueba; Google Analytics ' + GA4 + ' queda configurado en la cola y gtag.js no se pide mientras la página se dibuja', JSON.stringify({ a, pedidos: pidio() }));
+
+      // 2. Un clic en WhatsApp antes de que la librería cargue: el evento espera en la cola.
+      await evalJs(`(() => {
+        window.addEventListener('click', (e) => { const x = e.target.closest && e.target.closest('a'); if (x) e.preventDefault(); }, true);
+        const marca = document.querySelector('#inicio [data-origen="hero"]');
+        const enlace = marca.matches('a') ? marca : marca.querySelector('a[href*="wa.me"]');
+        enlace.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+      })()`);
+      const b = await estado();
+      ok(b.cola === conEvento && !b.scripts.length && !pidio(), etiqueta + ': un clic en WhatsApp antes de que cargue Analytics queda en la cola, detrás de la configuración (no se pierde)', JSON.stringify(b));
+
+      // 3. Sin gestos: a los 3 s de terminar la carga.
+      await sleep(3300);
+      const c = await estado();
+      ok(c.scripts.length === 1 && c.scripts[0] === urlGtag && pidio() === 1 && c.cola === conEvento, etiqueta + ': sin tocar la página, gtag.js se pide una sola vez a los 3 s de terminar la carga, con el evento todavía en la cola', JSON.stringify({ c, pedidos: pidio() }));
+
+      // 4. Con un gesto, de inmediato: una tecla y el scroll.
+      for (const [gesto, hacer] of [['una tecla', () => tecla('Shift', 'ShiftLeft', 16)], ['el scroll', () => evalJs('window.scrollTo({ top: 300, behavior: "instant" })')]]) {
+        await cargar('/', 1280, Object.assign({ espera: 250 }, o));
+        const antes = pidio();
+        await hacer();
+        await sleep(300);
+        const d = await estado();
+        ok(antes === 0 && d.scripts.length === 1 && d.scripts[0] === urlGtag && pidio() === 1, etiqueta + ': con el primer gesto del visitante (' + gesto + ') gtag.js se pide de inmediato', JSON.stringify({ antes, d, pedidos: pidio() }));
+      }
+    };
+
     const paginas = PAGINAS.concat([{ ruta: '/no-existe', nombre: '404', noindex: true }]).filter((p) => !SOLO || p.ruta === SOLO);
 
     // ---------- Cada página a cada ancho
@@ -601,13 +642,17 @@ async function verificarNavegador() {
       }
       dato(totalEnlaces + ' enlaces a WhatsApp revisados en total.');
       await cargar('/', 1280);
-      const ga = await evalJs('({ activo: window.__ga4Activo, script: (document.querySelector(\'script[src*="googletagmanager"]\') || {}).src || "", config: Array.from(window.dataLayer || []).filter((a) => a[0] === "config").map((a) => a[1]).join(",") })');
-      const pidioGa = pedidas.some((u) => /googletagmanager|google-analytics/.test(u));
-      const franjaBase = await evalJs('document.querySelector(".franja-prueba").getBoundingClientRect().height');
-      // En el dominio real GA4 se pide y se configura una sola vez. La petición a Google se
-      // intercepta aquí, así que la verificación no deja visitas falsas en Analytics.
-      if (BASE_ES_PRODUCCION) ok(ga.activo === true && ga.script === 'https://www.googletagmanager.com/gtag/js?id=' + GA4 && ga.config === GA4 && pidioGa && franjaBase === 0, 'dominio real: Google Analytics ' + GA4 + ' activo (se pide gtag.js y se configura una sola vez) y sin franja de prueba', JSON.stringify({ ga, pidioGa, franjaBase }));
-      else ok(ga.activo === false && !ga.script && !pidioGa && franjaBase > 0, new URL(BASE).host + ' no es el dominio real: franja "Sitio de prueba" visible y GA4 sin cargar (los eventos van a la consola)', JSON.stringify({ ga, pidioGa, franjaBase }));
+      if (BASE_ES_PRODUCCION) {
+        // La petición a Google se intercepta aquí: la verificación no deja visitas en Analytics.
+        await probarAnalytics({}, 'dominio real');
+      } else {
+        // Ni con un gesto ni esperando: fuera del dominio real Analytics no se pide.
+        await evalJs('window.scrollTo({ top: 300, behavior: "instant" })');
+        await sleep(3400);
+        const ga = await evalJs('({ activo: window.__ga4Activo, script: (document.querySelector(\'script[src*="googletagmanager"]\') || {}).src || "", franja: document.querySelector(".franja-prueba").getBoundingClientRect().height })');
+        const pidioGa = pedidas.some((u) => /googletagmanager|google-analytics/.test(u));
+        ok(ga.activo === false && !ga.script && !pidioGa && ga.franja > 0, new URL(BASE).host + ' no es el dominio real: franja "Sitio de prueba" visible y Google Analytics sin cargar, ni con scroll ni pasados 3 s (los eventos van a la consola)', JSON.stringify({ ga, pidioGa }));
+      }
 
       // ---------- Modo de prueba y dominio real, simulados sobre el contenedor local
       if (LOCAL) {
@@ -630,19 +675,7 @@ async function verificarNavegador() {
         await cargar('/servicios/paginas-web', 1280, { host: DOMINIO_PRUEBA });
         ok(await evalJs('document.querySelector(".franja-prueba").getBoundingClientRect().height > 0'), DOMINIO_PRUEBA + ': la franja también sale en las páginas internas');
 
-        await cargar('/', 1280, { host: 'synaptekai.tech' });
-        const real = await evalJs(`(() => {
-          window.addEventListener('click', (e) => { const a = e.target.closest && e.target.closest('a'); if (a) e.preventDefault(); }, true);
-          const antes = window.dataLayer.length;
-          const marca = document.querySelector('#inicio [data-origen="hero"]');
-          const enlace = marca.matches('a') ? marca : marca.querySelector('a[href*="wa.me"]');
-          enlace.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-          const nuevos = Array.from(window.dataLayer).slice(antes).map((a) => Array.from(a));
-          return { host: location.hostname, franja: document.querySelector('.franja-prueba').getBoundingClientRect().height, ga: window.__ga4Activo, script: !!document.querySelector('script[src*="googletagmanager.com/gtag/js?id="]'), config: Array.from(window.dataLayer).filter((a) => a[0] === 'config').map((a) => a[1]).join(','), evento: JSON.stringify(nuevos[0] || null) };
-        })()`);
-        ok(real.host === 'synaptekai.tech' && real.franja === 0, 'synaptekai.tech: sin franja de prueba', JSON.stringify(real));
-        ok(real.ga === true && real.script && real.config === GA4, 'synaptekai.tech: GA4 ' + GA4 + ' cargado una sola vez (la petición a Google se intercepta aquí)', JSON.stringify(real));
-        ok(real.evento === '["event","contacto_whatsapp",{"origen":"hero","pagina":"/"}]', 'synaptekai.tech: el clic en WhatsApp envía a GA4 ' + real.evento, JSON.stringify(real));
+        await probarAnalytics({ host: 'synaptekai.tech' }, 'synaptekai.tech (contenedor local)');
       }
 
       // ---------- Menú

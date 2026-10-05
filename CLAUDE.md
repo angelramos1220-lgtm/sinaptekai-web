@@ -202,6 +202,13 @@ Escape. Los cortes están en `src/styles/global.css`; el comportamiento, en `src
 - **GA4 solo se carga en `synaptekai.tech` y `www.synaptekai.tech`** (lo decide el script
   en línea de `Base.astro`). En cualquier otro dominio —localhost, el sitio de prueba— los
   eventos se escriben en la consola como `[GA4 · modo prueba] …`, sin ensuciar los datos reales.
+- **La librería de GA4 se carga con retraso**, para que no compita con el dibujado de la
+  página. La configuración queda en la cola (`dataLayer`) desde el inicio, pero `gtag.js`
+  (177 kB) se pide recién al primer gesto del visitante (scroll, toque, clic, tecla) o, si
+  no hace nada, 3 segundos después de que la página termina de cargar. Los eventos que
+  ocurran antes esperan en la cola y se envían cuando la librería llega: no se pierden.
+  Costo aceptado: quien se va antes de esos 3 segundos sin tocar nada no queda contado.
+  Cargada de inmediato, la librería bajaba el rendimiento de Lighthouse de ~97 a ~89.
 - Un único listener delegado (`src/scripts/medicion.ts`) dispara `contacto_whatsapp` en
   cada clic a un enlace `wa.me`, con dos parámetros: `origen` (el `data-origen` del enlace
   o de su contenedor) y `pagina` (la ruta, sin `.html`).
@@ -299,6 +306,7 @@ node scripts/verificar.js --capturas dir  # además, capturas de cada página a 
 node scripts/verificar.js --base https://nuevo.synaptekai.tech   # el entorno de prueba
 node scripts/verificar.js --base https://synaptekai.tech         # el sitio real
 node scripts/lighthouse.js                # Lighthouse móvil en /, un servicio y /casos (acepta --base)
+node scripts/lighthouse.js --como-real --veces 3   # el contenedor local servido como synaptekai.tech
 ```
 
 `verificar.js` usa Chrome o Edge sin ventana y **no toca producción**: las llamadas a n8n
@@ -316,6 +324,11 @@ Metas de Lighthouse (móvil): Rendimiento ≥ 95; Accesibilidad, Buenas práctic
 La portada debe pesar menos de 200 kB en la carga inicial. Fuera del dominio real el
 sitio lleva `noindex` a propósito, así que `lighthouse.js` omite ahí la única auditoría
 de SEO que exige que la página sea indexable; en `synaptekai.tech` se mide completa.
+
+**Localhost y el sitio de prueba no cargan Google Analytics**, así que ahí Lighthouse no
+puede medir lo que pesa. Para eso está `--como-real`: abre el contenedor local con el
+nombre `synaptekai.tech`, de modo que la página carga Analytics de verdad, pero con el
+envío de datos bloqueado (no queda ninguna visita registrada). Solo mide Rendimiento.
 
 Nota: si el equipo tiene apagadas las animaciones del sistema, Chrome informa
 `prefers-reduced-motion` y desactiva el desplazamiento suave. Las herramientas lo fuerzan
