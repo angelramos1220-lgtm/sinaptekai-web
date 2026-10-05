@@ -1,0 +1,79 @@
+---
+// Sección "Paquetes": 2 paquetes, comparativa, "Más servicios" y complementarios.
+// Datos: src/data/paquetes.ts, masServicios.ts, complementarios.ts y rubros.ts.
+// Todos los montos salen de src/data/precios.ts.
+import { textos as t } from '../data/textos';
+import { rubros } from '../data/rubros';
+import { paquetes } from '../data/paquetes';
+import { masServicios } from '../data/masServicios';
+import { complementarios } from '../data/complementarios';
+import TarjetaPaquete from './tarjetas/TarjetaPaquete.astro';
+import Comparativa from './tarjetas/Comparativa.astro';
+import TarjetaMasServicio from './tarjetas/TarjetaMasServicio.astro';
+import TarjetaComplementario from './tarjetas/TarjetaComplementario.astro';
+
+// Color de acento de la sección.
+const pkgAccent = '#4F46E5';
+const pkgAccentSoft = 'rgba(79,70,229,0.18)';
+---
+
+<section id="paquetes" data-screen-label="Paquetes" style="background:#0B0F19; color:#F1F5F9; padding:96px var(--margen-lateral) 140px; box-sizing:border-box; position:relative; overflow:hidden;">
+  <div style={`position:absolute; inset:0; background:radial-gradient(ellipse 55% 55% at 80% 10%, ${pkgAccentSoft}, transparent 70%); pointer-events:none; transition:background .4s ease;`}></div>
+  <div id="paquetes-content" style="max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:48px; position:relative;">
+    <div data-fade="1" style="max-width:640px; display:flex; flex-direction:column; gap:12px;">
+      <span style={`color:${pkgAccent}; font-weight:700; font-size:14px; letter-spacing:1.5px; text-transform:uppercase; transition:color .3s ease;`}>{t.pkgLabel}</span>
+      <h2 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:38px; font-weight:700; letter-spacing:-1px; line-height:1.15; text-wrap:balance;">{t.pkgTitle}</h2>
+      <p style="margin:0; font-size:16px; line-height:1.6; color:#94A3B8;">{t.pkgSub}</p>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:8px;">
+      {rubros.map((chip) => (<Fragment>
+        <span style="display:inline-flex; align-items:center; border:1px solid rgba(148,163,184,0.25); color:#94A3B8; font-size:13px; font-weight:600; padding:6px 14px; border-radius:999px;">{chip}</span>
+      </Fragment>))}
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:16px;">
+    <div class="pkg-grid" data-tilt-grid>
+      {paquetes.map((p) => <TarjetaPaquete paquete={p} />)}
+    </div>
+    {/* Comparativa: justo debajo de los 2 paquetes que compara, con su mismo ancho */}
+    <div id="comparativa" class="pkg-narrow">
+      <button type="button" id="comparativa-boton" class="fc-cian-fino" aria-expanded="false" aria-controls="comparativa-tabla" data-mostrar={t.compareShow} data-ocultar={t.compareHide} style={`display:inline-flex; align-items:center; gap:8px; background:none; border:none; color:${pkgAccent}; font-family:inherit; font-weight:700; font-size:15px; cursor:pointer; padding:10px 0; min-height:44px;`}>
+        <span data-etiqueta>{t.compareShow}</span>
+        <span data-flecha style="display:inline-block; transition:transform .25s ease; transform:rotate(0deg);">▾</span>
+      </button>
+      <Comparativa id="comparativa-tabla" oculta />
+    </div>
+    </div>
+
+    {/* Más servicios: se suman a un paquete o se contratan por separado */}
+    <div id="mas-servicios" class="pkg-narrow" style="display:flex; flex-direction:column; gap:28px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <span style={`color:${pkgAccent}; font-weight:700; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; transition:color .3s ease;`}>{t.addonsLabel}</span>
+        <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.5px;">{t.addonsTitle}</h3>
+      </div>
+      <div class="pkg-grid" data-tilt-grid>
+        {masServicios.map((m) => <TarjetaMasServicio servicio={m} />)}
+      </div>
+    </div>
+
+    {/* Servicios complementarios: bajo pedido, con menos peso visual */}
+    <div id="complementarios" style="display:flex; flex-direction:column; gap:20px; border-top:1px solid #1E293B; padding-top:40px;">
+      <div style="display:flex; flex-direction:column; gap:6px; max-width:640px;">
+        <span style="color:#94A3B8; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;">{t.compLabel}</span>
+        <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:20px; font-weight:700; letter-spacing:-0.3px; color:#E2E8F0;">{t.compTitle}</h3>
+        <p style="margin:0; font-size:14px; line-height:1.6; color:#94A3B8;">{t.compSub}</p>
+      </div>
+      <div class="comp-grid" data-tilt-grid>
+        {complementarios.map((c) => <TarjetaComplementario servicio={c} />)}
+      </div>
+    </div>
+
+    <p style="margin:0; font-size:12px; color:#94A3B8; border-top:1px solid #1E293B; padding-top:24px;">{t.pkgPriceNote}</p>
+  </div>
+</section>
+
+<script>
+  import { iniciarComparativa } from '../scripts/comparativa';
+  iniciarComparativa();
+</script>

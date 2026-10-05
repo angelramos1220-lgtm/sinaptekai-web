@@ -1,0 +1,38 @@
+---
+// /precios: todos los precios en una página. Los grupos y sus filas están en
+// src/data/paginaPrecios.ts; los montos salen de src/data/precios.ts.
+import Pagina from '../layouts/Pagina.astro';
+import CabeceraPagina from '../components/pagina/CabeceraPagina.astro';
+import Seccion from '../components/pagina/Seccion.astro';
+import ListaPrecios from '../components/pagina/ListaPrecios.astro';
+import LlamadoFinal from '../components/pagina/LlamadoFinal.astro';
+import Vinetas from '../components/Vinetas.astro';
+import { gruposPrecios, notasPrecios } from '../data/paginaPrecios';
+import { textosPaginas as tp } from '../data/textosPaginas';
+import { migasJsonLd } from '../lib/datosEstructurados';
+
+const x = tp.precios;
+
+const jsonLd = [migasJsonLd([{ texto: tp.migasInicio, ruta: '/' }, { texto: tp.menuPrecios, ruta: '/precios' }])];
+---
+
+<Pagina titulo={x.seoTitulo} descripcion={x.seoDescripcion} ruta="/precios" jsonLd={jsonLd} markdown>
+  <CabeceraPagina
+    migas={[{ texto: tp.migasInicio, href: '/' }, { texto: tp.menuPrecios }]}
+    etiqueta={x.etiqueta}
+    titulo={x.titulo}
+    bajada={x.bajada}
+  />
+
+  {gruposPrecios.map((grupo) => (
+    <Seccion id={grupo.id} titulo={grupo.titulo} bajada={grupo.bajada} disposicion="lateral" borde>
+      <ListaPrecios filas={grupo.filas} />
+    </Seccion>
+  ))}
+
+  <Seccion id="notas" titulo={x.notasTitulo} disposicion="lateral" borde>
+    <Vinetas items={notasPrecios} variante="grandes" />
+  </Seccion>
+
+  <LlamadoFinal mensaje={x.mensajeWhatsApp} origen={x.origen} />
+</Pagina>

@@ -1,0 +1,38 @@
+---
+// Sección "Recursos": el checklist gratuito y su formulario.
+// El envío lo hace src/scripts/leads.ts (mismo webhook y mismos campos de siempre).
+import { textos as t } from '../data/textos';
+---
+
+<section id="recursos" data-screen-label="Recursos gratuitos" style="background:#0B0F19; color:#F1F5F9; padding:96px var(--margen-lateral) 140px; box-sizing:border-box; position:relative; overflow:hidden;">
+  <div style="position:absolute; inset:0; background:radial-gradient(ellipse 50% 60% at 80% 20%, rgba(6,182,212,0.08), transparent 70%); pointer-events:none;"></div>
+  <div data-fade="1" style="max-width:1240px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:56px; align-items:center; position:relative;">
+    <div style="display:flex; flex-direction:column; gap:20px;">
+      <span style="color:#22D3EE; font-weight:700; font-size:14px; letter-spacing:1.5px; text-transform:uppercase;">{t.resourcesLabel}</span>
+      <h2 style="margin:0; font-size:38px; font-weight:800; letter-spacing:-1px; line-height:1.15; text-wrap:balance; background:linear-gradient(90deg,#818CF8,#22D3EE); -webkit-background-clip:text; background-clip:text; color:transparent;">{t.resourcesTitle}</h2>
+      <p style="margin:0; font-size:16px; line-height:1.6; color:#94A3B8; max-width:480px;">{t.resourcesDesc}</p>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:4px;">
+        <div style="display:flex; gap:10px; align-items:flex-start;"><span style="width:16px; height:16px; border-radius:50%; background:rgba(129,140,248,0.18); flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center;"><span style="width:5px; height:5px; border-radius:50%; background:#818CF8; display:block;"></span></span><span style="font-size:15px; line-height:1.5; color:#CBD5E1;">{t.resourcesBullet1}</span></div>
+        <div style="display:flex; gap:10px; align-items:flex-start;"><span style="width:16px; height:16px; border-radius:50%; background:rgba(129,140,248,0.18); flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center;"><span style="width:5px; height:5px; border-radius:50%; background:#818CF8; display:block;"></span></span><span style="font-size:15px; line-height:1.5; color:#CBD5E1;">{t.resourcesBullet2}</span></div>
+        <div style="display:flex; gap:10px; align-items:flex-start;"><span style="width:16px; height:16px; border-radius:50%; background:rgba(129,140,248,0.18); flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center;"><span style="width:5px; height:5px; border-radius:50%; background:#818CF8; display:block;"></span></span><span style="font-size:15px; line-height:1.5; color:#CBD5E1;">{t.resourcesBullet3}</span></div>
+      </div>
+    </div>
+    <form data-lead-form="" data-lead-source="seccion" novalidate style="width:100%; display:flex; flex-direction:column; gap:14px; background:rgba(30,41,59,0.4); border:1px solid #1E293B; border-radius:20px; padding:32px; box-sizing:border-box;">
+      <label style="display:flex; flex-direction:column; gap:6px; font-size:14px; font-weight:700; color:#CBD5E1;">{t.leadNombre}
+        <input class="fc-campo" name="nombre" type="text" autocomplete="name" aria-describedby="lead-section-error-nombre" style="min-height:44px; border-radius:10px; border:1px solid #334155; background:#0F172A; color:#F1F5F9; padding:0 14px; font-family:inherit; font-size:15px; box-sizing:border-box;">
+        <span id="lead-section-error-nombre" data-error-for="nombre" role="alert" style="display:none; font-size:13px; color:#F87171; font-weight:600;"></span>
+      </label>
+      <label style="display:flex; flex-direction:column; gap:6px; font-size:14px; font-weight:700; color:#CBD5E1;">{t.leadEmail}
+        <input class="fc-campo" name="email" type="email" autocomplete="email" aria-describedby="lead-section-error-email" style="min-height:44px; border-radius:10px; border:1px solid #334155; background:#0F172A; color:#F1F5F9; padding:0 14px; font-family:inherit; font-size:15px; box-sizing:border-box;">
+        <span id="lead-section-error-email" data-error-for="email" role="alert" style="display:none; font-size:13px; color:#F87171; font-weight:600;"></span>
+      </label>
+      <label style="display:flex; flex-direction:column; gap:6px; font-size:14px; font-weight:700; color:#CBD5E1;">{t.leadNegocio}
+        <input class="fc-campo" name="negocio" type="text" autocomplete="organization" aria-describedby="lead-section-error-negocio" style="min-height:44px; border-radius:10px; border:1px solid #334155; background:#0F172A; color:#F1F5F9; padding:0 14px; font-family:inherit; font-size:15px; box-sizing:border-box;">
+        <span id="lead-section-error-negocio" data-error-for="negocio" role="alert" style="display:none; font-size:13px; color:#F87171; font-weight:600;"></span>
+      </label>
+      <button class="hv-indigo fc-indigo" type="submit" style="min-height:48px; border:none; border-radius:12px; background:#4F46E5; color:#fff; font-family:inherit; font-weight:800; font-size:16px; cursor:pointer; margin-top:6px;">{t.resourcesCta}</button>
+      <p data-lead-status="" role="alert" style="display:none; margin:0; font-size:13px; color:#F87171; font-weight:600;"></p>
+      <p style="margin:0; font-size:12px; color:#94A3B8;">{t.resourcesFormNote}</p>
+    </form>
+  </div>
+</section>

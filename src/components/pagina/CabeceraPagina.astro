@@ -1,0 +1,32 @@
+---
+// Encabezado de una página interna: migas, rótulo, título, bajada y acciones.
+import { textosPaginas as tp } from '../../data/textosPaginas';
+
+export interface Miga {
+  texto: string;
+  href?: string;
+}
+interface Props {
+  migas: Miga[];
+  etiqueta?: string;
+  titulo: string;
+  bajada?: string;
+}
+const { migas, etiqueta, titulo, bajada } = Astro.props;
+---
+
+<section class="cabecera-pagina">
+  <div class="contenedor">
+    <nav aria-label={tp.migasEtiqueta}>
+      <ol class="migas">
+        {migas.map((miga) => (
+          <li>{miga.href ? <a href={miga.href}>{miga.texto}</a> : <span aria-current="page">{miga.texto}</span>}</li>
+        ))}
+      </ol>
+    </nav>
+    {etiqueta && <span class="chip chip--insignia">{etiqueta}</span>}
+    <h1 class="titulo-pagina">{titulo}</h1>
+    {bajada && <p class="bajada">{bajada}</p>}
+    {Astro.slots.has('default') && <div class="cabecera-pagina__acciones"><slot /></div>}
+  </div>
+</section>

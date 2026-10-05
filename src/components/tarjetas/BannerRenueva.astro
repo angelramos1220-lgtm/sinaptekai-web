@@ -1,0 +1,28 @@
+---
+// Banner "Renueva tu Página Web". Ocupa todo el ancho de la rejilla donde se ponga;
+// desde 1024 px es horizontal (texto | viñetas | precio y botón), por debajo se apila.
+import { renuevaWeb } from '../../data/planesWeb';
+import { waLink } from '../../lib/whatsapp';
+import Vinetas from '../Vinetas.astro';
+
+interface Props {
+  nivel?: 'h2' | 'h3';
+}
+const { nivel: Titulo = 'h3' } = Astro.props;
+---
+
+<div class="tilt-card tilt-card--pink promo-banner" data-tilt-card data-tilt-max="1.5">
+  <span class="promo-banner__insignia">{renuevaWeb.insignia}</span>
+  <div class="promo-main">
+    <div class="promo-banner__icono">🔄</div>
+    <Titulo class="tarjeta-plan__nombre">{renuevaWeb.nombre}</Titulo>
+    <p class="promo-banner__descripcion">{renuevaWeb.descripcion}</p>
+  </div>
+  <div class="promo-price">
+    <span class="tarjeta-plan__monto">{renuevaWeb.precio}</span>
+    <span class="tarjeta-plan__nota">{renuevaWeb.notaPago}</span>
+    <span class="promo-banner__nota-hosting">{renuevaWeb.notaHosting}</span>
+  </div>
+  <Vinetas items={renuevaWeb.vinetas} class="promo-list" />
+  <a class="promo-cta hv-brillo fc-blanco" href={waLink(renuevaWeb.mensajeWhatsApp)} target="_blank" data-origen={renuevaWeb.origen}>{renuevaWeb.boton}</a>
+</div>

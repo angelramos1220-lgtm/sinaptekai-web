@@ -1,0 +1,36 @@
+---
+// Sección de una página interna: rótulo, título y contenido.
+interface Props {
+  id?: string;
+  etiqueta?: string;
+  titulo?: string;
+  bajada?: string;
+  /** Fondo claro (como Servicios y Casos en la portada). */
+  clara?: boolean;
+  /** Línea separadora arriba. */
+  borde?: boolean;
+  /**
+   * Dónde va el contenido respecto del título:
+   *   apilada  debajo, a todo el ancho (rejillas de tarjetas);
+   *   lateral  al lado, en una columna más angosta (listas, precios, preguntas).
+   *            Por debajo de 1100 px se apila igual que la otra.
+   */
+  disposicion?: 'apilada' | 'lateral';
+}
+const { id, etiqueta, titulo, bajada, clara = false, borde = false, disposicion = 'apilada' } = Astro.props;
+---
+
+<section id={id} class:list={['seccion', clara && 'seccion--clara', borde && 'seccion--borde']}>
+  <div class:list={['contenedor', 'seccion__cuerpo', disposicion === 'lateral' && 'seccion__cuerpo--lateral']}>
+    {(etiqueta || titulo) && (
+      <div class="pila pila--corta" data-fade="1">
+        {etiqueta && <span class="etiqueta">{etiqueta}</span>}
+        {titulo && <h2 class="titulo-seccion">{titulo}</h2>}
+        {bajada && <p class="bajada">{bajada}</p>}
+      </div>
+    )}
+    <div class="pila pila--amplia seccion__contenido">
+      <slot />
+    </div>
+  </div>
+</section>

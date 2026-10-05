@@ -1,0 +1,33 @@
+---
+// /casos: los 3 casos de éxito con su texto aprobado exacto y sus anclas
+// (#due-hotel, #aquamatic, #oral-dent), más el bloque de testimonio.
+import Pagina from '../layouts/Pagina.astro';
+import CabeceraPagina from '../components/pagina/CabeceraPagina.astro';
+import LlamadoFinal from '../components/pagina/LlamadoFinal.astro';
+import TarjetaCaso from '../components/tarjetas/TarjetaCaso.astro';
+import Testimonio from '../components/tarjetas/Testimonio.astro';
+import { casos } from '../data/casos';
+import { textos as t } from '../data/textos';
+import { textosPaginas as tp } from '../data/textosPaginas';
+import { migasJsonLd } from '../lib/datosEstructurados';
+
+const c = tp.casos;
+const jsonLd = [migasJsonLd([{ texto: tp.migasInicio, ruta: '/' }, { texto: c.etiqueta, ruta: '/casos' }])];
+---
+
+<Pagina titulo={c.seoTitulo} descripcion={c.seoDescripcion} ruta="/casos" jsonLd={jsonLd} markdown>
+  <CabeceraPagina
+    migas={[{ texto: tp.migasInicio, href: '/' }, { texto: c.etiqueta }]}
+    etiqueta={c.etiqueta}
+    titulo={c.titulo}
+  />
+
+  <section class="seccion seccion--clara">
+    <div class="contenedor pila pila--amplia">
+      {casos.map((caso) => <TarjetaCaso caso={caso} amplia nivel="h2" />)}
+      <Testimonio />
+    </div>
+  </section>
+
+  <LlamadoFinal titulo={t.casosCta} bajada="" mensaje={t.casosWaMsg} origen={c.origen} />
+</Pagina>

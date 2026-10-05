@@ -1,0 +1,29 @@
+---
+// Sección "Casos de éxito" de la portada. Datos: src/data/casos.ts (textos aprobados
+// por el cliente: se muestran exactos) y src/data/testimonio.ts (null = no se dibuja).
+import { textos as t } from '../data/textos';
+import { casos } from '../data/casos';
+import { waLink } from '../lib/whatsapp';
+import TarjetaCaso from './tarjetas/TarjetaCaso.astro';
+import Testimonio from './tarjetas/Testimonio.astro';
+---
+
+<section id="casos" data-screen-label="Casos de éxito" style="background:#F8FAFC; color:#0F172A; padding:96px var(--margen-lateral) 140px; box-sizing:border-box;">
+  <div style="max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:56px;">
+    <div data-fade="1" style="max-width:640px; display:flex; flex-direction:column; gap:12px;">
+      <span style="color:#4F46E5; font-weight:700; font-size:14px; letter-spacing:1.5px; text-transform:uppercase;">{t.casosLabel}</span>
+      <h2 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:38px; font-weight:800; letter-spacing:-1px; line-height:1.15; text-wrap:balance;">{t.casosTitle}</h2>
+    </div>
+    <div class="casos-grid" data-tilt-grid>
+      {casos.map((caso) => <TarjetaCaso caso={caso} />)}
+    </div>
+    <Testimonio />
+    <div data-fade="1" style="display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; padding-top:16px;">
+      <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:26px; font-weight:800;">{t.casosCta}</h3>
+      <a class="hv-wa fc-cian" href={waLink(t.casosWaMsg)} target="_blank" data-origen="caso" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#052E16; font-weight:700; font-size:15px; padding:14px 28px; border-radius:12px; min-height:48px; box-sizing:border-box;">
+        <span style="width:8px; height:8px; border-radius:50%; background:#052E16; display:inline-block;"></span>
+        {t.ctaWa}
+      </a>
+    </div>
+  </div>
+</section>

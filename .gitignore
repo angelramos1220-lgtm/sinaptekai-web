@@ -4,5 +4,14 @@ Pagina WEB/
 SynaptekAI landing page/
 SynaptekAI landing page.zip
 
-# Copia de trabajo del bundle (scripts/bundle.js) y capturas de revisión
+# Salidas de las herramientas de verificación (informes, capturas, Lighthouse)
 .work/
+
+# Astro / Node
+node_modules/
+dist/
+.astro/
+npm-debug.log*
+
+# Entregables de revisión (capturas e informes de Lighthouse)
+entrega-fase-*/

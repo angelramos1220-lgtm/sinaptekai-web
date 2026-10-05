@@ -1,0 +1,372 @@
+/* ==========================================================================
+   Estilos globales de synaptekai.tech
+   ========================================================================== */
+
+/* --- Fuentes autoalojadas -------------------------------------------------
+   Solo el subconjunto latino de cada familia. Son fuentes variables: un mismo
+   archivo cubre todos los pesos que usa el sitio.
+     Manrope        texto y la mayoría de títulos (400 a 800)
+     Space Grotesk  títulos de Casos, Diseño Web, Paquetes y tarjetas (600 y 700) */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('../assets/fonts/manrope-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url('../assets/fonts/space-grotesk-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* --- Tokens ---------------------------------------------------------------
+   Paleta, tipografías y medidas del sitio. Las secciones de la portada se
+   portaron con sus estilos en línea para conservar la paridad con el sitio
+   anterior; todo lo nuevo (clases de este archivo y páginas nuevas) usa estos
+   tokens. */
+:root {
+  /* Fondos */
+  --fondo: #0B0F19;
+  --fondo-profundo: #070A12;
+  --superficie: #0F172A;
+  --superficie-clara: #F8FAFC;
+  --borde: #1E293B;
+  --borde-campo: #334155;
+  /* Texto */
+  --texto: #F1F5F9;
+  --texto-claro: #E2E8F0;
+  --texto-suave: #CBD5E1;
+  --texto-tenue: #94A3B8;
+  --texto-apagado: #64748B;
+  --tinta: #0F172A;
+  --tinta-suave: #475569;
+  /* Acentos */
+  --indigo: #4F46E5;
+  --indigo-oscuro: #4338CA;
+  --violeta: #818CF8;
+  --teal: #06B6D4;
+  --cian: #22D3EE;
+  --cian-claro: #67E8F9;
+  --rosa: #EC4899;
+  /* WhatsApp */
+  --wa: #25D366;
+  --wa-oscuro: #1FBE5C;
+  --wa-tinta: #052E16;
+  /* Tipografías */
+  --fuente-texto: 'Manrope', sans-serif;
+  --fuente-titulos: 'Space Grotesk', sans-serif;
+  /* Medidas */
+  --ancho-max: 1240px;
+  /* Margen lateral de todas las secciones del sitio: 48 px, y 20 px en móvil (abajo). */
+  --margen-lateral: 48px;
+  --seccion-arriba: 96px;
+  --seccion-abajo: 140px;
+  --radio-tarjeta: 20px;
+  --radio-boton: 12px;
+  --separacion-grilla: 24px;
+}
+
+/* --- Base y componentes (del sitio anterior, sin cambios) ----------------- */
+body { margin: 0; background: #0B0F19; font-family: 'Manrope', sans-serif; }
+a { color: #06B6D4; text-decoration: none; }
+a:hover { color: #4F46E5; }
+/* ============================================================
+   Tarjetas 3D reactivas — reemplaza al anillo giratorio.
+   Filosofía: nada se anima sola en reposo; todo reacciona al cursor.
+   El ángulo del borde y la posición del resplandor los actualiza JS vía
+   variables CSS (--tilt-x/--tilt-y/--tilt-z/--mx/--my/--border-angle);
+   mientras la tarjeta está activa, transition:none para que el
+   seguimiento sea instantáneo — el único momento en que SÍ transiciona
+   es al soltar el cursor (vuelta a reposo) y en la entrada escalonada.
+   ============================================================ */
+[data-tilt-grid] { perspective: 1000px; }
+.tilt-card {
+  --tilt-x: 0deg; --tilt-y: 0deg; --tilt-z: 0px;
+  --mx: 50%; --my: 50%; --shadow-x: 0px; --shadow-y: 0px;
+  --border-angle: 0deg;
+  --card-fill: rgba(15,23,42,0.78);
+  position: relative;
+  /* Con fallback visible: si el JS no llegara a correr, la tarjeta se ve
+     igual (opacidad 1, sin desplazamiento) en vez de quedar invisible
+     para siempre — el estado oculto de la entrada lo aplica el JS mismo,
+     justo antes de observar, no el CSS por defecto. */
+  opacity: var(--enter-o, 1);
+  transform-style: preserve-3d;
+  transform: translateY(var(--enter-y, 0px)) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateZ(var(--tilt-z));
+  transition: opacity .5s ease, transform .42s cubic-bezier(.22,1,.36,1), box-shadow .3s ease;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--card-fill), var(--card-fill)) padding-box,
+    linear-gradient(rgba(148,163,184,0.18), rgba(148,163,184,0.18)) border-box;
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+}
+.tilt-card.tc-in { --enter-y: 0px; --enter-o: 1; }
+.tilt-card > * { position: relative; z-index: 1; }
+.tilt-card::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: 0;
+  pointer-events: none; opacity: 0; transition: opacity .3s ease;
+  background: radial-gradient(circle at var(--mx) var(--my), rgba(99,102,241,0.18), transparent 60%);
+}
+.tilt-card.is-active {
+  transition: none;
+  box-shadow: 0 22px 50px -12px var(--hover-glow, rgba(99,102,241,0.25));
+  background:
+    linear-gradient(var(--card-fill), var(--card-fill)) padding-box,
+    conic-gradient(from var(--border-angle),
+      rgba(99,102,241,0.85) 0deg, rgba(139,92,246,0.45) 70deg,
+      rgba(45,212,191,0.12) 150deg, rgba(45,212,191,0.12) 210deg,
+      rgba(139,92,246,0.45) 290deg, rgba(99,102,241,0.85) 360deg
+    ) border-box;
+}
+.tilt-card.is-active::after { opacity: 1; }
+/* Variante clara (Servicios, Casos de éxito): un glow sobre blanco no se
+   ve, así que en vez de resplandor uso una sombra suave que sigue al
+   cursor. Fondo ya opaco de por sí — sin backdrop-filter, no hace falta. */
+.tilt-card--light { --card-fill: #ffffff; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.tilt-card--light::after { display: none; }
+.tilt-card--light.is-active {
+  box-shadow: var(--shadow-x) var(--shadow-y) 32px rgba(15,23,42,0.14), 0 20px 45px -14px var(--hover-glow, rgba(79,70,229,0.15));
+}
+/* Variante rosa (promo de Diseño Web): misma reactividad, paleta propia
+   para no chocar con la identidad rosa/magenta de esa tarjeta. */
+.tilt-card--pink { --card-fill: rgba(40,16,30,0.82); }
+.tilt-card--pink {
+  background:
+    linear-gradient(var(--card-fill), var(--card-fill)) padding-box,
+    linear-gradient(rgba(244,114,182,0.28), rgba(244,114,182,0.28)) border-box;
+}
+.tilt-card--pink::after {
+  background: radial-gradient(circle at var(--mx) var(--my), rgba(236,72,153,0.20), transparent 60%);
+}
+.tilt-card--pink.is-active {
+  box-shadow: 0 22px 50px -12px rgba(236,72,153,0.28);
+  background:
+    linear-gradient(var(--card-fill), var(--card-fill)) padding-box,
+    conic-gradient(from var(--border-angle),
+      rgba(236,72,153,0.85) 0deg, rgba(244,114,182,0.45) 70deg,
+      rgba(236,72,153,0.12) 150deg, rgba(236,72,153,0.12) 210deg,
+      rgba(244,114,182,0.45) 290deg, rgba(236,72,153,0.85) 360deg
+    ) border-box;
+}
+/* "Recomendado": distinción permanente pero sin animarse sola — borde en
+   reposo más marcado, nada más. Reacciona igual que el resto al pasar el
+   cursor (misma paleta índigo/violeta/teal de .is-active). */
+.tilt-card--featured {
+  background:
+    linear-gradient(var(--card-fill), var(--card-fill)) padding-box,
+    linear-gradient(rgba(129,140,248,0.45), rgba(129,140,248,0.45)) border-box;
+}
+.site-header { padding: 18px 48px; }
+.hero-section { padding: 96px 48px 120px; }
+.hero-content { gap: 24px; }
+.desktop-nav { display: flex; align-items: center; gap: 28px; font-size: 15px; white-space: nowrap; }
+.desktop-actions { display: flex; flex-shrink: 0; }
+.mobile-actions { display: none; align-items: center; gap: 8px; flex-shrink: 0; }
+.mobile-wa-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 12px; background: #25D366; flex-shrink: 0;
+}
+.mobile-wa-btn:hover { background: #1FBE5C; }
+.mobile-wa-btn:focus-visible { outline: 3px solid #67E8F9; outline-offset: 2px; }
+.mobile-nav-toggle {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.06);
+  border: 1px solid #1E293B; cursor: pointer; flex-shrink: 0;
+}
+.mobile-nav-toggle:focus-visible { outline: 3px solid #67E8F9; outline-offset: 2px; }
+.hamburger-bar { width: 20px; height: 2px; border-radius: 2px; background: #F1F5F9; transition: transform .25s ease, opacity .25s ease; }
+#mobile-nav-panel {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 12px var(--margen-lateral) 20px; border-top: 1px solid #1E293B;
+  background: #0B0F19;
+}
+#mobile-nav-panel a { padding: 12px 4px; font-size: 16px; font-weight: 600; color: #CBD5E1; min-height: 44px; display: flex; align-items: center; }
+#mobile-nav-panel a:hover { color: #fff; }
+#mobile-nav-panel a:focus-visible { outline: 2px solid #06B6D4; outline-offset: -2px; }
+#mobile-nav-panel .mobile-panel-wa-btn {
+  margin-top: 8px; justify-content: center; gap: 8px;
+  background: #25D366; color: #052E16; font-weight: 700; border-radius: 12px; padding: 0 20px;
+}
+#mobile-nav-panel .mobile-panel-wa-btn:hover { color: #052E16; background: #1FBE5C; }
+#mobile-nav-panel .mobile-panel-wa-btn:focus-visible { outline: 3px solid #67E8F9; outline-offset: 2px; }
+/* "Cómo funciona" — revelado secuencial. La línea es un solo div que escala
+   (scaleX en escritorio, scaleY en móvil vía la media query de abajo);
+   nunca left/top/width/height animados. Fallback visible: si el JS no
+   corriera, --enter-o/--enter-y no se setean nunca y el paso queda en su
+   valor por defecto (visible, sin desplazar) — mismo patrón que las
+   tarjetas 3D de arriba. */
+[data-how-grid] { position: relative; }
+.how-line {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, #4F46E5, #06B6D4);
+  transform-origin: left top; transform: scaleX(0);
+  transition: transform 2s cubic-bezier(.22,.61,.36,1);
+  pointer-events: none;
+}
+.how-step {
+  opacity: var(--enter-o, 1);
+  transform: translateY(var(--enter-y, 0px));
+  transition: opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1);
+}
+.how-num { display: inline-block; }
+@keyframes howNumPulse { 0% { transform: scale(1); } 45% { transform: scale(1.25); } 100% { transform: scale(1); } }
+.how-step.is-active .how-num { animation: howNumPulse .5s ease; }
+/* Video con play manual — sin autoplay ni muted, arranca (con audio) solo
+   con un gesto explícito del usuario. El botón desaparece una vez que el
+   video arrancó; de ahí en adelante manda el control nativo. */
+.sk-video-wrap { position: relative; }
+.sk-video-play-btn {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 56px; height: 56px; padding: 0; border: none; border-radius: 50%;
+  background: rgba(15, 23, 42, 0.55); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s ease, transform .2s ease;
+}
+.sk-video-play-btn svg { width: 22px; height: 22px; margin-left: 3px; }
+.sk-video-play-btn:hover { background: rgba(15, 23, 42, 0.78); transform: translate(-50%, -50%) scale(1.06); }
+.sk-video-play-btn:focus-visible { outline: 3px solid #67E8F9; outline-offset: 3px; }
+.sk-video-wrap.sk-video-started .sk-video-play-btn { display: none; }
+/* Grillas con columnas fijas por ancho: con auto-fit, 6 servicios o 3 casos
+   dejaban huecos o filas desparejas según el ancho. */
+.svc-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.casos-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.pkg-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 400px)); justify-content: center; gap: 24px; }
+.comp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+/* Diseño Web: 4 planes en fila y, debajo, "Renueva tu Página Web" a todo el
+   ancho. En escritorio la promo es un banner horizontal (texto | viñetas |
+   precio y botón); por debajo de 1024px se apila como una tarjeta normal. */
+.web-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.promo-banner {
+  grid-column: 1 / -1; display: grid; column-gap: 40px; row-gap: 16px; align-items: center;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.2fr) minmax(220px, 0.75fr);
+  grid-template-areas: "main list price" "main list cta";
+}
+.promo-main { grid-area: main; }
+.promo-list { grid-area: list; }
+.promo-price { grid-area: price; align-self: end; }
+.promo-cta { grid-area: cta; align-self: start; }
+/* Comparativa de paquetes: 2 columnas, sin desplazamiento horizontal ni en móvil. */
+.cmp-table { display: flex; flex-direction: column; border: 1px solid #1E293B; border-radius: 14px; overflow: hidden; margin-top: 8px; }
+.cmp-row { display: grid; grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr)); border-top: 1px solid #1E293B; }
+.cmp-row--head { border-top: none; background: rgba(255,255,255,0.04); }
+.cmp-label { padding: 12px 16px; font-size: 14px; line-height: 1.4; color: #E2E8F0; }
+.cmp-row--head .cmp-label { padding: 14px 16px; font-size: 13px; font-weight: 700; color: #94A3B8; }
+.cmp-pkg { padding: 14px 8px; font-size: 13px; font-weight: 700; line-height: 1.3; text-align: center; }
+.cmp-mark { padding: 12px 8px; font-weight: 700; text-align: center; align-self: center; }
+/* Mismo ancho que las 2 tarjetas de paquetes, para que la comparativa y "Más servicios" alineen con ellas. */
+.pkg-narrow { width: 100%; max-width: 824px; margin: 0 auto; }
+.comp-ejemplo summary { cursor: pointer; list-style: none; font-size: 13px; font-weight: 700; color: #22D3EE; padding: 6px 0; min-height: 32px; display: inline-flex; align-items: center; gap: 6px; }
+.comp-ejemplo summary::-webkit-details-marker { display: none; }
+.comp-ejemplo summary:hover { color: #67E8F9; }
+.comp-ejemplo summary:focus-visible { outline: 2px solid #06B6D4; outline-offset: 2px; border-radius: 6px; }
+.comp-ejemplo[open] summary .comp-ejemplo-arrow { transform: rotate(180deg); }
+.comp-ejemplo-arrow { display: inline-block; transition: transform .25s ease; }
+/* Diagrama del hero: por debajo de 1056px no cabe al lado del texto, así que
+   se dibuja en este espacio reservado debajo de la línea de confianza.
+   initHeroConstellation detecta el modo por la altura de este elemento. */
+.hero-flow-spacer { display: none; }
+@media (max-width: 1055px) {
+  .hero-flow-spacer { display: block; height: 300px; }
+}
+/* Cabecera en una sola fila a cualquier ancho:
+     desde 1240px   menú completo + botón "Hablar por WhatsApp" con texto;
+     1024 a 1239px  menú completo, más compacto, + botón de WhatsApp solo ícono;
+     menos de 1024  menú hamburguesa (el menú completo ya no entra).
+   scripts/verificar.js mide la holgura de la cabecera en cada ancho: un enlace
+   nuevo en el menú obliga a revisarla. */
+@media (max-width: 1239px) {
+  .desktop-nav { gap: 22px; }
+  .desktop-actions { display: none; }
+  .mobile-actions { display: flex; }
+  .mobile-nav-toggle { display: none; }
+  .web-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 1023px) {
+  .desktop-nav { display: none; }
+  .mobile-nav-toggle { display: flex; }
+  .promo-banner { display: flex; flex-direction: column; align-items: stretch; gap: 16px; }
+  .promo-price, .promo-cta { align-self: auto; }
+  .svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .casos-grid, .comp-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (min-width: 1024px) {
+  /* Si el panel quedó abierto y la ventana se agranda, no debe verse junto al menú completo. */
+  #mobile-nav-panel { display: none; }
+}
+@media (max-width: 639px) {
+  .svc-grid, .pkg-grid, .web-grid { grid-template-columns: minmax(0, 1fr); }
+  .cmp-row { grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, 1fr)); }
+  .cmp-label { padding: 10px 12px; font-size: 13px; }
+  .cmp-row--head .cmp-label { padding: 12px; font-size: 12px; }
+  .cmp-pkg { padding: 12px 4px; font-size: 12px; }
+}
+@media (max-width: 767px) {
+  /* Margen lateral en móvil: 20 px en todo el sitio, portada incluida. (El sitio anterior
+     dejaba 48 px en la portada; se cambió a pedido, como excepción a la paridad.) */
+  :root { --margen-lateral: 20px; }
+  .site-header { padding: 14px var(--margen-lateral); }
+  /* Espacio inferior y lateral: el botón flotante del chat (68px, abajo a la
+     derecha) no debe quedar encima de la línea de confianza ni del diagrama. */
+  .hero-section { padding: 28px 20px 96px; }
+  .hero-trust { padding-right: 84px; }
+  .hero-flow-spacer { height: min(300px, calc((100vw - 40px) * 0.7)); }
+  .hero-content { gap: 16px; }
+  /* Riel vertical del paso a paso: dentro del contenedor (left positivo),
+     nunca con offset negativo — un padre con overflow:hidden lo recortaría. */
+  [data-how-grid] { padding-left: 20px; }
+  .how-line { top: 0; bottom: 0; left: 6px; right: auto; width: 2px; height: auto; background: linear-gradient(180deg, #4F46E5, #06B6D4); transform: scaleY(0); }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* --- Desplazamiento suave ---------------------------------------------------
+   Los clics en enlaces internos (#seccion) bajan con suavidad, salvo que el
+   visitante haya pedido menos movimiento. La entrada con ancla desde otra página
+   la maneja src/scripts/ancla.ts. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* --- Movimiento reducido: también los pseudo-elementos ----------------------
+   La regla heredada de arriba usa "*", que no alcanza a ::before ni ::after. En el
+   sitio anterior el anillo del botón del chat seguía girando aunque el visitante
+   pidiera menos movimiento; aquí se detiene. */
+@media (prefers-reduced-motion: reduce) {
+  *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* --- Elementos que el sitio anterior creaba y destruía con JavaScript ------
+   Ahora están siempre en el HTML y se ocultan con el atributo hidden. Estas
+   reglas hacen falta porque sus clases fijan display. */
+#mobile-nav-panel[hidden],
+.cmp-table[hidden] { display: none; }
+
+/* --- Estados :hover y :focus ---------------------------------------------- */
+/* En el sitio anterior los generaba el motor de la herramienta a partir de
+   atributos style-hover / style-focus, con este mismo criterio: una clase por
+   regla y !important, porque los estilos base de cada elemento van en línea. */
+.hv-texto-blanco:hover { color:#fff !important; }
+.hv-wa:hover { background:#1FBE5C !important; }
+.fc-cian:focus { outline:3px solid #67E8F9 !important; outline-offset:2px !important; }
+.hv-indigo:hover { background:#4338CA !important; }
+.fc-indigo:focus { outline:3px solid #818CF8 !important; outline-offset:2px !important; }
+.hv-wa-suave:hover { background:rgba(37,211,102,0.1) !important; }
+.fc-verde:focus { outline:3px solid #4ADE80 !important; outline-offset:2px !important; }
+.hv-texto-cian:hover { color:#06B6D4 !important; }
+.hv-brillo:hover { filter:brightness(1.1) !important; }
+.fc-blanco:focus { outline:3px solid #fff !important; outline-offset:2px !important; }
+.fc-cian-fino:focus { outline:2px solid #06B6D4 !important; }
+.hv-gris-suave:hover { background:rgba(148,163,184,0.12) !important; }
+.fc-campo:focus { border-color:#06B6D4 !important; outline:2px solid rgba(6,182,212,0.35) !important; }
+.hv-wa-sube:hover { background:#1FBE5C !important; transform:translateY(-2px) !important; box-shadow:0 12px 32px rgba(37,211,102,0.3) !important; }
+.fc-cian-amplio:focus { outline:3px solid #67E8F9 !important; outline-offset:3px !important; }
+.hv-texto-cian-claro:hover { color:#67E8F9 !important; }
+.hv-texto-cian-vivo:hover { color:#22D3EE !important; }
+.hv-texto-gris:hover { color:#94A3B8 !important; }
+.hv-escala:hover { transform:scale(1.08) !important; }
+.hv-cerrar:hover { background:rgba(255,255,255,0.12) !important; color:#fff !important; }

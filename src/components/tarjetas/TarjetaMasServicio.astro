@@ -1,0 +1,33 @@
+---
+// Tarjeta de "Más servicios" (Visibilidad en Google e IA, Socio Tecnológico).
+import type { MasServicio } from '../../data/masServicios';
+import { textos as t } from '../../data/textos';
+import { waLink } from '../../lib/whatsapp';
+import Vinetas from '../Vinetas.astro';
+
+interface Props {
+  servicio: MasServicio;
+  nivel?: 'h3' | 'h4';
+}
+const { servicio: m, nivel: Titulo = 'h4' } = Astro.props;
+const c = m.colores;
+---
+
+<div
+  class="tilt-card tarjeta-mas"
+  data-tilt-card
+  style={`--hover-glow: ${c.resplandor}; --card-fill: ${c.fondo}; --acento: ${c.acento}; --acento-tinta: ${c.tinta}; --acento-suave: ${c.suave};`}
+>
+  <span class="tarjeta-mas__insignia">{m.insignia}</span>
+  <div class="tarjeta-mas__icono">{m.emoji}</div>
+  <Titulo class="tarjeta-mas__nombre">{m.nombre}</Titulo>
+  <p class="tarjeta-mas__bajada">{m.bajada}</p>
+  <div class="tarjeta-mas__precio">
+    <span class="tarjeta-mas__monto">{m.precio}</span>
+    <span class="tarjeta-mas__nota">{m.notaPrecio}</span>
+    {m.notaAparte && <span class="tarjeta-mas__aparte">{m.notaAparte}</span>}
+  </div>
+  <Vinetas items={m.vinetas} />
+  {m.prueba && <p class="tarjeta-mas__prueba">{m.prueba}</p>}
+  <a class="tarjeta-mas__boton hv-brillo fc-blanco" href={waLink(m.mensajeWhatsApp)} target="_blank" data-origen={m.origen}>{t.masCta}</a>
+</div>

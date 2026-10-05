@@ -1,0 +1,13 @@
+---
+// Bloque de testimonio. Con src/data/testimonio.ts en null no renderiza nada:
+// ni contenedor vacío ni espacio extra.
+import { testimonio } from '../../data/testimonio';
+---
+
+{testimonio && (
+  <figure class="testimonio" data-fade="1">
+    <span class="testimonio__comilla" aria-hidden="true">“</span>
+    <blockquote class="testimonio__cita">{testimonio.texto}</blockquote>
+    <figcaption class="testimonio__autor"><strong>{testimonio.nombre}</strong>{testimonio.cargo && <Fragment> · {testimonio.cargo}</Fragment>}</figcaption>
+  </figure>
+)}

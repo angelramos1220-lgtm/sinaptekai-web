@@ -1,0 +1,116 @@
+---
+// Plantilla única de las páginas de servicio. Datos: src/data/paginasServicio.ts.
+// Orden fijo: encabezado · qué incluye · precio · en uso en · preguntas · cierre.
+import Pagina from '../../layouts/Pagina.astro';
+import CabeceraPagina from '../../components/pagina/CabeceraPagina.astro';
+import Seccion from '../../components/pagina/Seccion.astro';
+import ListaPrecios from '../../components/pagina/ListaPrecios.astro';
+import EnUso from '../../components/pagina/EnUso.astro';
+import PreguntasFrecuentes from '../../components/pagina/PreguntasFrecuentes.astro';
+import LlamadoFinal from '../../components/pagina/LlamadoFinal.astro';
+import BotonWhatsApp from '../../components/BotonWhatsApp.astro';
+import Vinetas from '../../components/Vinetas.astro';
+import TarjetaPaquete from '../../components/tarjetas/TarjetaPaquete.astro';
+import Comparativa from '../../components/tarjetas/Comparativa.astro';
+import TarjetaPlanWeb from '../../components/tarjetas/TarjetaPlanWeb.astro';
+import BannerRenueva from '../../components/tarjetas/BannerRenueva.astro';
+import TarjetaComplementario from '../../components/tarjetas/TarjetaComplementario.astro';
+import { paginasServicio, type PaginaServicio } from '../../data/paginasServicio';
+import { paquetes } from '../../data/paquetes';
+import { planesWeb, notaMantenimiento } from '../../data/planesWeb';
+import { complementarios } from '../../data/complementarios';
+import { masServicios } from '../../data/masServicios';
+import { textos as t } from '../../data/textos';
+import { textosPaginas as tp } from '../../data/textosPaginas';
+import { migasJsonLd, servicioJsonLd, faqJsonLd } from '../../lib/datosEstructurados';
+
+export function getStaticPaths() {
+  return paginasServicio.map((pagina) => ({ params: { slug: pagina.slug }, props: { pagina } }));
+}
+
+interface Props {
+  pagina: PaginaServicio;
+}
+const { pagina } = Astro.props;
+// Las rejillas de tarjetas de estas dos páginas necesitan todo el ancho.
+const rejillaAncha = pagina.slug === 'paginas-web' || pagina.slug === 'complementarios';
+const prueba = pagina.slug === 'visibilidad-google-ia' ? masServicios.find((m) => m.id === 'visibilidad')!.prueba : '';
+
+const jsonLd = [
+  migasJsonLd([
+    { texto: tp.migasInicio, ruta: '/' },
+    { texto: pagina.menu, ruta: pagina.ruta },
+  ]),
+  servicioJsonLd(pagina),
+  faqJsonLd(pagina.faqs),
+];
+---
+
+<Pagina titulo={pagina.seo.titulo} descripcion={pagina.seo.descripcion} ruta={pagina.ruta} jsonLd={jsonLd} markdown>
+  <CabeceraPagina
+    migas={[{ texto: tp.migasInicio, href: '/' }, { texto: t.navSvc, href: '/#servicios' }, { texto: pagina.menu }]}
+    etiqueta={pagina.etiqueta}
+    titulo={pagina.titulo}
+    bajada={pagina.bajada}
+  >
+    <BotonWhatsApp mensaje={pagina.mensajeWhatsApp} origen={pagina.origen} texto={tp.botonWhatsApp} />
+  </CabeceraPagina>
+
+  <Seccion id="incluye" titulo={tp.incluyeTitulo} disposicion={rejillaAncha ? 'apilada' : 'lateral'} borde>
+    {pagina.slug === 'asistentes-whatsapp' && (
+      <Fragment>
+        <div class="pkg-grid" data-tilt-grid>
+          {paquetes.map((p) => <TarjetaPaquete paquete={p} />)}
+        </div>
+        <div class="pila">
+          <h3 class="titulo-bloque">{tp.comparativaTitulo}</h3>
+          <Comparativa />
+        </div>
+      </Fragment>
+    )}
+
+    {pagina.slug === 'paginas-web' && (
+      <div class="web-grid" data-tilt-grid>
+        {planesWeb.map((plan) => <TarjetaPlanWeb plan={plan} />)}
+        <p class="web-nota">{notaMantenimiento}</p>
+        <BannerRenueva />
+      </div>
+    )}
+
+    {pagina.slug === 'complementarios' && (
+      <div class="comp-grid" data-tilt-grid>
+        {complementarios.map((c) => <TarjetaComplementario servicio={c} nivel="h3" ancla />)}
+      </div>
+    )}
+
+    {pagina.incluye.length > 0 && (
+      <div class:list={['rejilla', pagina.incluye.length > 1 ? 'rejilla--2' : 'rejilla--1']}>
+        {pagina.incluye.map((bloque) => (
+          <div class="pila" data-fade="1">
+            {bloque.titulo && <h3 class="titulo-bloque">{bloque.titulo}</h3>}
+            {bloque.texto && <p class="texto">{bloque.texto}</p>}
+            <Vinetas items={bloque.vinetas} variante="grandes" />
+          </div>
+        ))}
+      </div>
+    )}
+  </Seccion>
+
+  <Seccion id="precio" titulo={tp.precioTitulo} disposicion="lateral" borde>
+    <ListaPrecios filas={pagina.precios.map((linea) => ({ concepto: linea.concepto, monto: linea.monto, nota: linea.nota }))} />
+    {prueba && <p class="texto texto--destacado">{prueba}</p>}
+    {pagina.notasPrecio.map((nota) => <p class="texto texto--pequeno">{nota}</p>)}
+  </Seccion>
+
+  {pagina.enUso.length > 0 && (
+    <Seccion id="en-uso" titulo={tp.enUsoTitulo} clara>
+      <EnUso ids={pagina.enUso} />
+    </Seccion>
+  )}
+
+  <Seccion id="preguntas" titulo={tp.faqTitulo} disposicion="lateral">
+    <PreguntasFrecuentes preguntas={pagina.faqs} />
+  </Seccion>
+
+  <LlamadoFinal mensaje={pagina.mensajeWhatsApp} origen={pagina.origen} />
+</Pagina>

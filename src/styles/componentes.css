@@ -1,0 +1,321 @@
+/* ==========================================================================
+   Componentes del sitio: clases con los tokens de global.css.
+   Las usan las páginas nuevas y las tarjetas compartidas con la portada.
+   ========================================================================== */
+
+/* --- Estructura de página -------------------------------------------------- */
+.pagina { background: var(--fondo); color: var(--texto); min-height: 100vh; display: flex; flex-direction: column; }
+.pagina > main { flex: 1; }
+.contenedor { width: 100%; max-width: var(--ancho-max); margin: 0 auto; box-sizing: border-box; }
+/* Cuerpo de una sección: título y contenido, apilados o lado a lado. */
+.seccion__cuerpo { display: flex; flex-direction: column; gap: 40px; }
+.seccion__contenido { min-width: 0; }
+@media (min-width: 1100px) {
+  .seccion__cuerpo--lateral { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr); gap: 48px; align-items: start; }
+}
+
+.seccion { position: relative; padding: 72px var(--margen-lateral); box-sizing: border-box; }
+.seccion--clara { background: var(--superficie-clara); color: var(--tinta); }
+.seccion--profunda { background: var(--fondo-profundo); }
+.seccion--borde { border-top: 1px solid var(--borde); }
+.seccion--primera { padding-top: 40px; }
+.pila { display: flex; flex-direction: column; gap: var(--pila, 24px); }
+.pila--amplia { --pila: 40px; }
+.pila--corta { --pila: 12px; }
+
+.rejilla { display: grid; gap: var(--separacion-grilla); grid-template-columns: repeat(var(--columnas, 3), minmax(0, 1fr)); }
+.rejilla--2 { --columnas: 2; }
+.rejilla--4 { --columnas: 4; }
+@media (max-width: 1239px) { .rejilla--4 { --columnas: 2; } }
+@media (max-width: 1023px) { .rejilla { --columnas: 2; } .rejilla--3a1 { --columnas: 1; } }
+@media (max-width: 639px) { .rejilla, .rejilla--2, .rejilla--4 { --columnas: 1; } }
+
+/* --- Tipografía ------------------------------------------------------------ */
+.etiqueta { color: var(--cian); font-weight: 700; font-size: 14px; letter-spacing: 1.5px; text-transform: uppercase; }
+.seccion--clara .etiqueta { color: var(--indigo); }
+.etiqueta--tenue { color: var(--texto-tenue); font-size: 12px; }
+.titulo-pagina { margin: 0; font-size: clamp(34px, 5.2vw, 52px); line-height: 1.08; font-weight: 800; letter-spacing: -1.4px; text-wrap: balance; }
+.titulo-pagina__acento { background: linear-gradient(90deg, var(--violeta), var(--cian)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.titulo-seccion { margin: 0; font-family: var(--fuente-titulos); font-size: clamp(26px, 3.2vw, 36px); font-weight: 700; letter-spacing: -0.8px; line-height: 1.15; text-wrap: balance; }
+.titulo-bloque { margin: 0; font-family: var(--fuente-titulos); font-size: 22px; font-weight: 700; letter-spacing: -0.4px; line-height: 1.25; }
+.bajada { margin: 0; font-size: 18px; line-height: 1.6; color: var(--texto-tenue); max-width: 640px; text-wrap: pretty; }
+.seccion--clara .bajada { color: var(--tinta-suave); }
+.texto { margin: 0; font-size: 16px; line-height: 1.7; color: var(--texto-suave); }
+.seccion--clara .texto { color: var(--tinta-suave); }
+.texto--pequeno { font-size: 13px; line-height: 1.6; color: var(--texto-tenue); }
+.enlace { color: var(--cian); font-weight: 700; }
+.enlace:hover { color: var(--cian-claro); }
+.enlace:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+.seccion--clara .enlace { color: var(--indigo); }
+.seccion--clara .enlace:hover { color: var(--teal); }
+
+/* --- Botones --------------------------------------------------------------- */
+.boton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 14px 26px; border-radius: var(--radio-boton); border: 1.5px solid transparent; box-sizing: border-box; font-family: inherit; font-weight: 700; font-size: 15px; line-height: 1.2; text-align: center; cursor: pointer; }
+.boton--wa { background: var(--wa); color: var(--wa-tinta); }
+.boton--wa:hover { background: var(--wa-oscuro); color: var(--wa-tinta); }
+.boton--wa:focus-visible { outline: 3px solid var(--cian-claro); outline-offset: 2px; }
+.boton--primario { background: var(--indigo); color: #fff; }
+.boton--primario:hover { background: var(--indigo-oscuro); color: #fff; }
+.boton--primario:focus-visible { outline: 3px solid var(--violeta); outline-offset: 2px; }
+.boton--contorno { border-color: rgba(148, 163, 184, 0.35); color: var(--texto-claro); background: transparent; }
+.boton--contorno:hover { background: rgba(148, 163, 184, 0.12); color: var(--texto-claro); }
+.boton--contorno:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.boton--grande { min-height: 52px; padding: 18px 36px; font-size: 18px; font-weight: 800; border-radius: 14px; }
+.boton__punto { width: 8px; height: 8px; border-radius: 50%; background: currentColor; display: inline-block; flex-shrink: 0; }
+
+/* --- Viñetas --------------------------------------------------------------- */
+.vinetas { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--vinetas-separacion, 8px); }
+.vineta { display: flex; gap: 10px; align-items: flex-start; }
+.vineta__marca { width: 16px; height: 16px; border-radius: 50%; background: var(--vineta-suave, rgba(79, 70, 229, 0.18)); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; }
+.vineta__punto { width: 5px; height: 5px; border-radius: 50%; background: var(--vineta, var(--violeta)); display: block; }
+.vineta__texto { font-size: 14px; line-height: 1.5; color: var(--texto-suave); }
+.vinetas--grandes .vineta__texto { font-size: 16px; line-height: 1.6; }
+.vinetas--grandes { --vinetas-separacion: 12px; }
+.vinetas--grandes .vineta__marca { margin-top: 5px; }
+.seccion--clara .vineta__texto { color: var(--tinta-suave); }
+/* Variante compacta: un punto simple (tarjetas "bajo pedido"). */
+.vinetas--simples { --vinetas-separacion: 6px; }
+.vinetas--simples .vineta { gap: 8px; }
+.vinetas--simples .vineta__marca { width: 5px; height: 5px; background: var(--texto-apagado); margin-top: 8px; display: block; }
+.vinetas--simples .vineta__punto { display: none; }
+.vinetas--simples .vineta__texto { font-size: 13px; color: var(--texto-tenue); }
+
+/* --- Chips ----------------------------------------------------------------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; border: 1px solid rgba(148, 163, 184, 0.25); color: var(--texto-tenue); font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 999px; }
+.chip--insignia { align-self: flex-start; border-color: rgba(6, 182, 212, 0.35); color: var(--cian-claro); letter-spacing: 0.4px; }
+
+/* --- Tarjeta de paquete ---------------------------------------------------- */
+.tarjeta-paquete { position: relative; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 18px; }
+.tilt-card > .tarjeta-paquete__insignia { position: absolute; top: -13px; left: 32px; background: var(--indigo); color: #fff; font-size: 12px; font-weight: 800; padding: 5px 14px; border-radius: 999px; letter-spacing: 0.3px; }
+.tarjeta-paquete__icono { width: 48px; height: 48px; border-radius: 13px; background: var(--indigo); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.tarjeta-paquete__icono-chat { width: 20px; height: 17px; background: #fff; border-radius: 50% 50% 50% 4px; }
+.tarjeta-paquete__icono-estrella { position: relative; width: 20px; height: 20px; }
+.tarjeta-paquete__icono-estrella > span { position: absolute; inset: 2px; background: #fff; }
+.tarjeta-paquete__icono-estrella > span + span { transform: rotate(45deg); }
+.tarjeta-paquete__nombre { margin: 0; font-family: var(--fuente-titulos); font-size: 21px; font-weight: 700; }
+.tarjeta-paquete__precio { display: flex; flex-direction: column; gap: 2px; }
+.tarjeta-paquete__monto { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+.tarjeta-paquete__nota { font-size: 13px; color: var(--texto-tenue); font-weight: 600; }
+.tarjeta-paquete .vinetas { --vinetas-separacion: 10px; --vineta: var(--indigo); margin-top: 4px; }
+.boton-tarjeta { margin-top: auto; display: inline-flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 12px; background: var(--indigo); color: #fff; font-weight: 700; font-size: 15px; text-align: center; }
+.boton-tarjeta:hover { filter: brightness(1.1); color: #fff; }
+.boton-tarjeta:focus { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* --- Comparativa de paquetes (la rejilla está en global.css) ---------------- */
+.cmp-mark--si { color: var(--indigo); }
+.cmp-mark--no { color: var(--tinta-suave); }
+
+/* --- Tarjeta de plan web --------------------------------------------------- */
+.tarjeta-plan { border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 16px; box-sizing: border-box; }
+.icono-degradado { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--indigo), var(--teal)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.icono-degradado--inverso { background: linear-gradient(135deg, var(--teal), var(--indigo)); }
+.tarjeta-plan__nombre { margin: 0; font-family: var(--fuente-titulos); font-size: 19px; font-weight: 700; }
+.tarjeta-plan__precio { display: flex; flex-direction: column; gap: 3px; }
+.tarjeta-plan__monto { font-size: 21px; font-weight: 800; letter-spacing: -0.3px; }
+.tarjeta-plan__nota { font-size: 12px; color: var(--texto-tenue); font-weight: 600; }
+.tarjeta-plan .vinetas { margin-top: 4px; }
+
+/* Nota bajo los 4 planes de Diseño Web: ocupa toda la fila de la rejilla. */
+.web-nota { grid-column: 1 / -1; margin: -8px 0 0; font-size: 13px; line-height: 1.6; color: var(--texto-tenue); }
+
+/* --- Banner "Renueva tu Página Web" (la rejilla está en global.css) -------- */
+.promo-banner { position: relative; padding: 28px; border-radius: 20px; box-sizing: border-box; }
+.tilt-card > .promo-banner__insignia { position: absolute; top: -13px; left: 28px; background: var(--rosa); color: #4A0A2E; font-size: 12px; font-weight: 800; padding: 5px 14px; border-radius: 999px; letter-spacing: 0.3px; }
+.promo-main { display: flex; flex-direction: column; gap: 16px; }
+.promo-banner__icono { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--rosa), #F472B6); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+.promo-banner__descripcion { margin: 0; font-size: 13px; line-height: 1.5; color: var(--texto-tenue); }
+.promo-price { display: flex; flex-direction: column; gap: 3px; }
+.promo-banner__nota-hosting { font-size: 12px; line-height: 1.5; color: var(--texto-tenue); margin-top: 4px; }
+.promo-list { --vineta: var(--rosa); --vineta-suave: rgba(244, 114, 182, 0.18); }
+.promo-cta { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; border-radius: 11px; background: var(--rosa); color: #4A0A2E; font-weight: 700; font-size: 14px; text-align: center; }
+.promo-cta:hover { filter: brightness(1.1); color: #4A0A2E; }
+.promo-cta:focus { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* --- Tarjeta de "Más servicios" -------------------------------------------- */
+.tarjeta-mas { position: relative; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 14px; --vineta: var(--acento); --vineta-suave: var(--acento-suave); }
+.tilt-card > .tarjeta-mas__insignia { position: absolute; top: -11px; left: 24px; background: var(--acento); color: var(--acento-tinta); font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 999px; letter-spacing: 0.3px; }
+.tarjeta-mas__icono { width: 40px; height: 40px; border-radius: 11px; background: var(--acento); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; }
+.tarjeta-mas__nombre { margin: 0; font-family: var(--fuente-titulos); font-size: 19px; font-weight: 700; }
+.tarjeta-mas__bajada { margin: 0; font-size: 14px; line-height: 1.55; color: var(--texto-tenue); }
+.tarjeta-mas__precio { display: flex; flex-direction: column; gap: 2px; }
+.tarjeta-mas__monto { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.tarjeta-mas__nota { font-size: 12px; line-height: 1.5; color: var(--texto-tenue); font-weight: 600; }
+.tarjeta-mas__aparte { margin-top: 4px; font-size: 12px; line-height: 1.5; color: var(--texto-tenue); }
+.tarjeta-mas .vinetas { margin-top: 2px; }
+.tarjeta-mas__prueba { margin: 0; font-size: 12px; line-height: 1.5; font-weight: 700; color: var(--acento); background: var(--acento-suave); padding: 8px 12px; border-radius: 10px; }
+.tarjeta-mas__boton { margin-top: auto; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 11px; background: var(--acento); color: var(--acento-tinta); font-weight: 700; font-size: 14px; text-align: center; }
+.tarjeta-mas__boton:hover { filter: brightness(1.1); color: var(--acento-tinta); }
+.tarjeta-mas__boton:focus { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* --- Tarjeta compacta "bajo pedido" ---------------------------------------- */
+.tarjeta-comp { position: relative; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 10px; --hover-glow: rgba(148, 163, 184, 0.12); --card-fill: rgba(15, 23, 42, 0.55); }
+.tarjeta-comp__insignia { align-self: flex-start; border: 1px solid rgba(148, 163, 184, 0.35); color: var(--texto-tenue); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px; letter-spacing: 0.3px; }
+.tarjeta-comp__nombre { margin: 0; font-family: var(--fuente-titulos); font-size: 16px; font-weight: 700; color: var(--texto-claro); }
+.tarjeta-comp__precios { display: flex; flex-direction: column; gap: 2px; }
+.tarjeta-comp__precio { font-size: 13px; font-weight: 700; color: var(--texto-suave); }
+.tarjeta-comp__nota { margin: 0; font-size: 11px; line-height: 1.5; color: var(--texto-tenue); }
+.tarjeta-comp__video { margin-top: 8px; }
+.tarjeta-comp__video--vertical { aspect-ratio: 9/16; max-height: 360px; }
+.tarjeta-comp__video video { width: 100%; height: auto; border-radius: 12px; display: block; background: #000; object-fit: cover; }
+.tarjeta-comp__video--vertical video { height: 100%; }
+.tarjeta-comp__boton { margin-top: auto; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 10px; border: 1px solid rgba(148, 163, 184, 0.35); background: transparent; color: var(--texto-claro); font-weight: 700; font-size: 13px; text-align: center; }
+.tarjeta-comp__boton:hover { background: rgba(148, 163, 184, 0.12); color: var(--texto-claro); }
+.tarjeta-comp__boton:focus { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* --- Tarjeta de caso ------------------------------------------------------- */
+.tarjeta-caso { --hover-glow: rgba(79, 70, 229, 0.18); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; height: 100%; box-sizing: border-box; scroll-margin-top: 24px; }
+.tarjeta-caso__chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.tarjeta-caso__chip { display: inline-flex; align-items: center; background: #EEF2FF; color: var(--indigo-oscuro); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; line-height: 1.4; white-space: nowrap; }
+.tarjeta-caso__imagen { width: 100%; border-radius: 14px; display: block; object-fit: cover; aspect-ratio: 16/9; }
+.tarjeta-caso__nombre { margin: 0; font-family: var(--fuente-titulos); font-size: 22px; font-weight: 800; }
+.tarjeta-caso__textos { display: flex; flex-direction: column; gap: 10px; }
+.tarjeta-caso__texto { margin: 0; font-size: 15px; line-height: 1.6; color: var(--tinta-suave); }
+.tarjeta-caso__texto strong { color: var(--tinta); }
+/* En la página de casos cada caso ocupa todo el ancho y el texto respira más. */
+.tarjeta-caso--amplia { padding: clamp(24px, 4vw, 44px); gap: 20px; }
+.tarjeta-caso--amplia .tarjeta-caso__nombre { font-size: clamp(24px, 3vw, 30px); }
+.tarjeta-caso--amplia .tarjeta-caso__texto { font-size: 16px; line-height: 1.7; max-width: 860px; }
+
+/* --- Testimonio ------------------------------------------------------------ */
+.testimonio { margin: 0; align-self: center; width: 100%; max-width: 920px; box-sizing: border-box; padding: clamp(24px, 4vw, 44px); border-radius: 24px; background: linear-gradient(135deg, #EEF2FF, #ECFEFF); border: 1px solid #E0E7FF; display: flex; flex-direction: column; gap: 18px; }
+.testimonio__comilla { font-family: var(--fuente-titulos); font-size: 72px; line-height: 0.55; height: 28px; font-weight: 800; background: linear-gradient(90deg, var(--indigo), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.testimonio__cita { margin: 0; font-family: var(--fuente-titulos); font-size: clamp(20px, 2.4vw, 28px); line-height: 1.35; font-weight: 700; letter-spacing: -0.4px; color: var(--tinta); text-wrap: balance; }
+.testimonio__autor { font-size: 15px; line-height: 1.5; color: var(--tinta-suave); }
+.testimonio__autor strong { color: var(--tinta); }
+
+/* --- Cabecera de página interna -------------------------------------------- */
+.cabecera-pagina { position: relative; overflow: hidden; padding: 40px var(--margen-lateral) 72px; box-sizing: border-box; }
+.cabecera-pagina::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 70% at 75% 20%, rgba(79, 70, 229, 0.18), transparent 70%); pointer-events: none; }
+.cabecera-pagina > .contenedor { position: relative; display: flex; flex-direction: column; gap: 20px; }
+.cabecera-pagina__acciones { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+.migas { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; padding: 0; list-style: none; font-size: 13px; font-weight: 600; color: var(--texto-apagado); }
+.migas a { color: var(--texto-tenue); }
+.migas a:hover { color: #fff; }
+.migas a:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+.migas li + li::before { content: '/'; margin-right: 8px; color: var(--texto-apagado); }
+.migas [aria-current] { color: var(--texto-suave); }
+
+/* --- Bloque de precio ------------------------------------------------------ */
+.bloque-precio { display: flex; flex-direction: column; gap: 6px; padding: 24px 28px; border: 1px solid var(--borde); border-radius: var(--radio-tarjeta); background: rgba(15, 23, 42, 0.6); }
+.bloque-precio__monto { font-size: clamp(26px, 3.4vw, 34px); font-weight: 800; letter-spacing: -0.6px; line-height: 1.15; }
+.bloque-precio__nota { font-size: 14px; line-height: 1.6; color: var(--texto-tenue); font-weight: 600; }
+.bloque-precio__aviso { margin: 8px 0 0; font-size: 13px; line-height: 1.6; color: var(--texto-tenue); }
+
+/* --- "En uso en" ----------------------------------------------------------- */
+.en-uso { display: flex; flex-direction: column; gap: 12px; padding: 28px; border-radius: var(--radio-tarjeta); background: #fff; border: 1px solid #E2E8F0; box-sizing: border-box; height: 100%; }
+.en-uso__nombre { margin: 0; font-family: var(--fuente-titulos); font-size: 20px; font-weight: 800; color: var(--tinta); }
+.en-uso__texto { margin: 0; font-size: 15px; line-height: 1.65; color: var(--tinta-suave); }
+.en-uso .enlace { margin-top: auto; padding-top: 4px; }
+
+/* --- Preguntas frecuentes -------------------------------------------------- */
+.faq { display: flex; flex-direction: column; gap: 12px; }
+.faq__item { border: 1px solid var(--borde); border-radius: 16px; background: rgba(15, 23, 42, 0.6); }
+.faq__item[open] { border-color: rgba(129, 140, 248, 0.45); }
+.faq__pregunta { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; font-size: 16px; font-weight: 700; line-height: 1.4; color: var(--texto); min-height: 44px; box-sizing: border-box; }
+.faq__pregunta::-webkit-details-marker { display: none; }
+.faq__pregunta::after { content: '+'; flex-shrink: 0; font-size: 22px; font-weight: 500; line-height: 1; color: var(--cian); transition: transform .2s ease; }
+.faq__item[open] > .faq__pregunta::after { transform: rotate(45deg); }
+.faq__pregunta:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 16px; }
+.faq__pregunta h3 { margin: 0; font: inherit; }
+.faq__respuesta { margin: 0; padding: 0 22px 20px; font-size: 15px; line-height: 1.7; color: var(--texto-suave); }
+
+/* --- Llamado final --------------------------------------------------------- */
+.llamado { position: relative; overflow: hidden; padding: 80px var(--margen-lateral) 96px; box-sizing: border-box; text-align: center; }
+.llamado::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(79, 70, 229, 0.16), transparent 70%); pointer-events: none; }
+.llamado > .contenedor { position: relative; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.llamado__titulo { margin: 0; font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -1.2px; line-height: 1.12; text-wrap: balance; }
+.llamado .bajada { max-width: 560px; }
+.llamado__correo { margin: 0; font-size: 15px; color: var(--texto-tenue); }
+
+/* --- Tabla de precios (/precios) ------------------------------------------- */
+.lista-precios { display: flex; flex-direction: column; border: 1px solid var(--borde); border-radius: var(--radio-tarjeta); overflow: hidden; background: rgba(15, 23, 42, 0.6); }
+.lista-precios__fila { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr) auto; gap: 8px 24px; align-items: center; padding: 18px 24px; border-top: 1px solid var(--borde); }
+.lista-precios__fila:first-child { border-top: none; }
+.lista-precios__nombre { margin: 0; font-family: var(--fuente-titulos); font-size: 17px; font-weight: 700; color: var(--texto); }
+.lista-precios__detalle { display: block; margin-top: 2px; font-family: var(--fuente-texto); font-size: 13px; font-weight: 600; color: var(--texto-tenue); }
+.lista-precios__montos { display: flex; flex-direction: column; gap: 2px; font-size: 15px; font-weight: 700; color: var(--texto-suave); }
+.lista-precios__montos small { font-size: 13px; font-weight: 600; color: var(--texto-tenue); }
+.lista-precios__fila .enlace { display: inline-flex; align-items: center; min-height: 24px; justify-self: start; font-size: 14px; white-space: nowrap; }
+@media (max-width: 767px) {
+  .lista-precios__fila { grid-template-columns: minmax(0, 1fr); padding: 18px 20px; }
+}
+
+/* --- Páginas simples: gracias y 404 ---------------------------------------- */
+.pagina-simple { display: flex; align-items: center; justify-content: center; padding: 64px var(--margen-lateral) 96px; box-sizing: border-box; }
+.pagina-simple > .contenedor { display: flex; flex-direction: column; gap: 20px; max-width: 600px; }
+.pagina-simple .titulo-pagina { font-size: clamp(30px, 4.4vw, 40px); letter-spacing: -1px; }
+.lista-enlaces { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.lista-enlaces a { display: inline-flex; align-items: center; min-height: 40px; }
+
+/* --- Franja del sitio de prueba -------------------------------------------- */
+.franja-prueba { display: none; }
+html.sitio-prueba .franja-prueba { display: block; background: #F59E0B; color: #451A03; font-size: 12px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; text-align: center; padding: 4px 12px; }
+
+/* --- Móvil ----------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .seccion { padding-top: 56px; padding-bottom: 56px; }
+  .seccion--primera { padding-top: 28px; }
+  .cabecera-pagina { padding-top: 28px; padding-bottom: 56px; }
+  .bajada { font-size: 17px; }
+  .boton { width: 100%; }
+  .cabecera-pagina__acciones { flex-direction: column; }
+  .llamado { padding-top: 64px; padding-bottom: 80px; }
+}
+
+/* --- Menú de la cabecera --------------------------------------------------- */
+.menu-enlace { display: inline-flex; align-items: center; gap: 6px; padding: 10px 0; color: var(--texto-suave); background: none; border: none; font: inherit; font-weight: 600; cursor: pointer; }
+.menu-enlace:hover, .menu-enlace[aria-current="page"], .menu-enlace[aria-expanded="true"], .menu-enlace--actual { color: #fff; }
+.menu-enlace:focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; border-radius: 4px; }
+.menu-servicios { position: relative; display: flex; }
+.menu-servicios__flecha { font-size: 0.8em; transition: transform .2s ease; }
+[aria-expanded="true"] > .menu-servicios__flecha { transform: rotate(180deg); }
+.submenu { position: absolute; top: 100%; left: -14px; z-index: 120; min-width: 270px; margin: 0; padding: 8px; list-style: none; display: flex; flex-direction: column; gap: 2px; background: var(--superficie); border: 1px solid var(--borde); border-radius: 14px; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45); }
+.submenu[hidden] { display: none; }
+.submenu a { display: flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: 10px; color: var(--texto-suave); font-size: 14.5px; font-weight: 600; white-space: nowrap; }
+.submenu a:hover, .submenu a[aria-current="page"] { background: rgba(79, 70, 229, 0.18); color: #fff; }
+.submenu a:focus-visible { outline: 2px solid var(--teal); outline-offset: -2px; }
+
+/* Menú hamburguesa: "Servicios" expandible */
+#mobile-nav-panel .panel-servicios__boton { display: flex; align-items: center; justify-content: space-between; min-height: 44px; padding: 12px 4px; background: none; border: none; font: inherit; font-size: 16px; font-weight: 600; color: var(--texto-suave); cursor: pointer; text-align: left; }
+#mobile-nav-panel .panel-servicios__boton:hover, #mobile-nav-panel .panel-servicios__boton[aria-expanded="true"] { color: #fff; }
+#mobile-nav-panel .panel-servicios__boton:focus-visible { outline: 2px solid var(--teal); outline-offset: -2px; }
+.panel-servicios { display: flex; flex-direction: column; gap: 2px; margin: 0 0 8px 6px; padding-left: 12px; border-left: 2px solid var(--borde); }
+.panel-servicios[hidden] { display: none; }
+#mobile-nav-panel .panel-servicios a { font-size: 15px; }
+#mobile-nav-panel a[aria-current="page"] { color: #fff; }
+
+/* --- Footer ---------------------------------------------------------------- */
+.pie { background: var(--fondo-profundo); color: var(--texto-tenue); padding: 64px var(--margen-lateral) 32px; box-sizing: border-box; }
+.pie__contenido { max-width: var(--ancho-max); margin: 0 auto; display: flex; flex-direction: column; gap: 48px; }
+.pie__columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 40px; }
+.pie__columna { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.pie__marca { display: flex; align-items: center; gap: 10px; }
+.pie__marca img { height: 38px; width: auto; display: block; }
+.pie__nombre { font-weight: 800; font-size: 18px; color: var(--texto); }
+.pie__nombre span { color: var(--teal); }
+.pie__lema { margin: 0; font-size: 14px; line-height: 1.6; max-width: 280px; }
+.pie__titulo { color: var(--texto); font-weight: 800; font-size: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
+.pie a { display: inline-flex; align-items: center; gap: 8px; padding: 4px 0; color: var(--texto-tenue); font-size: 14px; }
+.pie a:hover { color: var(--cian); }
+.pie a:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; border-radius: 4px; }
+.pie svg { flex-shrink: 0; }
+.pie__dato { font-size: 14px; }
+.pie__icono-wa { width: 16px; height: 13px; display: inline-block; flex-shrink: 0; background: var(--wa); border-radius: 50% 50% 50% 12%; }
+.pie__base { border-top: 1px solid var(--borde); padding-top: 24px; font-size: 13px; color: var(--texto-tenue); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.pie__legales { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.pie__legales a { display: inline-flex; align-items: center; min-height: 24px; font-size: 13px; padding: 0; }
+
+/* --- Varios ---------------------------------------------------------------- */
+.rejilla--1 { --columnas: 1; }
+.en-uso__texto strong { color: var(--tinta); }
+.texto--destacado { font-weight: 700; color: #2DD4BF; background: rgba(45, 212, 191, 0.14); padding: 12px 16px; border-radius: 12px; font-size: 14px; }
+.enlace--tenue { align-self: flex-start; display: inline-flex; align-items: center; min-height: 24px; color: var(--texto-tenue); font-weight: 600; font-size: 14px; }
+.enlace--tenue:hover { color: var(--texto-suave); }
+/* Texto solo para lectores de pantalla. */
+.solo-lectores { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+/* Enlace "Ver más →" de las tarjetas de Servicios de la portada (fondo claro). */
+.servicio-vermas { align-self: flex-start; display: inline-flex; align-items: center; min-height: 24px; padding: 4px 0; font-size: 14px; font-weight: 700; color: var(--indigo); }
+.servicio-vermas--solo { margin-top: auto; }
+.servicio-vermas:hover { color: var(--teal); }
+.servicio-vermas:focus-visible { outline: 2px solid var(--violeta); outline-offset: 3px; border-radius: 4px; }

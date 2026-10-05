@@ -1,0 +1,23 @@
+---
+// Layout de las páginas internas: cabecera, contenido, footer y (opcional) chat.
+// La portada no lo usa: arma sus secciones directamente sobre Base.astro.
+import Base, { type Props as PropsBase } from './Base.astro';
+import Cabecera from '../components/Cabecera.astro';
+import Pie from '../components/Pie.astro';
+import Chat from '../components/Chat.astro';
+
+interface Props extends PropsBase {
+  /** Muestra el chat flotante. Las páginas legales, la de gracias y la 404 no lo llevan. */
+  chat?: boolean;
+}
+const { chat = true, ...base } = Astro.props;
+---
+
+<Base {...base}>
+  <Cabecera rutaActual={base.ruta} />
+  <main>
+    <slot />
+  </main>
+  <Pie />
+  <Fragment slot="flotantes">{chat && <Chat />}</Fragment>
+</Base>

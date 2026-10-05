@@ -1,0 +1,19 @@
+---
+// Lista de viñetas. El color sale de las variables --vineta y --vineta-suave del
+// contenedor (ver componentes.css). Variantes: "grandes" y "simples".
+interface Props {
+  items: readonly string[];
+  variante?: 'normal' | 'grandes' | 'simples';
+  class?: string;
+}
+const { items, variante = 'normal', class: clase } = Astro.props;
+---
+
+<ul class:list={['vinetas', variante !== 'normal' && `vinetas--${variante}`, clase]}>
+  {items.map((item) => (
+    <li class="vineta">
+      <span class="vineta__marca"><span class="vineta__punto"></span></span>
+      <span class="vineta__texto">{item}</span>
+    </li>
+  ))}
+</ul>

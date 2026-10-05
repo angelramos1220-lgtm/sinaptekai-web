@@ -1,0 +1,41 @@
+---
+// Portada. Mismas secciones, mismo orden y mismos textos que el sitio anterior.
+import Base from '../layouts/Base.astro';
+import Cabecera from '../components/Cabecera.astro';
+import Hero from '../components/Hero.astro';
+import Servicios from '../components/Servicios.astro';
+import ComoFunciona from '../components/ComoFunciona.astro';
+import Casos from '../components/Casos.astro';
+import DisenoWeb from '../components/DisenoWeb.astro';
+import Paquetes from '../components/Paquetes.astro';
+import Recursos from '../components/Recursos.astro';
+import Contacto from '../components/Contacto.astro';
+import Comentarios from '../components/Comentarios.astro';
+import Pie from '../components/Pie.astro';
+import ModalChecklist from '../components/ModalChecklist.astro';
+import Chat from '../components/Chat.astro';
+import { negocio } from '../data/negocio';
+---
+
+<Base
+  titulo={negocio.titulo}
+  descripcion={negocio.descripcion}
+  ruta="/"
+  markdown
+>
+  <Cabecera rutaActual="/" />
+  <main>
+  <Hero />
+  <Servicios />
+  <ComoFunciona />
+  <Casos />
+  <DisenoWeb />
+  <Paquetes />
+  <Recursos />
+  <Contacto />
+  <Comentarios />
+  </main>
+  <Pie />
+  <ModalChecklist />
+  <Chat slot="flotantes" />
+</Base>
