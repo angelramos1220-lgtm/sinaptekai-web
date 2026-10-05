@@ -22,7 +22,7 @@ const pkgAccentSoft = 'rgba(79,70,229,0.18)';
   <div id="paquetes-content" style="max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:48px; position:relative;">
     <div data-fade="1" style="max-width:640px; display:flex; flex-direction:column; gap:12px;">
       <span style={`color:${pkgAccent}; font-weight:700; font-size:14px; letter-spacing:1.5px; text-transform:uppercase; transition:color .3s ease;`}>{t.pkgLabel}</span>
-      <h2 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:38px; font-weight:700; letter-spacing:-1px; line-height:1.15; text-wrap:balance;">{t.pkgTitle}</h2>
+      <h2 style="margin:0; font-family:var(--fuente-titulos); font-size:38px; font-weight:700; letter-spacing:-1px; line-height:1.15; text-wrap:balance;">{t.pkgTitle}</h2>
       <p style="margin:0; font-size:16px; line-height:1.6; color:#94A3B8;">{t.pkgSub}</p>
     </div>
 
@@ -50,7 +50,7 @@ const pkgAccentSoft = 'rgba(79,70,229,0.18)';
     <div id="mas-servicios" class="pkg-narrow" style="display:flex; flex-direction:column; gap:28px;">
       <div style="display:flex; flex-direction:column; gap:4px;">
         <span style={`color:${pkgAccent}; font-weight:700; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; transition:color .3s ease;`}>{t.addonsLabel}</span>
-        <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:700; letter-spacing:-0.5px;">{t.addonsTitle}</h3>
+        <h3 style="margin:0; font-family:var(--fuente-titulos); font-size:24px; font-weight:700; letter-spacing:-0.5px;">{t.addonsTitle}</h3>
       </div>
       <div class="pkg-grid" data-tilt-grid>
         {masServicios.map((m) => <TarjetaMasServicio servicio={m} />)}
@@ -61,7 +61,7 @@ const pkgAccentSoft = 'rgba(79,70,229,0.18)';
     <div id="complementarios" style="display:flex; flex-direction:column; gap:20px; border-top:1px solid #1E293B; padding-top:40px;">
       <div style="display:flex; flex-direction:column; gap:6px; max-width:640px;">
         <span style="color:#94A3B8; font-weight:700; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;">{t.compLabel}</span>
-        <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:20px; font-weight:700; letter-spacing:-0.3px; color:#E2E8F0;">{t.compTitle}</h3>
+        <h3 style="margin:0; font-family:var(--fuente-titulos); font-size:20px; font-weight:700; letter-spacing:-0.3px; color:#E2E8F0;">{t.compTitle}</h3>
         <p style="margin:0; font-size:14px; line-height:1.6; color:#94A3B8;">{t.compSub}</p>
       </div>
       <div class="comp-grid" data-tilt-grid>

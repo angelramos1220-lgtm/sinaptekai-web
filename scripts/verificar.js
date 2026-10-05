@@ -420,6 +420,7 @@ async function verificarNavegador() {
     let fallidas = [];
     let pedidas = [];
     let capturadas = []; // peticiones a n8n interceptadas (nunca salen de aquí)
+    let retrasoFuentes = 0; // ms que se retienen las fuentes, para probar su llegada tardía
     let bytes = 0;
     cdp.on((method, p) => {
       if (method === 'Runtime.exceptionThrown') consola.push('excepción: ' + ((p.exceptionDetails.exception && p.exceptionDetails.exception.description) || p.exceptionDetails.text).split('\n')[0]);
@@ -429,7 +430,10 @@ async function verificarNavegador() {
       else if (method === 'Network.responseReceived' && p.response.status >= 400) fallidas.push(p.response.status + ' ' + p.response.url);
       else if (method === 'Network.loadingFailed' && !p.canceled) fallidas.push('falló ' + (p.errorText || '') + ' ' + (p.requestId || ''));
       else if (method === 'Network.loadingFinished') bytes += p.encodedDataLength || 0;
-      else if (method === 'Fetch.requestPaused') {
+      else if (method === 'Fetch.requestPaused' && /\.woff2(\?|$)/.test(p.request.url)) {
+        // Las fuentes pasan de largo, salvo cuando una prueba pide que lleguen tarde.
+        setTimeout(() => cdp.send('Fetch.continueRequest', { requestId: p.requestId }).catch(() => {}), retrasoFuentes);
+      } else if (method === 'Fetch.requestPaused') {
         const url = p.request.url;
         const esN8n = ES_N8N(url);
         if (esN8n) capturadas.push({ url, metodo: p.request.method, tipo: p.request.headers['Content-Type'] || p.request.headers['content-type'] || '', cuerpo: p.request.postData || '' });
@@ -448,7 +452,7 @@ async function verificarNavegador() {
     // Se interceptan n8n (por su dirección y por la ruta /webhook/) y Google Analytics. El
     // sitio que se revisa puede estar en un dominio *.easypanel.host: por eso no se intercepta
     // ese dominio entero, solo las direcciones de n8n.
-    await cdp.send('Fetch.enable', { patterns: ORIGENES_N8N.map((o) => ({ urlPattern: o + '/*' })).concat([{ urlPattern: '*/webhook/*' }, { urlPattern: '*/webhook-test/*' }, { urlPattern: '*googletagmanager.com*' }, { urlPattern: '*google-analytics.com*' }, { urlPattern: '*analytics.google.com*' }]) });
+    await cdp.send('Fetch.enable', { patterns: ORIGENES_N8N.map((o) => ({ urlPattern: o + '/*' })).concat([{ urlPattern: '*.woff2*' }, { urlPattern: '*/webhook/*' }, { urlPattern: '*/webhook-test/*' }, { urlPattern: '*googletagmanager.com*' }, { urlPattern: '*google-analytics.com*' }, { urlPattern: '*analytics.google.com*' }]) });
 
     const evalJs = async (expression) => {
       const r = await cdp.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
@@ -878,6 +882,33 @@ async function verificarNavegador() {
       const v2 = deVideo();
       ok(ejemplos === 2 && v0.length === 0 && v1.length === 1 && !/\.mp4/.test(v1[0]) && v2.some((u) => /\.mp4/.test(u)),
         '/servicios/complementarios: nada de video al cargar; "Ver ejemplo" pide solo la portada (' + v1.join(', ') + ') y el video baja al pulsar reproducir', JSON.stringify({ ejemplos, v0, v1, v2 }));
+
+      // ---------- Fuentes que llegan tarde: la página no debe saltar
+      // Se retienen las fuentes 1,5 s: la página se dibuja con la fuente de respaldo y
+      // después llega la definitiva. Con los respaldos ajustados (global.css) el texto
+      // ocupa casi el mismo espacio, así que el desplazamiento acumulado (CLS) es mínimo.
+      titulo('Navegador: fuentes que llegan tarde (CLS con las fuentes retenidas 1,5 s)');
+      const medirCls = () => evalJs(`new Promise((res) => {
+        let total = 0; let mayor = '';
+        new PerformanceObserver((l) => { for (const e of l.getEntries()) { if (e.hadRecentInput) continue; total += e.value; const n = e.sources && e.sources[0] && e.sources[0].node; if (n && n.nodeType === 1 && e.value >= 0.01 && !mayor) mayor = n.tagName.toLowerCase() + (n.id ? '#' + n.id : ''); } }).observe({ type: 'layout-shift', buffered: true });
+        setTimeout(() => res({ cls: Math.round(total * 1000) / 1000, mayor, fuentes: Array.from(document.fonts).filter((f) => f.status === 'loaded' && !/respaldo/.test(f.family)).length }), 200);
+      })`);
+      retrasoFuentes = 1500;
+      try {
+        for (const [ruta, anchos, tope] of [['/', [344, 360, 375, 390, 393, 412, 430, 768, 1280], 0.05], ['/servicios/asistentes-whatsapp', [375, 412, 1280], 0.05], ['/casos', [375, 412, 1280], 0.05], ['/precios', [375, 768, 1280], 0.05]]) {
+          const fila = []; const problemas = [];
+          for (const w of anchos) {
+            await cargar(ruta, w, { espera: 1200 });
+            const r = await medirCls();
+            fila.push(w + ': ' + r.cls.toFixed(3));
+            if (!r.fuentes) problemas.push(w + ' px: las fuentes del sitio no llegaron a cargar');
+            if (r.cls > tope) problemas.push(w + ' px: CLS ' + r.cls.toFixed(3) + (r.mayor ? ' (se mueve ' + r.mayor + ')' : ''));
+          }
+          ok(!problemas.length, ruta + ' → ' + fila.join(' · ') + ' (tope ' + tope + ')', problemas.join(' · '));
+        }
+      } finally {
+        retrasoFuentes = 0;
+      }
 
       // ---------- Peso de la carga inicial
       titulo('Navegador: peso de la carga inicial (sin caché, 1280 px)');

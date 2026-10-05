@@ -12,14 +12,14 @@ import Testimonio from './tarjetas/Testimonio.astro';
   <div style="max-width:1240px; margin:0 auto; display:flex; flex-direction:column; gap:56px;">
     <div data-fade="1" style="max-width:640px; display:flex; flex-direction:column; gap:12px;">
       <span style="color:#4F46E5; font-weight:700; font-size:14px; letter-spacing:1.5px; text-transform:uppercase;">{t.casosLabel}</span>
-      <h2 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:38px; font-weight:800; letter-spacing:-1px; line-height:1.15; text-wrap:balance;">{t.casosTitle}</h2>
+      <h2 style="margin:0; font-family:var(--fuente-titulos); font-size:38px; font-weight:800; letter-spacing:-1px; line-height:1.15; text-wrap:balance;">{t.casosTitle}</h2>
     </div>
     <div class="casos-grid" data-tilt-grid>
       {casos.map((caso) => <TarjetaCaso caso={caso} />)}
     </div>
     <Testimonio />
     <div data-fade="1" style="display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center; padding-top:16px;">
-      <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; font-size:26px; font-weight:800;">{t.casosCta}</h3>
+      <h3 style="margin:0; font-family:var(--fuente-titulos); font-size:26px; font-weight:800;">{t.casosCta}</h3>
       <a class="hv-wa fc-cian" href={waLink(t.casosWaMsg)} target="_blank" data-origen="caso" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#052E16; font-weight:700; font-size:15px; padding:14px 28px; border-radius:12px; min-height:48px; box-sizing:border-box;">
         <span style="width:8px; height:8px; border-radius:50%; background:#052E16; display:inline-block;"></span>
         {t.ctaWa}

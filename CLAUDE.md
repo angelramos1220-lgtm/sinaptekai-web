@@ -117,7 +117,7 @@ public/          Se publica tal cual: assets/ (PDF, favicons, og-image, videos),
 nginx.conf       Servidor: URLs sin extensión, Markdown por negociación, caché, 404, modo de prueba, www.
 Dockerfile       Build con Node y sitio final con nginx.
 docs/            textos-nuevos.md (textos revisados) y el registro de la migración.
-scripts/         verificar.js, lighthouse.js y optimizar-logo.mjs (ver "Verificación").
+scripts/         verificar.js, lighthouse.js, fuentes-respaldo.js y optimizar-logo.mjs (ver "Verificación").
 ```
 
 | Qué | Archivo en `src/data/` |
@@ -184,6 +184,33 @@ ni resultados que no estén escritos en otra parte.
    `.md` y en `llms.txt`.
 2. Para que salga en "En uso en" de una página de servicio: su `id` en `enUso`, en
    `paginasServicio.ts`. Para la línea "En uso en:" de la tarjeta de la portada: `servicios.ts`.
+
+## Fuentes
+
+Manrope (texto) y Space Grotesk (títulos de bloques) están autoalojadas. Mientras se
+descargan, el texto se dibuja con una fuente del sistema; si esa fuente ocupa otro ancho,
+al llegar la definitiva los renglones se reparten distinto y la página salta.
+
+- **Fuentes de respaldo ajustadas** (`src/styles/global.css`): caras `@font-face` que usan
+  la fuente del sistema (Arial; Roboto en Android) escalada con `size-adjust` y con las
+  medidas verticales de la fuente del sitio, una por peso. Con ellas el texto ocupa lo
+  mismo antes y después.
+- **Solo se aplican a la primera pantalla**: el hero de la portada, el encabezado de las
+  páginas internas, y las páginas de gracias y 404 (`.hero-section`, `.cabecera-pagina`,
+  `.pagina-simple`, `.legal-hero`). Ahí `--fuente-texto` y `--fuente-titulos` pasan a ser
+  las pilas "estables". Aplicarlas a todo el texto se probó y se descartó: dibujar con
+  esas caras es más lento y sumaba ~200 ms de layout en un móvil lento.
+- **El titular del hero tiene su propia cara** (`--fuente-titular`), ajustada para que
+  reparta sus renglones igual que Manrope en los 30 anchos de pantalla más comunes.
+- **Usar siempre las pilas** `var(--fuente-texto)` y `var(--fuente-titulos)`; no escribir
+  `'Manrope'` ni `'Space Grotesk'` a mano en un estilo.
+- **Si cambia una fuente del sitio o el texto del titular del hero**, volver a medir con
+  `node scripts/fuentes-respaldo.js` y copiar los valores a `global.css`.
+- Los valores de Roboto están calculados con el archivo de la fuente, no comprobados en
+  un teléfono Android.
+
+`verificar.js` retiene las fuentes 1,5 s y exige que el desplazamiento acumulado (CLS)
+quede por debajo de 0,05 en las cuatro páginas principales.
 
 ## Cabecera y menú
 
@@ -307,6 +334,7 @@ node scripts/verificar.js --base https://nuevo.synaptekai.tech   # el entorno de
 node scripts/verificar.js --base https://synaptekai.tech         # el sitio real
 node scripts/lighthouse.js                # Lighthouse móvil en /, un servicio y /casos (acepta --base)
 node scripts/lighthouse.js --como-real --veces 3   # el contenedor local servido como synaptekai.tech
+node scripts/fuentes-respaldo.js          # mide las fuentes y calcula los ajustes de respaldo (ver "Fuentes")
 ```
 
 `verificar.js` usa Chrome o Edge sin ventana y **no toca producción**: las llamadas a n8n
