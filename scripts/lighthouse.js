@@ -6,6 +6,8 @@
  *   node scripts/lighthouse.js --base URL --out carpeta
  *
  * Metas: Rendimiento >= 95; Accesibilidad, Buenas prácticas y SEO = 100.
+ * Fuera de synaptekai.tech el sitio va en modo de prueba (noindex): ahí se omite la
+ * auditoría de SEO que exige que la página sea indexable.
  * Deja un informe .html y .json por página en la carpeta de salida y un resumen.md.
  *
  * Lighthouse no es dependencia del proyecto: se baja con npx la primera vez. Usa el
@@ -23,6 +25,11 @@ const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf('--' + name); return i === -1 || !args[i + 1] ? def : args[i + 1]; };
 const BASE = opt('base', 'http://localhost:8081').replace(/\/$/, '');
 const OUT = path.resolve(ROOT, opt('out', '.work/lighthouse'));
+// Fuera del dominio real el sitio va en modo de prueba, con "noindex" a propósito. Ahí
+// se omite la auditoría de SEO que exige que la página sea indexable: fallaría siempre
+// y no dice nada del sitio. En synaptekai.tech se corre completa.
+const ES_PRODUCCION = /^https:\/\/(www\.)?synaptekai\.tech$/.test(BASE);
+const OMITIR = ES_PRODUCCION ? [] : ['--skip-audits=is-crawlable'];
 const PAGINAS = [
   { ruta: '/', nombre: 'portada' },
   { ruta: '/servicios/asistentes-whatsapp', nombre: 'servicio-asistentes-whatsapp' },
@@ -40,7 +47,7 @@ for (const p of PAGINAS) {
   const r = spawnSync('npx', ['--yes', 'lighthouse@latest', BASE + p.ruta,
     '--only-categories=performance,accessibility,best-practices,seo',
     '--chrome-flags="--headless=new --force-prefers-no-reduced-motion"',
-    '--output=json', '--output=html', '--output-path=' + salida, '--quiet'], { shell: true, encoding: 'utf8' });
+    ...OMITIR, '--output=json', '--output=html', '--output-path=' + salida, '--quiet'], { shell: true, encoding: 'utf8' });
   if (r.status !== 0) { console.error(r.stderr || r.stdout); process.exit(2); }
   const j = JSON.parse(fs.readFileSync(salida + '.report.json', 'utf8'));
   const puntajes = CATEGORIAS.map(([id, , meta]) => { const n = Math.round(j.categories[id].score * 100); if (n < meta) fallos++; return n; });
@@ -56,6 +63,7 @@ for (const p of PAGINAS) {
   }
 }
 lineas.push('Lighthouse ' + filas[0].version + ', emulación móvil con red y procesador lentos simulados.', '');
+if (!ES_PRODUCCION) lineas.push('Esta dirección no es el dominio real: el sitio va en modo de prueba (con noindex a propósito), así que en SEO se omite la auditoría "la página se puede indexar". En synaptekai.tech se mide completa.', '');
 lineas.push('| Página | ' + CATEGORIAS.map(([, n]) => n).join(' | ') + ' | ' + METRICAS.map(([, n]) => n).join(' | ') + ' |');
 lineas.push('|---|' + CATEGORIAS.map(() => '---').join('|') + '|' + METRICAS.map(() => '---').join('|') + '|');
 for (const f of filas) lineas.push('| `' + f.p.ruta + '` | ' + f.puntajes.join(' | ') + ' | ' + f.metricas.join(' | ') + ' |');

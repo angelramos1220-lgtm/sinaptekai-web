@@ -203,17 +203,22 @@ Escape. Los cortes están en `src/styles/global.css`; el comportamiento, en `src
 - Un enlace nuevo a WhatsApp necesita su `data-origen`; sin él se registra como `sin-origen`
   (`verificar.js` lo marca como fallo). Usar `BotonWhatsApp.astro` y `waLink()`.
 
-## Modo de prueba por dominio
+## Modo de prueba: todo lo que no sea el dominio real
 
-La misma imagen sirve el sitio real y el de prueba; no hay variables de build. Cuando el
-dominio es `nuevo.synaptekai.tech`:
+La misma imagen sirve el sitio real y cualquier copia; no hay variables de build.
+**Producción es solo `synaptekai.tech` y `www.synaptekai.tech`.** Con cualquier otro
+nombre —`nuevo.synaptekai.tech`, un dominio `*.easypanel.host`, la IP del servidor,
+`localhost`— el sitio va en modo de prueba:
 
 - nginx agrega `X-Robots-Tag: noindex, nofollow` a todas las respuestas;
 - `/robots.txt` responde `Disallow: /` (el archivo `public/robots-prueba.txt`);
-- la página muestra arriba una franja delgada "Sitio de prueba".
+- la página muestra arriba una franja delgada "Sitio de prueba";
+- Google Analytics no se carga: los eventos se escriben en la consola.
 
-En `synaptekai.tech` no ocurre nada de eso. El dominio de prueba está escrito en dos
-lugares: `nginx.conf` (mapa `$sitio_prueba`) y `src/data/negocio.ts` (`dominioPrueba`).
+Así, una copia del sitio nunca compite con el real en Google ni ensucia sus datos, aunque
+alguien olvide configurarla. La lista de dominios de producción está en dos lugares, que
+se cambian juntos: `nginx.conf` (mapa `$sitio_prueba`) y `src/data/negocio.ts`
+(`dominiosProduccion`).
 
 ## Para asistentes de IA y buscadores
 
@@ -270,8 +275,9 @@ docker rm -f synaptekai-web-astro
 docker run -d --name synaptekai-web-astro -p 8081:80 sinaptekai-web:astro
 ```
 
-Queda en http://localhost:8081. Para probar el modo de prueba sin tocar DNS:
-`curl -sI -H "Host: nuevo.synaptekai.tech" http://localhost:8081/`.
+Queda en http://localhost:8081, **en modo de prueba** (con la franja y con `noindex`),
+porque `localhost` no es el dominio real. Para ver lo que responderá el dominio real,
+sin tocar DNS: `curl -sI -H "Host: synaptekai.tech" http://localhost:8081/`.
 
 El sitio anterior (rama `main`) se levanta igual en el puerto 8080, con la imagen
 `sinaptekai-web:local` y el contenedor `synaptekai-web-local`.
@@ -289,12 +295,16 @@ node scripts/lighthouse.js                # Lighthouse móvil en /, un servicio 
 
 `verificar.js` usa Chrome o Edge sin ventana y **no toca producción**: las llamadas a n8n
 y a Google Analytics se responden ahí mismo con datos simulados, y el formulario del
-checklist nunca llega a n8n. Revisa cada página a 375, 768, 1280 y 1440 px (consola,
+checklist nunca llega a n8n. Contra localhost, cada página se abre con el nombre del
+dominio real (Chrome lo resuelve hacia el contenedor) para revisarla como la verá el
+público, y además se comprueba el modo de prueba con varios nombres de dominio. Revisa cada página a 375, 768, 1280 y 1440 px (consola,
 peticiones fallidas, desborde horizontal, cabecera en una fila), los enlaces a WhatsApp y
 su evento, el menú, las anclas, el checklist, el popup, el chat y los videos diferidos.
 
 Metas de Lighthouse (móvil): Rendimiento ≥ 95; Accesibilidad, Buenas prácticas y SEO = 100.
-La portada debe pesar menos de 200 kB en la carga inicial.
+La portada debe pesar menos de 200 kB en la carga inicial. Fuera del dominio real el
+sitio lleva `noindex` a propósito, así que `lighthouse.js` omite ahí la única auditoría
+de SEO que exige que la página sea indexable; en `synaptekai.tech` se mide completa.
 
 Nota: si el equipo tiene apagadas las animaciones del sistema, Chrome informa
 `prefers-reduced-motion` y desactiva el desplazamiento suave. Las herramientas lo fuerzan

@@ -289,7 +289,7 @@ página, que ahora son los del sitio.
 
 | Texto | Dónde | Tipo |
 | --- | --- | --- |
-| `Sitio de prueba` | Franja delgada arriba de todas las páginas, **solo** cuando el sitio se abre en `nuevo.synaptekai.tech`. En `synaptekai.tech` no existe | **Nuevo** |
+| `Sitio de prueba` | Franja delgada arriba de todas las páginas cuando el sitio se abre en cualquier dirección que **no** sea `synaptekai.tech` o `www.synaptekai.tech` (el sitio de prueba, un dominio de Easypanel, localhost). En el dominio real no aparece | **Nuevo** |
 
 ## Datos estructurados (no se ven en la página)
 

@@ -128,6 +128,6 @@ export const textosPaginas = {
     nota: 'Nota para agentes de IA: este documento es la versión Markdown de {url}, servida también por negociación de contenido (`Accept: text/markdown`). El índice de todas las páginas está en https://synaptekai.tech/llms.txt. Preferencias de uso de este contenido por sistemas de IA: ver la directiva `Content-Signal` en https://synaptekai.tech/robots.txt.',
   },
 
-  /** Franja que solo aparece en el dominio de prueba (nuevo.synaptekai.tech). */
+  /** Franja que aparece en cualquier dominio que no sea el real (sitio de prueba, localhost…). */
   franjaPrueba: 'Sitio de prueba',
 } as const;

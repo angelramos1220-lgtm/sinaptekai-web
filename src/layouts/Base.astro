@@ -98,18 +98,21 @@ const organizacion = {
     {jsonLd.map((dato) => <script type="application/ld+json" set:html={JSON.stringify(dato)} />)}
 
     <!-- Antes de dibujar la página:
-         1. Google Analytics 4 solo se carga en los dominios de producción. En cualquier
-            otro (localhost, sitio de prueba) los eventos se escriben en la consola.
-         2. En el dominio de prueba se marca la página para mostrar la franja de aviso.
+         1. Producción es SOLO synaptekai.tech y www.synaptekai.tech (negocio.dominiosProduccion).
+            Solo ahí se carga Google Analytics 4.
+         2. En cualquier otro dominio (el sitio de prueba, un dominio de Easypanel, localhost)
+            la página va en modo de prueba: muestra la franja de aviso y escribe los eventos
+            en la consola. nginx aplica la misma regla para el noindex y robots.txt.
          3. Si se entra con un ancla (/#paquetes) y el visitante no pidió menos movimiento,
             se guarda y se quita de la URL para que el navegador no salte de golpe:
             src/scripts/ancla.ts hace después el desplazamiento suave. -->
-    <script is:inline define:vars={{ ga4: negocio.ga4, dominios: negocio.dominiosProduccion, dominioPrueba: negocio.dominioPrueba }}>
+    <script is:inline define:vars={{ ga4: negocio.ga4, dominios: negocio.dominiosProduccion }}>
       window.dataLayer = window.dataLayer || [];
       function gtag() { dataLayer.push(arguments); }
       window.gtag = gtag;
-      window.__ga4Activo = dominios.indexOf(location.hostname) !== -1;
-      if (window.__ga4Activo) {
+      var produccion = dominios.indexOf(location.hostname) !== -1;
+      window.__ga4Activo = produccion;
+      if (produccion) {
         gtag('js', new Date());
         gtag('config', ga4);
         var s = document.createElement('script');
@@ -117,7 +120,7 @@ const organizacion = {
         s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4;
         document.head.appendChild(s);
       }
-      if (location.hostname === dominioPrueba) document.documentElement.classList.add('sitio-prueba');
+      if (!produccion) document.documentElement.classList.add('sitio-prueba');
       if (location.hash.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         window.__anclaInicial = location.hash;
         history.replaceState(null, '', location.pathname + location.search);

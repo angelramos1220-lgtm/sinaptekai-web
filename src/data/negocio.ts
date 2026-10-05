@@ -25,10 +25,13 @@ export const negocio = {
   },
   /** Google Analytics 4. */
   ga4: 'G-Q01K6J04NG',
-  /** Dominios donde se carga GA4. En cualquier otro, los eventos se escriben en consola. */
+  /**
+   * Los únicos dominios de producción. Solo en ellos se carga GA4. En cualquier otro
+   * (sitio de prueba, dominio de Easypanel, localhost) la página muestra la franja
+   * "Sitio de prueba" y escribe los eventos en la consola. nginx.conf repite esta
+   * lista (mapa $sitio_prueba) para el noindex y robots.txt: cambiar las dos juntas.
+   */
   dominiosProduccion: ['synaptekai.tech', 'www.synaptekai.tech'],
-  /** Dominio del sitio de prueba: nginx lo sirve sin indexar y la página muestra una franja de aviso. */
-  dominioPrueba: 'nuevo.synaptekai.tech',
 } as const;
 
 // Integraciones con n8n. No cambiar las URLs ni los nombres de los campos que

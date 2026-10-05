@@ -13,7 +13,8 @@
  *   Servidor   cada URL responde lo que debe (200 sin redirección, tipo de contenido), las
  *              variantes .html, la versión Markdown de cada página y su negociación con
  *              "Accept: text/markdown", robots.txt, sitemap.xml, llms.txt, la página 404, la
- *              redirección de www, el modo de prueba por dominio y las cabeceras de seguridad
+ *              redirección de www, el modo de prueba (todo lo que no sea el dominio real:
+ *              noindex, robots con Disallow y franja) y las cabeceras de seguridad
  *              y de caché. De cada página: título, descripción, canonical, datos estructurados.
  *   Navegador  cada página a 375, 768, 1280 y 1440 px: sin errores de consola, sin peticiones
  *              fallidas, sin desborde horizontal, cabecera en una sola fila, y todos los
@@ -39,6 +40,9 @@ const args = process.argv.slice(2);
 const opt = (name, def) => { const i = args.indexOf('--' + name); return i === -1 || !args[i + 1] || args[i + 1].startsWith('--') ? def : args[i + 1]; };
 const BASE = opt('base', 'http://localhost:8081').replace(/\/$/, '');
 const LOCAL = /^http:\/\/(localhost|127\.0\.0\.1)/.test(BASE);
+// El dominio real. Cualquier otra dirección (localhost, el sitio de prueba, un dominio de
+// Easypanel) se sirve en modo de prueba: noindex, robots con Disallow y franja de aviso.
+const BASE_ES_PRODUCCION = /^https:\/\/(www\.)?synaptekai\.tech$/.test(BASE);
 const OUT = path.resolve(ROOT, '.work/verificacion');
 const CAPTURAS = args.includes('--capturas');
 const DIR_CAPTURAS = path.resolve(ROOT, opt('capturas', '.work/verificacion/capturas'));
@@ -195,10 +199,18 @@ async function verificarServidor() {
   }
 
   titulo('Servidor: robots, sitemap y llms.txt');
-  const robots = (await pedir('/robots.txt', LOCAL ? { host: 'synaptekai.tech' } : {})).texto;
-  ok(/Content-Signal:/i.test(robots) && /Sitemap: https:\/\/synaptekai\.tech\/sitemap\.xml/.test(robots) && /^User-agent: \*\r?\nAllow: \/\s*$/m.test(robots), 'robots.txt del dominio real: permite el rastreo, con Content-Signal y Sitemap');
+  const sinCr = (s) => s.replace(/\r\n/g, '\n');
   const robotsRepo = fs.readFileSync(path.join(ROOT, 'public/robots.txt'), 'utf8');
-  if (LOCAL) ok(robots === robotsRepo, 'robots.txt se sirve tal cual está en public/robots.txt (' + robots.length + ' bytes)');
+  if (LOCAL || BASE_ES_PRODUCCION) {
+    // En local se pide con el nombre del dominio real: con cualquier otro, nginx entrega el de prueba.
+    const robots = (await pedir('/robots.txt', LOCAL ? { host: 'synaptekai.tech' } : {})).texto;
+    ok(/Content-Signal:/i.test(robots) && /Sitemap: https:\/\/synaptekai\.tech\/sitemap\.xml/.test(robots) && /^User-agent: \*\r?\nAllow: \/\s*$/m.test(robots), 'robots.txt del dominio real: permite el rastreo, con Content-Signal y Sitemap');
+    ok(sinCr(robots) === sinCr(robotsRepo), 'robots.txt del dominio real se sirve tal cual está en public/robots.txt (' + robots.length + ' bytes)');
+  }
+  if (!BASE_ES_PRODUCCION) {
+    const robotsAqui = (await pedir('/robots.txt')).texto;
+    ok(/^User-agent: \*\s+Disallow: \/\s*$/.test(robotsAqui.trim()), new URL(BASE).host + ' no es el dominio real: su robots.txt responde "Disallow: /"', robotsAqui.slice(0, 80));
+  }
   const sitemap = (await pedir('/sitemap.xml')).texto;
   const enSitemap = Array.from(sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)).map((m) => m[1]);
   const esperadas = PAGINAS.filter((p) => !p.noindex).map((p) => DOMINIO + p.ruta).concat([DOMINIO + '/bot']);
@@ -241,23 +253,38 @@ async function verificarServidor() {
     const r = await pedir(recurso[0]);
     ok(r.estado === 200 && /immutable/.test(r.cab['cache-control'] || '') && /max-age=31536000/.test(r.cab['cache-control'] || ''), recurso[0] + ' con caché larga e inmutable (' + r.cab['cache-control'] + ')');
   } else aviso('la portada no enlaza ningún recurso de /_astro/ para revisar su caché');
+  // Modo de prueba: todo lo que no sea el dominio real sale con noindex y robots cerrado.
+  const cabecerasPrueba = async (host, etiqueta) => {
+    const o = host ? { host } : {};
+    const problemas = [];
+    for (const ruta of ['/', '/casos.md', '/no-existe', '/assets/og-image.jpg']) {
+      const r = await pedir(ruta, Object.assign({ method: ruta.startsWith('/assets/') ? 'HEAD' : 'GET' }, o));
+      if (!/noindex, nofollow/.test(r.cab['x-robots-tag'] || '')) problemas.push(ruta + ' sin X-Robots-Tag (' + r.cab['x-robots-tag'] + ')');
+    }
+    const rob = await pedir('/robots.txt', o);
+    if (rob.estado !== 200 || !/^User-agent: \*\s+Disallow: \/\s*$/.test(rob.texto.trim())) problemas.push('robots.txt: ' + rob.texto.slice(0, 60));
+    ok(!problemas.length, etiqueta + ' → modo de prueba: "X-Robots-Tag: noindex, nofollow" en páginas, .md, 404 y archivos; robots.txt con "Disallow: /"', problemas.join('; '));
+  };
+  const cabecerasReal = async (host, etiqueta) => {
+    const o = host ? { host } : {};
+    const problemas = [];
+    for (const ruta of ['/', '/casos.md', '/no-existe', '/robots.txt']) { const r = await pedir(ruta, o); if (r.cab['x-robots-tag']) problemas.push(ruta + ' lleva X-Robots-Tag: ' + r.cab['x-robots-tag']); }
+    ok(!problemas.length, etiqueta + ' → dominio real: sin X-Robots-Tag en ninguna respuesta', problemas.join('; '));
+  };
   if (LOCAL) {
     const www = await pedir('/casos?x=1', { host: 'www.synaptekai.tech' });
     ok(www.estado === 301 && www.cab.location === DOMINIO + '/casos?x=1', 'www.synaptekai.tech redirige con 301 a ' + DOMINIO, 'estado ' + www.estado + ' → ' + www.cab.location);
-    const real = await pedir('/', { host: 'synaptekai.tech' });
-    ok(!real.cab['x-robots-tag'], 'synaptekai.tech: sin X-Robots-Tag', String(real.cab['x-robots-tag']));
-    const prueba = await pedir('/', { host: DOMINIO_PRUEBA });
-    ok(/noindex, nofollow/.test(prueba.cab['x-robots-tag'] || ''), DOMINIO_PRUEBA + ': X-Robots-Tag: noindex, nofollow', String(prueba.cab['x-robots-tag']));
-    const pruebaMd = await pedir('/casos.md', { host: DOMINIO_PRUEBA });
-    ok(/noindex, nofollow/.test(pruebaMd.cab['x-robots-tag'] || ''), DOMINIO_PRUEBA + ': también en los .md', String(pruebaMd.cab['x-robots-tag']));
-    const robotsPrueba = await pedir('/robots.txt', { host: DOMINIO_PRUEBA });
-    ok(robotsPrueba.estado === 200 && /^User-agent: \*\s+Disallow: \/\s*$/m.test(robotsPrueba.texto) && !/Sitemap/.test(robotsPrueba.texto), DOMINIO_PRUEBA + '/robots.txt responde "Disallow: /"', robotsPrueba.texto.slice(0, 80));
+    await cabecerasReal('synaptekai.tech', 'Host synaptekai.tech');
+    // Todo lo demás: el sitio de prueba, un dominio de Easypanel, una IP, otro subdominio,
+    // un nombre que solo empieza igual, y la propia dirección local.
+    for (const host of [DOMINIO_PRUEBA, 'sitio-web-nuevo.ejemplo.easypanel.host', '203.0.113.10', 'otro.synaptekai.tech', 'synaptekai.tech.ejemplo.com']) await cabecerasPrueba(host, 'Host ' + host);
+    await cabecerasPrueba(null, new URL(BASE).host);
     const robotsOtro = await pedir('/robots-prueba.txt', { host: 'synaptekai.tech' });
     ok(robotsOtro.estado === 404, 'el robots de prueba no se puede pedir directo (/robots-prueba.txt → 404)', 'estado ' + robotsOtro.estado);
+  } else if (BASE_ES_PRODUCCION) {
+    await cabecerasReal(null, new URL(BASE).host);
   } else {
-    dato('www, modo de prueba por Host: solo se revisan contra localhost.');
-    const r = await pedir('/');
-    dato('X-Robots-Tag de ' + BASE + ': ' + (r.cab['x-robots-tag'] || 'ninguno'));
+    await cabecerasPrueba(null, new URL(BASE).host);
   }
 }
 
@@ -340,6 +367,8 @@ const PROBAR_WHATSAPP = `(() => {
   const eventos = [];
   const original = console.info;
   console.info = function (m, p) { if (typeof m === 'string' && m.indexOf('[GA4') === 0) eventos.push({ nombre: m.replace(/^\\[GA4[^\\]]*\\] /, ''), p }); else original.apply(console, arguments); };
+  const gtagOriginal = window.gtag;
+  window.gtag = function () { if (arguments[0] === 'event') eventos.push({ nombre: arguments[1], p: arguments[2] }); if (gtagOriginal) gtagOriginal.apply(this, arguments); };
   const enlaces = Array.from(document.querySelectorAll('a[href*="wa.me"]'));
   return enlaces.map((a) => {
     eventos.length = 0;
@@ -461,12 +490,16 @@ async function verificarNavegador() {
     const paginas = PAGINAS.concat([{ ruta: '/no-existe', nombre: '404', noindex: true }]).filter((p) => !SOLO || p.ruta === SOLO);
 
     // ---------- Cada página a cada ancho
-    titulo('Navegador: cada página a ' + WIDTHS.join(', ') + ' px');
+    // En local las páginas se revisan como las verá el público: con el nombre del dominio
+    // real (Chrome lo resuelve hacia el contenedor), sin franja y con GA4 interceptado.
+    const comoReal = LOCAL ? { host: 'synaptekai.tech' } : {};
+    const esperaFranja = !LOCAL && !BASE_ES_PRODUCCION;
+    titulo('Navegador: cada página a ' + WIDTHS.join(', ') + ' px' + (LOCAL ? ' (servidas como synaptekai.tech)' : ''));
     for (const p of paginas) {
       const notas = [];
       const problemas = [];
       for (const w of WIDTHS) {
-        await cargar(p.ruta, w);
+        await cargar(p.ruta, w, comoReal);
         await recorrer(w);
         const m = await evalJs(MEDIR_PAGINA);
         const e = '[' + w + '] ';
@@ -479,7 +512,8 @@ async function verificarNavegador() {
           if (m.cabecera.enlacesPartidos) problemas.push(e + m.cabecera.enlacesPartidos + ' enlaces del menú partidos en dos líneas');
         }
         if (m.h1.length !== 1) problemas.push(e + m.h1.length + ' h1 visibles');
-        if (m.franja) problemas.push(e + 'se ve la franja de "sitio de prueba" fuera del dominio de prueba');
+        if (esperaFranja && !m.franja) problemas.push(e + 'falta la franja de "sitio de prueba" (esta dirección no es el dominio real)');
+        if (!esperaFranja && m.franja) problemas.push(e + 'se ve la franja de "sitio de prueba" en el dominio real');
         // La 404 siempre deja en consola el aviso de su propia respuesta 404: no es un error de la página.
         const errores = consola.filter((x) => !/favicon/.test(x) && !(p.nombre === '404' && x.includes('status of 404') && x.includes(p.ruta)));
         if (errores.length) problemas.push(e + 'consola: ' + Array.from(new Set(errores)).slice(0, 3).join(' | '));
@@ -516,7 +550,7 @@ async function verificarNavegador() {
       }
 
       // ---------- Enlaces de WhatsApp y evento
-      titulo('Navegador: enlaces a WhatsApp y evento contacto_whatsapp (modo consola)');
+      titulo('Navegador: enlaces a WhatsApp y evento contacto_whatsapp' + (BASE_ES_PRODUCCION ? '' : ' (modo de prueba: eventos en la consola)'));
       let totalEnlaces = 0;
       for (const p of paginas) {
         await cargar(p.ruta, 1280);
@@ -545,8 +579,9 @@ async function verificarNavegador() {
       await cargar('/', 1280);
       const ga = await evalJs('({ activo: window.__ga4Activo, script: !!document.querySelector(\'script[src*="googletagmanager"]\') })');
       const pidioGa = pedidas.some((u) => /googletagmanager|google-analytics/.test(u));
-      if (/synaptekai\.tech/.test(BASE) && !BASE.includes(DOMINIO_PRUEBA)) ok(ga.activo === true, 'GA4 activo en el dominio real');
-      else ok(ga.activo === false && !ga.script && !pidioGa, 'GA4 no se carga fuera del dominio real: los eventos van a la consola');
+      const franjaBase = await evalJs('document.querySelector(".franja-prueba").getBoundingClientRect().height');
+      if (BASE_ES_PRODUCCION) ok(ga.activo === true && franjaBase === 0, 'dominio real: GA4 activo y sin franja de prueba', JSON.stringify({ ga, franjaBase }));
+      else ok(ga.activo === false && !ga.script && !pidioGa && franjaBase > 0, new URL(BASE).host + ' no es el dominio real: franja "Sitio de prueba" visible y GA4 sin cargar (los eventos van a la consola)', JSON.stringify({ ga, pidioGa, franjaBase }));
 
       // ---------- Modo de prueba y dominio real, simulados sobre el contenedor local
       if (LOCAL) {
@@ -711,6 +746,8 @@ async function verificarNavegador() {
         const eventos = [];
         const original = console.info;
         console.info = function (m, p) { if (typeof m === 'string' && m.indexOf('[GA4') === 0) eventos.push(m.replace(/^\\[GA4[^\\]]*\\] /, '') + ' ' + JSON.stringify(p)); else original.apply(console, arguments); };
+        const gtagOriginal = window.gtag;
+        window.gtag = function () { if (arguments[0] === 'event') eventos.push(arguments[1] + ' ' + JSON.stringify(arguments[2])); if (gtagOriginal) gtagOriginal.apply(this, arguments); };
         const enviar = (id, datos) => {
           const f = document.getElementById(id);
           for (const k of Object.keys(datos)) f.elements[k].value = datos[k];

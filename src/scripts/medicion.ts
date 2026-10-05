@@ -1,9 +1,9 @@
 // Medición con Google Analytics 4.
 //
-// GA4 solo se carga en los dominios de producción (lo decide el script en línea de
-// Base.astro, que deja el resultado en window.__ga4Activo). En cualquier otro dominio
-// (localhost, sitio de prueba) los eventos se escriben en la consola, para poder
-// probarlos sin ensuciar los datos reales.
+// GA4 solo se carga en los dominios de producción, synaptekai.tech y www (lo decide el
+// script en línea de Base.astro, que deja el resultado en window.__ga4Activo). En
+// cualquier otro dominio (localhost, el sitio de prueba) los eventos se escriben en la
+// consola, para poder probarlos sin ensuciar los datos reales.
 
 declare global {
   interface Window {
