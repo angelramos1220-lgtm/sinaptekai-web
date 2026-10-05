@@ -346,7 +346,8 @@ sitio real tampoco deja rastro: no envía formularios ni visitas a Analytics.
 
 Revisa cada página a 375, 768, 1280 y 1440 px (consola, peticiones fallidas, desborde
 horizontal, cabecera en una fila), los enlaces a WhatsApp y su evento, el menú, las
-anclas, el checklist, el popup, el chat y los videos diferidos.
+anclas, el checklist, el popup, el chat, los videos diferidos y que la página no salte
+cuando las fuentes llegan tarde.
 
 Metas de Lighthouse (móvil): Rendimiento ≥ 95; Accesibilidad, Buenas prácticas y SEO = 100.
 La portada debe pesar menos de 200 kB en la carga inicial. Fuera del dominio real el
