@@ -6,6 +6,7 @@ import '../styles/componentes.css';
 import { negocio } from '../data/negocio';
 import { servicios } from '../data/servicios';
 import { textosPaginas as tp } from '../data/textosPaginas';
+import { rutaMarkdown } from '../lib/rutas';
 import manropeUrl from '../assets/fonts/manrope-latin.woff2?url';
 
 export interface Props {
@@ -19,9 +20,11 @@ export interface Props {
   noindex?: boolean;
   /** Datos estructurados propios de la página (Service, FAQPage, BreadcrumbList…). */
   jsonLd?: object[];
+  /** La página tiene versión Markdown (src/lib/markdown.ts): se anuncia en el <head>. */
+  markdown?: boolean;
 }
 
-const { titulo, descripcion, ruta, ogImagenAlt, noindex = false, jsonLd = [] } = Astro.props;
+const { titulo, descripcion, ruta, ogImagenAlt, noindex = false, jsonLd = [], markdown = false } = Astro.props;
 // Canonical absoluto a la URL limpia: /privacidad.html y /privacidad apuntan a /privacidad.
 const canonical = new URL(ruta, negocio.url).href;
 const ogImagen = `${negocio.url}/assets/og-image.jpg`;
@@ -35,7 +38,7 @@ const organizacion = {
   name: negocio.nombre,
   url: `${negocio.url}/`,
   logo: `${negocio.url}/assets/favicon-512x512.png`,
-  description: 'Agentes de IA por WhatsApp, páginas web a medida y visibilidad en Google para negocios en todo el Perú. Desde Arequipa, con implementación 100% remota.',
+  description: negocio.descripcion,
   email: negocio.correo,
   telephone: `+${negocio.whatsapp.numero}`,
   address: {
@@ -65,6 +68,7 @@ const organizacion = {
     <meta name="description" content={descripcion}>
     <link rel="canonical" href={canonical}>
     {noindex && <meta name="robots" content="noindex">}
+    {markdown && <link rel="alternate" type="text/markdown" href={rutaMarkdown(ruta)}>}
 
     <meta property="og:type" content="website">
     <meta property="og:url" content={canonical}>

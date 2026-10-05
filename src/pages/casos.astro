@@ -15,7 +15,7 @@ const c = tp.casos;
 const jsonLd = [migasJsonLd([{ texto: tp.migasInicio, ruta: '/' }, { texto: c.etiqueta, ruta: '/casos' }])];
 ---
 
-<Pagina titulo={c.seoTitulo} descripcion={c.seoDescripcion} ruta="/casos" jsonLd={jsonLd}>
+<Pagina titulo={c.seoTitulo} descripcion={c.seoDescripcion} ruta="/casos" jsonLd={jsonLd} markdown>
   <CabeceraPagina
     migas={[{ texto: tp.migasInicio, href: '/' }, { texto: c.etiqueta }]}
     etiqueta={c.etiqueta}

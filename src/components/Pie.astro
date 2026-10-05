@@ -8,10 +8,18 @@ import { enlacesServicios, enlacesPie, enlacesLegales } from '../data/sitio';
 import { waLink } from '../lib/whatsapp';
 import logo from '../assets/marca/logo.webp';
 
+interface Props {
+  /**
+   * En las páginas internas el footer usa en móvil el mismo margen lateral que el
+   * contenido. En la portada conserva el del sitio anterior (48 px), igual que sus secciones.
+   */
+  alineado?: boolean;
+}
+const { alineado = false } = Astro.props;
 const waHref = waLink(t.waMsg);
 ---
 
-<footer class="pie" data-screen-label="Footer">
+<footer class:list={['pie', alineado && 'pie--alineado']} data-screen-label="Footer">
   <div class="pie__contenido">
     <div class="pie__columnas">
       <div class="pie__columna">

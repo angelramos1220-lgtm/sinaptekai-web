@@ -303,3 +303,43 @@ Nombres de oferta armados con textos ya publicados — **Nuevo** como combinaci�
 `Videos con IA: plan Full`, `Inventario + Boletas: Tienda`, `Inventario + Boletas: Supermercado`.
 
 `/servicios/automatizacion` lleva el dato "Service" sin ofertas, porque no tiene un monto publicado.
+
+## Fase 3 — Versiones Markdown y `llms.txt`
+
+Las leen los asistentes de IA (ChatGPT, Claude, Gemini, Perplexity), no los visitantes.
+Ahora se **generan desde los mismos datos que el sitio**, así que dicen lo mismo que las
+páginas, con los mismos montos. Hay una por página: `/index.md`, `/casos.md`,
+`/precios.md` y `/servicios/<página>.md`.
+
+Lo único propio de estos documentos — **Nuevo**:
+
+| Texto | Dónde |
+| --- | --- |
+| `Páginas del sitio en Markdown` | Título del índice de páginas, en `/index.md` y `/llms.txt` |
+| `Portada` · `servicios, cómo funciona, casos de éxito, paquetes y precios.` | Primera línea de ese índice |
+| `Página de casos:` · `Caso completo:` | Antes del enlace a `/casos` |
+| `Todos los precios están en soles (S/).` | Bajo el título de `/precios.md` (la frase ya estaba en `llms.txt`) |
+| `Paquete`, `Mensualidad`, `Incluye`, `Servicio`, `Plan`, `Mantenimiento`, `Concepto`, `Detalle`, `Sí`, `No` | Encabezados y celdas de las tablas |
+| `Correo`, `Web`, `Ubicación` | Bloque de contacto |
+
+La nota final de cada documento es la que ya tenía `/index.md`, ahora con la dirección de
+cada página y un enlace a `llms.txt`:
+
+> Nota para agentes de IA: este documento es la versión Markdown de {dirección de la página}, servida también por negociación de contenido (`Accept: text/markdown`). El índice de todas las páginas está en https://synaptekai.tech/llms.txt. Preferencias de uso de este contenido por sistemas de IA: ver la directiva `Content-Signal` en https://synaptekai.tech/robots.txt.
+
+**Cambio de redacción en `llms.txt`, para que lo sepas:** el archivo actual estaba escrito
+a mano y contaba todo en tercera persona ("se pasó el dominio a nombre del negocio",
+"SynaptekAI habla el idioma técnico por el cliente"). El nuevo usa las frases del sitio
+tal cual ("Pasamos el dominio a nombre del negocio", "Nosotros hablamos el idioma técnico
+por ti"). Motivo: los casos tienen que ir exactos, y un texto escrito aparte se
+desactualiza. Se conservan el título, la descripción, el párrafo de presentación ("SynaptekAI
+es una agencia de automatización e inteligencia artificial para negocios…") y la línea
+"Implementación 100% remota, para negocios en todo el Perú.". Se agrega el índice de
+páginas con sus versiones Markdown.
+
+`/index.md` conserva su contenido y su orden; suma los enlaces a las páginas nuevas, los
+planes de Diseño Web con lo que incluye cada uno y los datos de contacto completos.
+
+`robots.txt` no cambia (conserva `Content-Signal`). `sitemap.xml` pasa de 4 a 12
+direcciones: suma las 6 páginas de servicio, `/casos` y `/precios`, y lista `/bot` en vez
+de `/bot.html` (las dos siguen respondiendo).

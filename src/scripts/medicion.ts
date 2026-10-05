@@ -32,7 +32,13 @@ export function medirWhatsApp(origen: string): void {
 // Un único listener delegado sobre document: cualquier enlace a wa.me (también los
 // que el chat crea después) dispara contacto_whatsapp con el data-origen propio o
 // el de su contenedor. Un enlace sin marca se registra como "sin-origen".
+//
+// Lo que abre WhatsApp sin pasar por un enlace (el formulario de Contacto) avisa con
+// el evento "contacto-whatsapp" y su origen en detail: se mide igual.
 export function iniciarMedicion(): void {
+  document.addEventListener('contacto-whatsapp', (e) => {
+    medirWhatsApp((e as CustomEvent<{ origen?: string }>).detail?.origen || 'sin-origen');
+  });
   document.addEventListener('click', (e) => {
     const objetivo = e.target instanceof Element ? e.target : null;
     const enlace = objetivo ? objetivo.closest('a[href*="wa.me/"]') : null;

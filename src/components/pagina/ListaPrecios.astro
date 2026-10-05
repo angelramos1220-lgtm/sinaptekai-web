@@ -2,15 +2,8 @@
 // Lista de precios: una fila por concepto, con su monto, su nota y un enlace opcional.
 // Los montos llegan ya formateados desde src/data (su origen es src/data/precios.ts).
 import { textosPaginas as tp } from '../../data/textosPaginas';
+import type { FilaPrecio } from '../../data/paginaPrecios';
 
-export interface FilaPrecio {
-  concepto: string;
-  detalle?: string;
-  monto: string;
-  nota?: string;
-  /** Página con el detalle: la fila lleva un enlace "Ver más →" hacia ella. */
-  enlace?: { href: string };
-}
 interface Props {
   filas: FilaPrecio[];
 }

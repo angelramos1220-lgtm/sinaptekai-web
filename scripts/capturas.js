@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 /*
+ * OBSOLETO: herramienta del sitio anterior (el bundle de legacy/index.html). Para el sitio
+ * nuevo se usa scripts/verificar.js. Se borra en la Fase 5 de la migración.
+ *
  * scripts/capturas.js — revisa el sitio en un navegador real (Chrome o Edge sin ventana).
  *
  *   node scripts/capturas.js                      capturas a 375, 768 y 1280 px en .work/capturas/

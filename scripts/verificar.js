@@ -57,7 +57,8 @@ const WIDTHS_CABECERA = [320, 375, 768, 1023, 1024, 1100, 1239, 1240, 1280, 1440
 const SERVICIOS = ['asistentes-whatsapp', 'paginas-web', 'visibilidad-google-ia', 'socio-tecnologico', 'automatizacion', 'complementarios'];
 const PAGINAS = [
   { ruta: '/', nombre: 'portada', md: '/index.md' },
-  ...SERVICIOS.map((s) => ({ ruta: '/servicios/' + s, nombre: 'servicio-' + s, servicio: true, interna: true, md: '/servicios/' + s + '.md' })),
+  // "automatizacion" no tiene un monto publicado: su dato Service va sin ofertas.
+  ...SERVICIOS.map((s) => ({ ruta: '/servicios/' + s, nombre: 'servicio-' + s, servicio: true, interna: true, md: '/servicios/' + s + '.md', sinOfertas: s === 'automatizacion' })),
   { ruta: '/casos', nombre: 'casos', interna: true, md: '/casos.md' },
   { ruta: '/precios', nombre: 'precios', interna: true, md: '/precios.md' },
   { ruta: '/privacidad', nombre: 'privacidad', interna: true },
@@ -155,7 +156,8 @@ async function verificarServidor() {
       if (p.servicio && !ld.tipos.includes('Service')) problemas.push('falta JSON-LD Service');
       if (p.servicio && !ld.tipos.includes('FAQPage')) problemas.push('falta JSON-LD FAQPage');
       if (p.interna && !ld.tipos.includes('BreadcrumbList')) problemas.push('falta JSON-LD BreadcrumbList');
-      if (p.servicio && !/"priceCurrency":"PEN"/.test(html)) problemas.push('Service sin ofertas en PEN');
+      if (p.servicio && !p.sinOfertas && !/"priceCurrency":"PEN"/.test(html)) problemas.push('Service sin ofertas en PEN');
+      if (/"priceCurrency":"(?!PEN)/.test(html)) problemas.push('hay una oferta en otra moneda');
       for (const re of PROHIBIDO) if (re.test(html.replace(/<script[\s\S]*?<\/script>/g, ''))) problemas.push('texto prohibido ' + re);
       if (ruta === p.ruta && !p.noindex) {
         if (titulos.has(t)) problemas.push('título repetido con ' + titulos.get(t)); else titulos.set(t, ruta);
@@ -194,7 +196,9 @@ async function verificarServidor() {
 
   titulo('Servidor: robots, sitemap y llms.txt');
   const robots = (await pedir('/robots.txt', LOCAL ? { host: 'synaptekai.tech' } : {})).texto;
-  ok(/Content-Signal:/i.test(robots) && /Sitemap: https:\/\/synaptekai\.tech\/sitemap\.xml/.test(robots) && !/^Disallow: \/\s*$/m.test(robots), 'robots.txt del dominio real: con Content-Signal y Sitemap, sin "Disallow: /"');
+  ok(/Content-Signal:/i.test(robots) && /Sitemap: https:\/\/synaptekai\.tech\/sitemap\.xml/.test(robots) && /^User-agent: \*\r?\nAllow: \/\s*$/m.test(robots), 'robots.txt del dominio real: permite el rastreo, con Content-Signal y Sitemap');
+  const robotsRepo = fs.readFileSync(path.join(ROOT, 'public/robots.txt'), 'utf8');
+  if (LOCAL) ok(robots === robotsRepo, 'robots.txt se sirve tal cual está en public/robots.txt (' + robots.length + ' bytes)');
   const sitemap = (await pedir('/sitemap.xml')).texto;
   const enSitemap = Array.from(sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)).map((m) => m[1]);
   const esperadas = PAGINAS.filter((p) => !p.noindex).map((p) => DOMINIO + p.ruta).concat([DOMINIO + '/bot']);
@@ -355,7 +359,10 @@ async function verificarNavegador() {
     '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', '--mute-audio',
     // Si el sistema tiene las animaciones apagadas, Chrome desactiva el desplazamiento
     // suave: se fuerza para poder probarlo (el modo reducido se emula por página).
-    '--force-prefers-no-reduced-motion', '--enable-smooth-scrolling', 'about:blank'], { stdio: 'ignore' });
+    '--force-prefers-no-reduced-motion', '--enable-smooth-scrolling',
+    // Los dos dominios apuntan al contenedor local: el modo de prueba y el dominio real
+    // se prueban aquí mismo, sin tocar el DNS ni el sitio publicado.
+    '--host-resolver-rules=MAP ' + DOMINIO_PRUEBA + ' 127.0.0.1, MAP synaptekai.tech 127.0.0.1', 'about:blank'], { stdio: 'ignore' });
   let cdp;
   try {
     cdp = await conectar();
@@ -422,7 +429,9 @@ async function verificarNavegador() {
       await cdp.send('Page.navigate', { url: 'about:blank' });
       await sleep(150);
       consola = []; fallidas = []; pedidas = []; bytes = 0;
-      await cdp.send('Page.navigate', { url: BASE + ruta });
+      // o.host: abre el contenedor local con otro nombre de dominio.
+      const origen = o.host ? 'http://' + o.host + ':' + (new URL(BASE).port || 80) : BASE;
+      await cdp.send('Page.navigate', { url: origen + ruta });
       for (let i = 0; i < 80; i++) {
         await sleep(200);
         if (await evalJs('document.readyState === "complete" && location.href !== "about:blank"').catch(() => false)) break;
@@ -471,7 +480,8 @@ async function verificarNavegador() {
         }
         if (m.h1.length !== 1) problemas.push(e + m.h1.length + ' h1 visibles');
         if (m.franja) problemas.push(e + 'se ve la franja de "sitio de prueba" fuera del dominio de prueba');
-        const errores = consola.filter((x) => !/favicon/.test(x));
+        // La 404 siempre deja en consola el aviso de su propia respuesta 404: no es un error de la página.
+        const errores = consola.filter((x) => !/favicon/.test(x) && !(p.nombre === '404' && x.includes('status of 404') && x.includes(p.ruta)));
         if (errores.length) problemas.push(e + 'consola: ' + Array.from(new Set(errores)).slice(0, 3).join(' | '));
         const malas = fallidas.filter((x) => !(p.nombre === '404' && x.includes(p.ruta)));
         if (malas.length) problemas.push(e + 'peticiones fallidas: ' + Array.from(new Set(malas)).slice(0, 3).join(' | '));
@@ -537,6 +547,42 @@ async function verificarNavegador() {
       const pidioGa = pedidas.some((u) => /googletagmanager|google-analytics/.test(u));
       if (/synaptekai\.tech/.test(BASE) && !BASE.includes(DOMINIO_PRUEBA)) ok(ga.activo === true, 'GA4 activo en el dominio real');
       else ok(ga.activo === false && !ga.script && !pidioGa, 'GA4 no se carga fuera del dominio real: los eventos van a la consola');
+
+      // ---------- Modo de prueba y dominio real, simulados sobre el contenedor local
+      if (LOCAL) {
+        titulo('Navegador: sitio de prueba y dominio real (simulados sobre localhost)');
+        const problemasPrueba = [];
+        let franja = null;
+        for (const w of [375, 1280]) {
+          await cargar('/', w, { host: DOMINIO_PRUEBA });
+          await recorrer(w);
+          franja = await evalJs(`(() => { const f = document.querySelector('.franja-prueba'); const r = f.getBoundingClientRect(); const c = document.querySelector('header.site-header').getBoundingClientRect(); return { host: location.hostname, alto: Math.round(r.height), texto: f.textContent.trim(), arriba: Math.round(r.top + window.scrollY), cabecera: Math.round(c.top + window.scrollY), ga: window.__ga4Activo, desborde: document.documentElement.scrollWidth > window.innerWidth }; })()`);
+          if (franja.host !== DOMINIO_PRUEBA) problemasPrueba.push('[' + w + '] no cargó con el dominio de prueba (' + franja.host + ')');
+          if (!(franja.alto > 0) || franja.texto !== 'Sitio de prueba' || franja.arriba !== 0) problemasPrueba.push('[' + w + '] franja: ' + JSON.stringify(franja));
+          if (franja.cabecera < franja.alto) problemasPrueba.push('[' + w + '] la franja tapa la cabecera');
+          if (franja.ga !== false) problemasPrueba.push('[' + w + '] GA4 activo en el sitio de prueba');
+          if (franja.desborde) problemasPrueba.push('[' + w + '] desborde horizontal');
+          if (pedidas.some((u) => /googletagmanager|google-analytics/.test(u))) problemasPrueba.push('[' + w + '] pidió Google Analytics');
+          if (CAPTURAS) await capturar('sitio-de-prueba-portada', w);
+        }
+        ok(!problemasPrueba.length, DOMINIO_PRUEBA + ': franja "' + franja.texto + '" arriba de la página (' + franja.alto + ' px), sin Google Analytics', problemasPrueba.join(' · '));
+        await cargar('/servicios/paginas-web', 1280, { host: DOMINIO_PRUEBA });
+        ok(await evalJs('document.querySelector(".franja-prueba").getBoundingClientRect().height > 0'), DOMINIO_PRUEBA + ': la franja también sale en las páginas internas');
+
+        await cargar('/', 1280, { host: 'synaptekai.tech' });
+        const real = await evalJs(`(() => {
+          window.addEventListener('click', (e) => { const a = e.target.closest && e.target.closest('a'); if (a) e.preventDefault(); }, true);
+          const antes = window.dataLayer.length;
+          const marca = document.querySelector('#inicio [data-origen="hero"]');
+          const enlace = marca.matches('a') ? marca : marca.querySelector('a[href*="wa.me"]');
+          enlace.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          const nuevos = Array.from(window.dataLayer).slice(antes).map((a) => Array.from(a));
+          return { host: location.hostname, franja: document.querySelector('.franja-prueba').getBoundingClientRect().height, ga: window.__ga4Activo, script: !!document.querySelector('script[src*="googletagmanager.com/gtag/js?id=G-Q01K6J04NG"]'), config: Array.from(window.dataLayer).filter((a) => a[0] === 'config').map((a) => a[1]).join(','), evento: JSON.stringify(nuevos[0] || null) };
+        })()`);
+        ok(real.host === 'synaptekai.tech' && real.franja === 0, 'synaptekai.tech: sin franja de prueba', JSON.stringify(real));
+        ok(real.ga === true && real.script && real.config === 'G-Q01K6J04NG', 'synaptekai.tech: GA4 G-Q01K6J04NG cargado una sola vez (la petición a Google se intercepta aquí)', JSON.stringify(real));
+        ok(real.evento === '["event","contacto_whatsapp",{"origen":"hero","pagina":"/"}]', 'synaptekai.tech: el clic en WhatsApp envía a GA4 ' + real.evento, JSON.stringify(real));
+      }
 
       // ---------- Menú
       titulo('Navegador: menú');
@@ -656,6 +702,28 @@ async function verificarNavegador() {
       ok(tras.startsWith('/gracias.html | 1'), 'después lleva a /gracias.html y marca el popup como visto (' + tras + ')');
       const descarga = await evalJs('(() => { const a = document.querySelector(\'a[href="/assets/checklist-automatizacion.pdf"]\'); return a ? (a.getAttribute("download") || "sin download") : null; })()');
       ok(!!descarga, 'la página de gracias ofrece el PDF en /assets/checklist-automatizacion.pdf (' + descarga + ')');
+
+      // ---------- Formularios de Contacto y Comentarios: abren WhatsApp con el mensaje armado
+      await cargar('/', 1280);
+      const formularios = await evalJs(`(() => {
+        const abiertas = [];
+        window.open = (u) => { abiertas.push(decodeURIComponent(u)); return null; };
+        const eventos = [];
+        const original = console.info;
+        console.info = function (m, p) { if (typeof m === 'string' && m.indexOf('[GA4') === 0) eventos.push(m.replace(/^\\[GA4[^\\]]*\\] /, '') + ' ' + JSON.stringify(p)); else original.apply(console, arguments); };
+        const enviar = (id, datos) => {
+          const f = document.getElementById(id);
+          for (const k of Object.keys(datos)) f.elements[k].value = datos[k];
+          f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        };
+        enviar('form-contacto', { nombre: 'Ana', negocio: 'Bodega Ana', mensaje: 'Quiero un asistente' });
+        enviar('form-comentarios', { fbNombre: '', fbComentario: 'Muy clara la web' });
+        return { abiertas, eventos };
+      })()`);
+      ok(formularios.abiertas[0] === 'https://wa.me/51939584377?text=Hola, soy Ana de Bodega Ana. Quiero un asistente' && formularios.eventos.length === 1 && formularios.eventos[0] === 'contacto_whatsapp {"origen":"contacto","pagina":"/"}',
+        'formulario de Contacto: abre WhatsApp con el mensaje armado y registra contacto_whatsapp (origen contacto)', JSON.stringify(formularios));
+      ok(formularios.abiertas[1] === 'https://wa.me/51939584377?text=Comentario de un visitante de la web: Muy clara la web',
+        'formulario de Comentarios: abre WhatsApp con el comentario (' + (formularios.abiertas[1] || '').split('text=')[1] + ')', JSON.stringify(formularios.abiertas));
 
       // ---------- Popup
       await prepararAlmacen(false);

@@ -97,6 +97,37 @@ export const textosPaginas = {
     terminosDescripcion: 'Términos del Servicio de SynaptekAI: qué ofrecemos, el modelo de instalación más suscripción, responsabilidades del cliente y condiciones de uso.',
   },
 
+  // Versiones Markdown de las páginas y llms.txt (src/lib/markdown.ts)
+  markdown: {
+    tituloPortada: 'SynaptekAI — Agentes de IA para negocios',
+    /** Presentación de llms.txt. */
+    llmsIntro: 'SynaptekAI es una agencia de automatización e inteligencia artificial para negocios. Crea agentes virtuales que atienden, agendan y venden por WhatsApp y Telegram las 24 horas, construye páginas web a medida y ordena la presencia de un negocio en Google. El sitio es solo en español y todos los precios están en soles (S/).',
+    remoto: 'Implementación 100% remota, para negocios en todo el Perú.',
+    soles: 'Todos los precios están en soles (S/).',
+    paginas: 'Páginas del sitio en Markdown',
+    portada: 'Portada',
+    portadaDescripcion: 'servicios, cómo funciona, casos de éxito, paquetes y precios.',
+    masDetalle: 'Página de casos:',
+    casoCompleto: 'Caso completo:',
+    // Encabezados de tablas
+    colPaquete: 'Paquete',
+    colMensualidad: 'Mensualidad',
+    colIncluye: 'Incluye',
+    colServicio: 'Servicio',
+    colPlan: 'Plan',
+    colMantenimiento: 'Mantenimiento',
+    colConcepto: 'Concepto',
+    colDetalle: 'Detalle',
+    si: 'Sí',
+    no: 'No',
+    // Contacto
+    correo: 'Correo',
+    web: 'Web',
+    ubicacion: 'Ubicación',
+    /** Nota final de cada documento. {url} = la página de la que es versión. */
+    nota: 'Nota para agentes de IA: este documento es la versión Markdown de {url}, servida también por negociación de contenido (`Accept: text/markdown`). El índice de todas las páginas está en https://synaptekai.tech/llms.txt. Preferencias de uso de este contenido por sistemas de IA: ver la directiva `Content-Signal` en https://synaptekai.tech/robots.txt.',
+  },
+
   /** Franja que solo aparece en el dominio de prueba (nuevo.synaptekai.tech). */
   franjaPrueba: 'Sitio de prueba',
 } as const;

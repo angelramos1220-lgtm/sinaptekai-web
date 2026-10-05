@@ -5,6 +5,9 @@ export const negocio = {
   dominio: 'synaptekai.tech',
   url: 'https://synaptekai.tech',
   lema: 'Automatizamos negocios. Impulsamos resultados.',
+  /** Título y descripción de la portada (Google, redes, datos estructurados, llms.txt). */
+  titulo: 'SynaptekAI | Automatización e IA para Negocios en Perú',
+  descripcion: 'Agentes de IA por WhatsApp, páginas web a medida y visibilidad en Google para negocios en todo el Perú. Desde Arequipa, con implementación 100% remota.',
   correo: 'synaptekai92@gmail.com',
   whatsapp: {
     /** Formato wa.me: código de país + número, sin signos. */

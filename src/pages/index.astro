@@ -14,12 +14,14 @@ import Comentarios from '../components/Comentarios.astro';
 import Pie from '../components/Pie.astro';
 import ModalChecklist from '../components/ModalChecklist.astro';
 import Chat from '../components/Chat.astro';
+import { negocio } from '../data/negocio';
 ---
 
 <Base
-  titulo="SynaptekAI | Automatización e IA para Negocios en Perú"
-  descripcion="Agentes de IA por WhatsApp, páginas web a medida y visibilidad en Google para negocios en todo el Perú. Desde Arequipa, con implementación 100% remota."
+  titulo={negocio.titulo}
+  descripcion={negocio.descripcion}
   ruta="/"
+  markdown
 >
   <Cabecera rutaActual="/" />
   <main>

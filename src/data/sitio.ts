@@ -30,12 +30,13 @@ export const enlacesLegales: Enlace[] = [
 ];
 
 /** Páginas que van al sitemap (rutas limpias, sin .html). La de gracias y la 404 no van. */
-export const rutasSitemap: { ruta: string; prioridad: string; frecuencia: string }[] = [
+export const rutasSitemap: { ruta: string; prioridad: string; frecuencia: string; /** Fecha del último cambio (AAAA-MM-DD). Sin ella se usa la fecha de publicación. */ actualizado?: string }[] = [
   { ruta: '/', prioridad: '1.0', frecuencia: 'weekly' },
   ...paginasServicio.map((p) => ({ ruta: p.ruta, prioridad: '0.8', frecuencia: 'monthly' })),
   { ruta: '/casos', prioridad: '0.8', frecuencia: 'monthly' },
   { ruta: '/precios', prioridad: '0.8', frecuencia: 'monthly' },
-  { ruta: '/privacidad', prioridad: '0.3', frecuencia: 'yearly' },
-  { ruta: '/terminos', prioridad: '0.3', frecuencia: 'yearly' },
-  { ruta: '/bot', prioridad: '0.3', frecuencia: 'yearly' },
+  // Contenido fijo: al cambiar el texto legal o la página del bot, actualizar su fecha.
+  { ruta: '/privacidad', prioridad: '0.3', frecuencia: 'yearly', actualizado: '2026-09-01' },
+  { ruta: '/terminos', prioridad: '0.3', frecuencia: 'yearly', actualizado: '2026-09-01' },
+  { ruta: '/bot', prioridad: '0.3', frecuencia: 'yearly', actualizado: '2026-08-14' },
 ];

@@ -1,64 +1,22 @@
 ---
-// /precios: todos los precios en una página. Los montos salen de src/data/precios.ts
-// a través de los mismos datos que usan la portada y las páginas de servicio.
+// /precios: todos los precios en una página. Los grupos y sus filas están en
+// src/data/paginaPrecios.ts; los montos salen de src/data/precios.ts.
 import Pagina from '../layouts/Pagina.astro';
 import CabeceraPagina from '../components/pagina/CabeceraPagina.astro';
 import Seccion from '../components/pagina/Seccion.astro';
-import ListaPrecios, { type FilaPrecio } from '../components/pagina/ListaPrecios.astro';
+import ListaPrecios from '../components/pagina/ListaPrecios.astro';
 import LlamadoFinal from '../components/pagina/LlamadoFinal.astro';
 import Vinetas from '../components/Vinetas.astro';
-import { paquetes } from '../data/paquetes';
-import { masServicios } from '../data/masServicios';
-import { planesWeb, renuevaWeb } from '../data/planesWeb';
-import { complementarios } from '../data/complementarios';
-import { textos as t } from '../data/textos';
+import { gruposPrecios, notasPrecios } from '../data/paginaPrecios';
 import { textosPaginas as tp } from '../data/textosPaginas';
 import { migasJsonLd } from '../lib/datosEstructurados';
 
 const x = tp.precios;
-const verMas = (href: string) => ({ href });
-
-const filasPaquetes: FilaPrecio[] = paquetes.map((p) => ({
-  concepto: p.nombre,
-  detalle: p.insignia,
-  monto: `${t.pkgDesde} ${p.instalacion}`,
-  nota: `${t.pkgInstallWord} · ${p.mensual}`,
-  enlace: verMas('/servicios/asistentes-whatsapp'),
-}));
-
-const filasMas: FilaPrecio[] = masServicios.map((m) => ({
-  concepto: m.nombre,
-  monto: m.precio,
-  nota: m.notaPrecio,
-  enlace: verMas(m.id === 'visibilidad' ? '/servicios/visibilidad-google-ia' : '/servicios/socio-tecnologico'),
-}));
-
-const filasWeb: FilaPrecio[] = [
-  ...planesWeb.map((plan) => ({
-    concepto: plan.nombre,
-    monto: plan.precio,
-    nota: `${plan.notaPago} · ${plan.mantenimiento}`,
-    enlace: verMas('/servicios/paginas-web'),
-  })),
-  { concepto: renuevaWeb.nombre, detalle: renuevaWeb.insignia, monto: renuevaWeb.precio, nota: renuevaWeb.notaPago, enlace: verMas('/servicios/paginas-web') },
-];
-
-const filasComplementarios: FilaPrecio[] = complementarios.map((c) => ({
-  concepto: c.nombre,
-  detalle: t.compBadge,
-  monto: c.precios[0],
-  nota: c.precios[1],
-  enlace: verMas(`/servicios/complementarios#${c.id}`),
-}));
-
-// Notas: frases que ya están en la portada, junto a cada precio.
-const [, videos, inventario] = complementarios;
-const notas = [t.pkgPriceNote, renuevaWeb.notaHosting, videos.vinetas[2], inventario.vinetas[2], inventario.nota];
 
 const jsonLd = [migasJsonLd([{ texto: tp.migasInicio, ruta: '/' }, { texto: tp.menuPrecios, ruta: '/precios' }])];
 ---
 
-<Pagina titulo={x.seoTitulo} descripcion={x.seoDescripcion} ruta="/precios" jsonLd={jsonLd}>
+<Pagina titulo={x.seoTitulo} descripcion={x.seoDescripcion} ruta="/precios" jsonLd={jsonLd} markdown>
   <CabeceraPagina
     migas={[{ texto: tp.migasInicio, href: '/' }, { texto: tp.menuPrecios }]}
     etiqueta={x.etiqueta}
@@ -66,24 +24,14 @@ const jsonLd = [migasJsonLd([{ texto: tp.migasInicio, ruta: '/' }, { texto: tp.m
     bajada={x.bajada}
   />
 
-  <Seccion id="paquetes" titulo={x.paquetes} disposicion="lateral" borde>
-    <ListaPrecios filas={filasPaquetes} />
-  </Seccion>
-
-  <Seccion id="mas-servicios" titulo={x.masServicios} bajada={x.masServiciosBajada} disposicion="lateral" borde>
-    <ListaPrecios filas={filasMas} />
-  </Seccion>
-
-  <Seccion id="diseno-web" titulo={x.web} bajada={x.webBajada} disposicion="lateral" borde>
-    <ListaPrecios filas={filasWeb} />
-  </Seccion>
-
-  <Seccion id="complementarios" titulo={x.complementarios} bajada={x.complementariosBajada} disposicion="lateral" borde>
-    <ListaPrecios filas={filasComplementarios} />
-  </Seccion>
+  {gruposPrecios.map((grupo) => (
+    <Seccion id={grupo.id} titulo={grupo.titulo} bajada={grupo.bajada} disposicion="lateral" borde>
+      <ListaPrecios filas={grupo.filas} />
+    </Seccion>
+  ))}
 
   <Seccion id="notas" titulo={x.notasTitulo} disposicion="lateral" borde>
-    <Vinetas items={notas} variante="grandes" />
+    <Vinetas items={notasPrecios} variante="grandes" />
   </Seccion>
 
   <LlamadoFinal mensaje={x.mensajeWhatsApp} origen={x.origen} />
